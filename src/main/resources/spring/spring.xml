@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd
+           http://www.springframework.org/schema/data/mongo
+    	   http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+           http://www.springframework.org/schema/task
+           http://www.springframework.org/schema/task/spring-task-4.2.xsd
+           http://www.springframework.org/schema/mvc   
+           http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd">
+
+
+	<context:component-scan
+		base-package="com.anbang.qipai.members.web.controller" />
+	<mvc:annotation-driven />
+
+
+	<!-- ②：启动Spring MVC的注解功能，完成请求和注解POJO的映射， 配置一个基于注解的定制的WebBindingInitializer，解决日期转换问题，方法级别的处理器映射 -->
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="cacheSeconds" value="0" />
+		<!-- 配置一下对json数据的转换 -->
+		<property name="messageConverters">
+			<list>
+				<bean
+					class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"></bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="initProcessor"
+		class="com.anbang.qipai.members.init.InitProcessor" init-method="init" />
+
+	<!--http client -->
+	<bean id="httpClient" class="org.eclipse.jetty.client.HttpClient" />
+	<bean id="sslContextFactory"
+		class="org.eclipse.jetty.util.ssl.SslContextFactory" />
+	<bean id="sslHttpClient"
+		class="org.eclipse.jetty.client.HttpClient">
+		<constructor-arg ref="sslContextFactory" />
+	</bean>
+
+	<!--会话管理 -->
+	<bean id="userSessionsManager"
+		class="com.dml.users.UserSessionsManager" />
+
+	<!--dao -->
+	<!-- spring data mongodb repositories支持 -->
+	<mongo:repositories
+		base-package="com.anbang.qipai.members.cqrs.q.dao.mongodb.repository"
+		mongo-template-ref="mongoTemplate" />
+
+	<!-- mongodb配置 -->
+	<bean id="mongoTemplate"
+		class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg name="mongo" ref="mongo" />
+		<constructor-arg name="databaseName"
+			value="qipai_members" />
+	</bean>
+	<bean id="mongo"
+		class="org.springframework.data.mongodb.core.MongoFactoryBean">
+		<property name="host" value="127.0.0.1" />
+		<property name="port" value="27017" />
+	</bean>
+
+	<bean id="mongodbMemberDboDao"
+		class="com.anbang.qipai.members.cqrs.q.dao.mongodb.MongodbMemberDboDao">
+		<property name="mongoTemplate" ref="mongoTemplate" />
+	</bean>
+
+	<bean id="mongodbAuthorizationDboDao"
+		class="com.anbang.qipai.members.cqrs.q.dao.mongodb.MongodbAuthorizationDboDao">
+		<property name="mongoTemplate" ref="mongoTemplate" />
+	</bean>
+
+	<!--cmdservice -->
+	<bean id="memberAuthCmdServiceImpl"
+		class="com.anbang.qipai.members.cqrs.c.service.impl.MemberAuthCmdServiceImpl" />
+	<bean id="memberAuthService"
+		class="com.anbang.qipai.members.cqrs.c.service.MemberAuthService" />
+
+	<!--disruptor cmd service -->
+	<bean id="disruptorFactory"
+		class="com.anbang.qipai.members.cqrs.c.service.disruptor.DisruptorFactory" />
+	<bean id="processCoreCommandEventHandler"
+		class="com.anbang.qipai.members.cqrs.c.service.disruptor.ProcessCoreCommandEventHandler" />
+
+
+	<bean id="memberAuthCmdService"
+		class="com.anbang.qipai.members.cqrs.c.service.disruptor.DisruptorMemberAuthCmdService" />
+
+	<!--query service -->
+	<bean id="memberAuthQueryService"
+		class="com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService" />
+
+	<!--repository -->
+	<bean id="singletonEntityRepository"
+		class="com.highto.framework.ddd.SingletonEntityRepository">
+		<property name="entityFactory" ref="entityFactory" />
+	</bean>
+	<bean id="entityFactory"
+		class="com.anbang.qipai.members.cqrs.c.repository.SingletonEntityFactoryImpl" />
+
+	<!--snapshot -->
+	<bean id="coreSnapshotFactory"
+		class="com.anbang.qipai.members.cqrs.c.service.disruptor.CoreSnapshotFactory" />
+	<bean id="snapshotJsonUtil"
+		class="com.anbang.qipai.members.cqrs.c.service.disruptor.SnapshotJsonUtil" />
+	<bean id="coreSnapshotService"
+		class="com.anbang.qipai.members.cqrs.c.service.disruptor.CoreSnapshotService" />
+
+</beans>   
