@@ -1,12 +1,12 @@
-package com.anbang.qipai.members.config;
+package com.anbang.qipai.members;
 
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 
 import com.anbang.qipai.members.cqrs.c.repository.SingletonEntityFactoryImpl;
 import com.anbang.qipai.members.cqrs.c.service.disruptor.ProcessCoreCommandEventHandler;
@@ -15,9 +15,8 @@ import com.anbang.qipai.members.init.InitProcessor;
 import com.dml.users.UserSessionsManager;
 import com.highto.framework.ddd.SingletonEntityRepository;
 
-@Configuration
-@ComponentScan("com.anbang.qipai.members")
-public class BeanConfig {
+@SpringBootApplication
+public class QipaiMembersApplication {
 
 	@Autowired
 	private SnapshotJsonUtil snapshotJsonUtil;
@@ -59,6 +58,10 @@ public class BeanConfig {
 				coreCommandEventHandler, singletonEntityRepository(), applicationContext);
 		initProcessor.init();
 		return initProcessor;
+	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(QipaiMembersApplication.class, args);
 	}
 
 }
