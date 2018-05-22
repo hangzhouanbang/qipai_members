@@ -1,0 +1,9 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/qipai_members
+  application:
+    name: qipai_members
+server:
+  context-path: /qipai_members
+  port: 82
