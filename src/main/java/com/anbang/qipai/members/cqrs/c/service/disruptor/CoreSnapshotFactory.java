@@ -1,9 +1,11 @@
 package com.anbang.qipai.members.cqrs.c.service.disruptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.highto.framework.ddd.SingletonEntityRepository;
 
+@Component
 public class CoreSnapshotFactory {
 
 	@Autowired

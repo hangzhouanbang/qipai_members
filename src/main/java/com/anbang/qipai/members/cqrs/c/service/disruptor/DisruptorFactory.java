@@ -3,6 +3,7 @@ package com.anbang.qipai.members.cqrs.c.service.disruptor;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.highto.framework.disruptor.event.CommandEvent;
 import com.highto.framework.disruptor.event.factory.CommandEventFactory;
@@ -17,6 +18,7 @@ import com.lmax.disruptor.util.DaemonThreadFactory;
  * @author neo
  *
  */
+@Component
 public class DisruptorFactory {
 
 	private Disruptor<CommandEvent> coreCmdDisruptor;

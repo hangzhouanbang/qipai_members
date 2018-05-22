@@ -1,5 +1,7 @@
 package com.anbang.qipai.members.cqrs.c.service.impl;
 
+import org.springframework.stereotype.Component;
+
 import com.anbang.qipai.members.cqrs.c.domain.MemberIdManager;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthCmdService;
 import com.dml.users.AuthorizationAlreadyExistsException;
@@ -7,6 +9,7 @@ import com.dml.users.ThirdAuthorization;
 import com.dml.users.UserNotFoundException;
 import com.dml.users.UsersManager;
 
+@Component
 public class MemberAuthCmdServiceImpl extends CmdServiceBase implements MemberAuthCmdService {
 
 	@Override

@@ -1,13 +1,14 @@
 package com.anbang.qipai.members.cqrs.q.dao.mongodb;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.members.cqrs.q.dao.AuthorizationDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.mongodb.repository.AuthorizationDboRepository;
 import com.anbang.qipai.members.cqrs.q.dbo.AuthorizationDbo;
-import com.highto.framework.data.mongodb.MongodbDaoBase;
 
-public class MongodbAuthorizationDboDao extends MongodbDaoBase implements AuthorizationDboDao {
+@Component
+public class MongodbAuthorizationDboDao implements AuthorizationDboDao {
 
 	@Autowired
 	private AuthorizationDboRepository repository;

@@ -1,5 +1,10 @@
 package com.anbang.qipai.members.cqrs.c.service.disruptor;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -7,12 +12,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import java.io.File;
-import java.io.IOException;
-
-/**
- * Created by tan on 2016/8/29.
- */
+@Component
 public class SnapshotJsonUtil {
 	private ObjectMapper objectMapper;
 	private JsonFactory factory;
@@ -41,7 +41,7 @@ public class SnapshotJsonUtil {
 
 	public Object recovery(String fileBasePath, Class clazz) throws IOException {
 
-		//System.out.println(clazz.getClass());
+		// System.out.println(clazz.getClass());
 		File recentFile = getRecentFile(fileBasePath);
 		if (recentFile == null)
 			return null;

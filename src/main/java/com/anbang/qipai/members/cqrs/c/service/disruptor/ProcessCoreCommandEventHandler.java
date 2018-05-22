@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.highto.framework.ddd.CRPair;
 import com.highto.framework.ddd.Command;
@@ -21,6 +22,7 @@ import com.lmax.disruptor.EventHandler;
  *
  * @author zheng chengdong
  */
+@Component
 public class ProcessCoreCommandEventHandler implements EventHandler<CommandEvent> {
 	@Autowired
 	private CoreSnapshotFactory coreSnapshotFactory;

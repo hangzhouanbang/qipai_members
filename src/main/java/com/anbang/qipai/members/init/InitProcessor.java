@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.eclipse.jetty.client.HttpClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import com.anbang.qipai.members.cqrs.c.service.disruptor.CoreSnapshot;
@@ -17,19 +16,14 @@ import com.highto.framework.ddd.CommonCommand;
 import com.highto.framework.ddd.SingletonEntityRepository;
 
 public class InitProcessor {
-	@Autowired
 	private HttpClient httpClient;
 
-	@Autowired
 	private HttpClient sslHttpClient;
 
-	@Autowired
 	private SnapshotJsonUtil snapshotJsonUtil;
 
-	@Autowired
 	private ProcessCoreCommandEventHandler coreCommandEventHandler;
 
-	@Autowired
 	private SingletonEntityRepository singletonEntityRepository;
 
 	// @Autowired
@@ -38,10 +32,20 @@ public class InitProcessor {
 	// @Autowired
 	// private MemberCashAccountRepository memberCashAccountRepository;
 
-	@Autowired
 	private ApplicationContext applicationContext;
 
 	FileUtil fileUtil = new FileUtil();
+
+	public InitProcessor(HttpClient httpClient, HttpClient sslHttpClient, SnapshotJsonUtil snapshotJsonUtil,
+			ProcessCoreCommandEventHandler coreCommandEventHandler, SingletonEntityRepository singletonEntityRepository,
+			ApplicationContext applicationContext) {
+		this.httpClient = httpClient;
+		this.sslHttpClient = sslHttpClient;
+		this.snapshotJsonUtil = snapshotJsonUtil;
+		this.coreCommandEventHandler = coreCommandEventHandler;
+		this.singletonEntityRepository = singletonEntityRepository;
+		this.applicationContext = applicationContext;
+	}
 
 	public void init() {
 

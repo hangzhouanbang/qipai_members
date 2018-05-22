@@ -1,12 +1,14 @@
 package com.anbang.qipai.members.cqrs.q.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.members.cqrs.q.dao.AuthorizationDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberDboDao;
 import com.anbang.qipai.members.cqrs.q.dbo.AuthorizationDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 
+@Component
 public class MemberAuthQueryService {
 
 	@Autowired

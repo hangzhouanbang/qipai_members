@@ -1,6 +1,7 @@
 package com.anbang.qipai.members.cqrs.c.service.disruptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthCmdService;
 import com.anbang.qipai.members.cqrs.c.service.impl.MemberAuthCmdServiceImpl;
@@ -8,6 +9,7 @@ import com.dml.users.AuthorizationAlreadyExistsException;
 import com.dml.users.UserNotFoundException;
 import com.highto.framework.ddd.CommonCommand;
 
+@Component(value = "memberAuthCmdService")
 public class DisruptorMemberAuthCmdService extends DisruptorCmdServiceBase implements MemberAuthCmdService {
 
 	@Autowired
