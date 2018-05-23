@@ -7,3 +7,8 @@ spring:
 server:
   context-path: /qipai_members
   port: 82
+  
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
