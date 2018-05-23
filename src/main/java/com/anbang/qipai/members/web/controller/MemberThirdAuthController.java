@@ -10,9 +10,9 @@ import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthCmdService;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthService;
@@ -21,7 +21,7 @@ import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.google.gson.Gson;
 
-@Controller
+@RestController
 @RequestMapping("/thirdauth")
 public class MemberThirdAuthController {
 

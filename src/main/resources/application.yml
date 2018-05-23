@@ -5,7 +5,6 @@ spring:
   application:
     name: qipai_members
 server:
-  context-path: /qipai_members
   port: 82
   
 eureka:
