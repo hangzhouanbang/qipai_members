@@ -25,9 +25,9 @@ import com.google.gson.Gson;
 @RequestMapping("/thirdauth")
 public class MemberThirdAuthController {
 
-	private static String APPID = "wx4868b35061f87885";
+	private static String APPID = "wx91c0b0f25d1cb67d";
 
-	private static String APPSECRET = "64020361b8ec4c99936c0e3999a9f249";
+	private static String APPSECRET = "c0a93347508774f9c83f3d2f1b6aa1cd";
 
 	private Gson gson = new Gson();
 
@@ -43,9 +43,9 @@ public class MemberThirdAuthController {
 	@Autowired
 	private MemberAuthService memberAuthService;
 
-	@RequestMapping(value = "/wechatlogin")
+	@RequestMapping(value = "/wechatcodelogin")
 	@ResponseBody
-	public CommonVO wechatlogin(String code) {
+	public CommonVO wechatcodelogin(String code) {
 		CommonVO vo = new CommonVO();
 		if (code != null) {
 			try {
