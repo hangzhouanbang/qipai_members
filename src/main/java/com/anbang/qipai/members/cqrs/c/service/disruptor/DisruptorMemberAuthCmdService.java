@@ -30,7 +30,7 @@ public class DisruptorMemberAuthCmdService extends DisruptorCmdServiceBase imple
 	}
 
 	@Override
-	public String createMemberAndAddThirdAuth(String publisher, String uuid, long currentTime)
+	public String createMemberAndAddThirdAuth(String publisher, String uuid, Long currentTime)
 			throws AuthorizationAlreadyExistsException {
 		CommonCommand cmd = new CommonCommand(MemberAuthCmdServiceImpl.class.getName(), "createMemberAndAddThirdAuth",
 				publisher, uuid, currentTime);

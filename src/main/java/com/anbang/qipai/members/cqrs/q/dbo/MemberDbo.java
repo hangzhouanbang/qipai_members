@@ -6,6 +6,11 @@ public class MemberDbo {
 
 	private String nickname;
 
+	/**
+	 * 性别：male男，female女
+	 */
+	private String gender;
+
 	private String headimgurl;
 
 	public String getId() {
@@ -22,6 +27,14 @@ public class MemberDbo {
 
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 
 	public String getHeadimgurl() {

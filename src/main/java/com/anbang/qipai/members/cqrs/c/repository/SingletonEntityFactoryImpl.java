@@ -1,10 +1,7 @@
 package com.anbang.qipai.members.cqrs.c.repository;
 
-import org.springframework.stereotype.Component;
-
 import com.highto.framework.ddd.SingletonEntityFactory;
 
-@Component(value = "entityFactory")
 public class SingletonEntityFactoryImpl implements SingletonEntityFactory {
 
 	@Override

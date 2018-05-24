@@ -3,9 +3,6 @@ package com.anbang.qipai.members.cqrs.c.service.disruptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.highto.framework.ddd.CRPair;
 import com.highto.framework.ddd.Command;
 import com.highto.framework.disruptor.Handler;
@@ -22,11 +19,8 @@ import com.lmax.disruptor.EventHandler;
  *
  * @author zheng chengdong
  */
-@Component
 public class ProcessCoreCommandEventHandler implements EventHandler<CommandEvent> {
-	@Autowired
 	private CoreSnapshotFactory coreSnapshotFactory;
-	@Autowired
 	private SnapshotJsonUtil snapshotJsonUtil;
 
 	private String fileBasePath = "snapshot/core/";
@@ -37,6 +31,11 @@ public class ProcessCoreCommandEventHandler implements EventHandler<CommandEvent
 
 	private String jFileNamePrefix = "core_";
 	private FileUtil fileUtil = new FileUtil();
+
+	public ProcessCoreCommandEventHandler(CoreSnapshotFactory coreSnapshotFactory, SnapshotJsonUtil snapshotJsonUtil) {
+		this.coreSnapshotFactory = coreSnapshotFactory;
+		this.snapshotJsonUtil = snapshotJsonUtil;
+	}
 
 	@Override
 	public void onEvent(CommandEvent event, long sequence, boolean endOfBatch) throws Exception {

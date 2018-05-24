@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 import com.anbang.qipai.members.cqrs.c.repository.SingletonEntityFactoryImpl;
+import com.anbang.qipai.members.cqrs.c.service.disruptor.CoreSnapshotFactory;
 import com.anbang.qipai.members.cqrs.c.service.disruptor.ProcessCoreCommandEventHandler;
 import com.anbang.qipai.members.cqrs.c.service.disruptor.SnapshotJsonUtil;
 import com.anbang.qipai.members.init.InitProcessor;
@@ -24,13 +25,10 @@ public class QipaiMembersApplication {
 	private SnapshotJsonUtil snapshotJsonUtil;
 
 	@Autowired
-	private ProcessCoreCommandEventHandler coreCommandEventHandler;
-
-	@Autowired
-	private SingletonEntityFactoryImpl entityFactory;
-
-	@Autowired
 	private ApplicationContext applicationContext;
+
+	@Autowired
+	private CoreSnapshotFactory coreSnapshotFactory;
 
 	@Bean
 	public HttpClient httpClient() {
@@ -50,14 +48,19 @@ public class QipaiMembersApplication {
 	@Bean
 	public SingletonEntityRepository singletonEntityRepository() {
 		SingletonEntityRepository singletonEntityRepository = new SingletonEntityRepository();
-		singletonEntityRepository.setEntityFactory(entityFactory);
+		singletonEntityRepository.setEntityFactory(new SingletonEntityFactoryImpl());
 		return singletonEntityRepository;
+	}
+
+	@Bean
+	public ProcessCoreCommandEventHandler processCoreCommandEventHandler() {
+		return new ProcessCoreCommandEventHandler(coreSnapshotFactory, snapshotJsonUtil);
 	}
 
 	@Bean
 	public InitProcessor initProcessor() {
 		InitProcessor initProcessor = new InitProcessor(httpClient(), sslHttpClient(), snapshotJsonUtil,
-				coreCommandEventHandler, singletonEntityRepository(), applicationContext);
+				processCoreCommandEventHandler(), singletonEntityRepository(), applicationContext);
 		initProcessor.init();
 		return initProcessor;
 	}

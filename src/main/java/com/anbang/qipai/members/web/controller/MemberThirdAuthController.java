@@ -43,6 +43,68 @@ public class MemberThirdAuthController {
 	@Autowired
 	private MemberAuthService memberAuthService;
 
+	/**
+	 * 客户端已经获取好了openid/unionid和微信用户信息
+	 * 
+	 * @param unionid
+	 * @param openid
+	 * @param nickname
+	 * @param headimgurl
+	 * @param sex
+	 *            1男 0女
+	 * @return
+	 */
+	@RequestMapping(value = "/wechatidlogin")
+	@ResponseBody
+	public CommonVO wechatidlogin(String unionid, String openid, String nickname, String headimgurl, int sex) {
+		CommonVO vo = new CommonVO();
+		try {
+			AuthorizationDbo unionidAuthDbo = memberAuthQueryService.findThirdAuthorizationDbo("union.weixin", unionid);
+			if (unionidAuthDbo != null) {// 已unionid注册
+				AuthorizationDbo openidAuthDbo = memberAuthQueryService
+						.findThirdAuthorizationDbo("open.weixin.app.qipai", openid);
+				if (openidAuthDbo == null) {// openid未注册
+					// 添加openid授权
+					memberAuthCmdService.addThirdAuth("open.weixin.app.qipai", openid, unionidAuthDbo.getMemberId());
+					memberAuthQueryService.addThirdAuth("open.weixin.app.qipai", openid, unionidAuthDbo.getMemberId());
+				}
+				// openid登录
+				String token = memberAuthService.thirdAuth("open.weixin.app.qipai", openid);
+				vo.setSuccess(true);
+				Map data = new HashMap();
+				data.put("token", token);
+				vo.setData(data);
+				return vo;
+			} else {
+				// 创建会员和unionid授权
+				String memberId = memberAuthCmdService.createMemberAndAddThirdAuth("union.weixin", unionid,
+						System.currentTimeMillis());
+				memberAuthQueryService.createMemberAndAddThirdAuth(memberId, "union.weixin", unionid);
+
+				// 填充用户信息
+				memberAuthQueryService.updateMember(memberId, nickname, headimgurl);
+
+				// unionid登录
+				String token = memberAuthService.thirdAuth("union.weixin", unionid);
+				vo.setSuccess(true);
+				Map data = new HashMap();
+				data.put("token", token);
+				vo.setData(data);
+				return vo;
+			}
+		} catch (Exception e) {
+			vo.setSuccess(false);
+			vo.setMsg(e.getClass().toString());
+			return vo;
+		}
+	}
+
+	/**
+	 * 服务器端通过code自己去获取openid/unionid
+	 * 
+	 * @param code
+	 * @return
+	 */
 	@RequestMapping(value = "/wechatcodelogin")
 	@ResponseBody
 	public CommonVO wechatcodelogin(String code) {
@@ -104,9 +166,7 @@ public class MemberThirdAuthController {
 					vo.setMsg("request token failed");
 					return vo;
 				}
-			} catch (
-
-			Exception e) {
+			} catch (Exception e) {
 				vo.setSuccess(false);
 				return vo;
 			}
