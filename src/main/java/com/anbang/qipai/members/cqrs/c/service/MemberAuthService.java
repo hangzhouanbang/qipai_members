@@ -32,4 +32,8 @@ public class MemberAuthService extends CmdServiceBase {
 		return sessionId;
 	}
 
+	public String getMemberIdBySessionId(String sessionId) {
+		return userSessionsManager.getUserIdBySessionId(sessionId);
+	}
+
 }
