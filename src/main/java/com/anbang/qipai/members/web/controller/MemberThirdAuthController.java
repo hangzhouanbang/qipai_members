@@ -99,84 +99,7 @@ public class MemberThirdAuthController {
 		}
 	}
 
-	/**
-	 * 服务器端通过code自己去获取openid/unionid
-	 * 
-	 * @param code
-	 * @return
-	 */
-	@RequestMapping(value = "/wechatcodelogin")
-	@ResponseBody
-	public CommonVO wechatcodelogin(String code) {
-		CommonVO vo = new CommonVO();
-		if (code != null) {
-			try {
-				Map tokenData = takeOauth2AccessToken(code);
-				if (tokenData != null) {
-					if (tokenData.containsKey("errmsg")) {
-						vo.setSuccess(false);
-						vo.setMsg("wechatlogin: errcode:" + tokenData.get("errcode") + "errmsg:"
-								+ tokenData.get("errmsg"));
-						return vo;
-					} else {
-						String access_token = (String) tokenData.get("access_token");
-						String openid = (String) tokenData.get("openid");
-						String unionid = (String) tokenData.get("unionid");
-						AuthorizationDbo unionidAuthDbo = memberAuthQueryService
-								.findThirdAuthorizationDbo("union.weixin", unionid);
-						if (unionidAuthDbo != null) {// 已unionid注册
-							AuthorizationDbo openidAuthDbo = memberAuthQueryService
-									.findThirdAuthorizationDbo("open.weixin.app.qipai", openid);
-							if (openidAuthDbo == null) {// openid未注册
-								// 添加openid授权
-								memberAuthCmdService.addThirdAuth("open.weixin.app.qipai", openid,
-										unionidAuthDbo.getMemberId());
-								memberAuthQueryService.addThirdAuth("open.weixin.app.qipai", openid,
-										unionidAuthDbo.getMemberId());
-							}
-							// openid登录
-							String token = memberAuthService.thirdAuth("open.weixin.app.qipai", openid);
-							vo.setSuccess(true);
-							vo.setData(token);
-							return vo;
-						} else {
-							// 创建会员和unionid授权
-							String memberId = memberAuthCmdService.createMemberAndAddThirdAuth("union.weixin", unionid,
-									System.currentTimeMillis());
-							memberAuthQueryService.createMemberAndAddThirdAuth(memberId, "union.weixin", unionid);
 
-							// 获取微信用户信息
-							Map userInfo = takeUserInfo(access_token, openid);
-							if (userInfo != null) {
-								if (!tokenData.containsKey("errmsg")) {
-									String nickname = (String) userInfo.get("nickname");
-									String headimgurl = (String) userInfo.get("headimgurl");
-									memberAuthQueryService.updateMember(memberId, nickname, headimgurl);
-								}
-							}
-							// unionid登录
-							String token = memberAuthService.thirdAuth("union.weixin", unionid);
-							vo.setSuccess(true);
-							vo.setData(token);
-							return vo;
-						}
-					}
-				} else {
-					vo.setSuccess(false);
-					vo.setMsg("request token failed");
-					return vo;
-				}
-			} catch (Exception e) {
-				vo.setSuccess(false);
-				return vo;
-			}
-		} else {
-			vo.setSuccess(false);
-			vo.setMsg("nocode");
-			return vo;
-		}
-
-	}
 
 	/**
 	 * 获取网页授权access_token
@@ -187,7 +110,6 @@ public class MemberThirdAuthController {
 	 * @throws ExecutionException
 	 * @throws TimeoutException
 	 */
-
 	private Map takeOauth2AccessToken(String code) throws InterruptedException, ExecutionException, TimeoutException {
 		Map data = new HashMap();
 		try {

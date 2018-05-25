@@ -7,6 +7,7 @@ import com.anbang.qipai.members.cqrs.c.service.MemberAuthCmdService;
 import com.anbang.qipai.members.cqrs.c.service.impl.MemberAuthCmdServiceImpl;
 import com.dml.users.AuthorizationAlreadyExistsException;
 import com.dml.users.UserNotFoundException;
+import com.highto.framework.concurrent.DeferredResult;
 import com.highto.framework.ddd.CommonCommand;
 
 @Component(value = "memberAuthCmdService")
@@ -23,10 +24,21 @@ public class DisruptorMemberAuthCmdService extends DisruptorCmdServiceBase imple
 			throws UserNotFoundException, AuthorizationAlreadyExistsException {
 		CommonCommand cmd = new CommonCommand(MemberAuthCmdServiceImpl.class.getName(), "addThirdAuth", publisher, uuid,
 				memberId);
-		publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
+		DeferredResult<Object> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
 			memberAuthCmdServiceImpl.addThirdAuth(cmd.getParameter(), cmd.getParameter(), cmd.getParameter());
 			return null;
 		});
+		try {
+			result.getResult();
+		} catch (Exception e) {
+			if (e instanceof UserNotFoundException) {
+				throw (UserNotFoundException) e;
+			} else if (e instanceof AuthorizationAlreadyExistsException) {
+				throw (AuthorizationAlreadyExistsException) e;
+			} else {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 
 	@Override
@@ -34,11 +46,20 @@ public class DisruptorMemberAuthCmdService extends DisruptorCmdServiceBase imple
 			throws AuthorizationAlreadyExistsException {
 		CommonCommand cmd = new CommonCommand(MemberAuthCmdServiceImpl.class.getName(), "createMemberAndAddThirdAuth",
 				publisher, uuid, currentTime);
-		return publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
+		DeferredResult<String> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
 			String memberId = memberAuthCmdServiceImpl.createMemberAndAddThirdAuth(cmd.getParameter(),
 					cmd.getParameter(), cmd.getParameter());
 			return memberId;
 		});
+		try {
+			return result.getResult();
+		} catch (Exception e) {
+			if (e instanceof AuthorizationAlreadyExistsException) {
+				throw (AuthorizationAlreadyExistsException) e;
+			} else {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 
 }
