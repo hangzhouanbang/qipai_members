@@ -15,7 +15,7 @@ import com.dml.users.UsersManager;
 @Component
 public class MemberAuthService extends CmdServiceBase {
 
-	private static long sessionKeepaliveTime = 30 * 24 * 60 * 60 * 1000;
+	private static int sessionKeepaliveTime = 30 * 24 * 60 * 60 * 1000;
 
 	@Autowired
 	private UserSessionsManager userSessionsManager;
@@ -33,6 +33,7 @@ public class MemberAuthService extends CmdServiceBase {
 	}
 
 	public String getMemberIdBySessionId(String sessionId) {
+		userSessionsManager.updateUserSession(sessionId, System.currentTimeMillis(), sessionKeepaliveTime);
 		return userSessionsManager.getUserIdBySessionId(sessionId);
 	}
 
