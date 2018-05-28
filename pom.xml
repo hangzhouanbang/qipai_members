@@ -37,6 +37,12 @@
 			<artifactId>users.dml</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>accounting.dml</groupId>
+			<artifactId>accounting.dml</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 
 		<!-- 其它 -->
 		<dependency>

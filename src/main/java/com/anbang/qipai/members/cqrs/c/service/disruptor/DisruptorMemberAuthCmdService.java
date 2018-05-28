@@ -3,6 +3,7 @@ package com.anbang.qipai.members.cqrs.c.service.disruptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.anbang.qipai.members.cqrs.c.domain.CreateMemberResult;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthCmdService;
 import com.anbang.qipai.members.cqrs.c.service.impl.MemberAuthCmdServiceImpl;
 import com.dml.users.AuthorizationAlreadyExistsException;
@@ -42,14 +43,14 @@ public class DisruptorMemberAuthCmdService extends DisruptorCmdServiceBase imple
 	}
 
 	@Override
-	public String createMemberAndAddThirdAuth(String publisher, String uuid, Long currentTime)
-			throws AuthorizationAlreadyExistsException {
+	public CreateMemberResult createMemberAndAddThirdAuth(String publisher, String uuid, int goldForNewMember,
+			Long currentTime) throws AuthorizationAlreadyExistsException {
 		CommonCommand cmd = new CommonCommand(MemberAuthCmdServiceImpl.class.getName(), "createMemberAndAddThirdAuth",
-				publisher, uuid, currentTime);
-		DeferredResult<String> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
-			String memberId = memberAuthCmdServiceImpl.createMemberAndAddThirdAuth(cmd.getParameter(),
-					cmd.getParameter(), cmd.getParameter());
-			return memberId;
+				publisher, uuid, goldForNewMember, currentTime);
+		DeferredResult<CreateMemberResult> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
+			CreateMemberResult cmResult = memberAuthCmdServiceImpl.createMemberAndAddThirdAuth(cmd.getParameter(),
+					cmd.getParameter(), cmd.getParameter(), cmd.getParameter());
+			return cmResult;
 		});
 		try {
 			return result.getResult();

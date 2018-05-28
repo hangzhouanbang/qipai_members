@@ -14,10 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.anbang.qipai.members.cqrs.c.domain.CreateMemberResult;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthCmdService;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthService;
 import com.anbang.qipai.members.cqrs.q.dbo.AuthorizationDbo;
 import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
+import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
+import com.anbang.qipai.members.plan.domain.CreateMemberConfiguration;
+import com.anbang.qipai.members.plan.service.ConfigurationService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.google.gson.Gson;
 
@@ -42,6 +46,12 @@ public class MemberThirdAuthController {
 
 	@Autowired
 	private MemberAuthService memberAuthService;
+
+	@Autowired
+	private ConfigurationService configurationService;
+
+	@Autowired
+	private MemberGoldQueryService memberGoldQueryService;
 
 	/**
 	 * 客户端已经获取好了openid/unionid和微信用户信息
@@ -76,13 +86,24 @@ public class MemberThirdAuthController {
 				vo.setData(data);
 				return vo;
 			} else {
+				int goldForNewMember = 0;
+				// 查询创建会员赠送的金币数
+				CreateMemberConfiguration createMemberConfiguration = configurationService
+						.findCreateMemberConfiguration();
+				if (createMemberConfiguration != null) {
+					goldForNewMember = createMemberConfiguration.getGoldForNewMember();
+				}
 				// 创建会员和unionid授权
-				String memberId = memberAuthCmdService.createMemberAndAddThirdAuth("union.weixin", unionid,
-						System.currentTimeMillis());
-				memberAuthQueryService.createMemberAndAddThirdAuth(memberId, "union.weixin", unionid);
+				CreateMemberResult createMemberResult = memberAuthCmdService.createMemberAndAddThirdAuth("union.weixin",
+						unionid, goldForNewMember, System.currentTimeMillis());
+				memberAuthQueryService.createMemberAndAddThirdAuth(createMemberResult.getMemberId(), "union.weixin",
+						unionid);
 
 				// 填充用户信息
-				memberAuthQueryService.updateMember(memberId, nickname, headimgurl);
+				memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl);
+
+				// 创建金币帐户，赠送金币记账
+				memberGoldQueryService.createMember(createMemberResult);
 
 				// unionid登录
 				String token = memberAuthService.thirdAuth("union.weixin", unionid);
@@ -98,8 +119,6 @@ public class MemberThirdAuthController {
 			return vo;
 		}
 	}
-
-
 
 	/**
 	 * 获取网页授权access_token
