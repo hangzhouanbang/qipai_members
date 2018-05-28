@@ -9,7 +9,7 @@ public interface MemberAuthCmdService {
 	void addThirdAuth(String publisher, String uuid, String memberId)
 			throws UserNotFoundException, AuthorizationAlreadyExistsException;
 
-	CreateMemberResult createMemberAndAddThirdAuth(String publisher, String uuid, int goldForNewMember,
+	CreateMemberResult createMemberAndAddThirdAuth(String publisher, String uuid, Integer goldForNewMember,
 			Long currentTime) throws AuthorizationAlreadyExistsException;
 
 }

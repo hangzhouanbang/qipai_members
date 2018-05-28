@@ -29,7 +29,7 @@ public class MemberAuthCmdServiceImpl extends CmdServiceBase implements MemberAu
 	}
 
 	@Override
-	public CreateMemberResult createMemberAndAddThirdAuth(String publisher, String uuid, int goldForNewMember,
+	public CreateMemberResult createMemberAndAddThirdAuth(String publisher, String uuid, Integer goldForNewMember,
 			Long currentTime) throws AuthorizationAlreadyExistsException {
 		MemberIdManager memberIdManager = singletonEntityRepository.getEntity(MemberIdManager.class);
 		UsersManager usersManager = singletonEntityRepository.getEntity(UsersManager.class);
