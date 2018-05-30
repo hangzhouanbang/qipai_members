@@ -31,4 +31,9 @@ public class MongodbMemberDboDao implements MemberDboDao {
 				new Update().set("nickname", nickname).set("headimgurl", headimgurl), MemberDbo.class);
 	}
 
+	@Override
+	public MemberDbo findById(String id) {
+		return repository.findOne(id);
+	}
+
 }

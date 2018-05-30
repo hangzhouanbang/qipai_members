@@ -2,6 +2,35 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/qipai_members
+      
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: 192.168.0.14:9092
+          zk-nodes: 192.168.0.14:2181
+          minPartitionCount: 1
+          autoCreateTopics: true
+          autoAddPartitions: false
+        bindings:
+          members:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 10000
+                linger:
+                  ms: 1
+                batch:
+                  size: 8
+
+      bindings:
+        members:
+          destination: members
+          producer:
+            partitionCount: 1
+      
+      
   application:
     name: qipai-members
 server:

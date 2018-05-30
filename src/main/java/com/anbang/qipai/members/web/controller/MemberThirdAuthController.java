@@ -18,8 +18,10 @@ import com.anbang.qipai.members.cqrs.c.domain.CreateMemberResult;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthCmdService;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthService;
 import com.anbang.qipai.members.cqrs.q.dbo.AuthorizationDbo;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
+import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.plan.domain.CreateMemberConfiguration;
 import com.anbang.qipai.members.plan.service.ConfigurationService;
 import com.anbang.qipai.members.web.vo.CommonVO;
@@ -52,6 +54,9 @@ public class MemberThirdAuthController {
 
 	@Autowired
 	private MemberGoldQueryService memberGoldQueryService;
+
+	@Autowired
+	private MembersMsgService membersMsgService;
 
 	/**
 	 * 客户端已经获取好了openid/unionid和微信用户信息
@@ -104,6 +109,10 @@ public class MemberThirdAuthController {
 
 				// 创建金币帐户，赠送金币记账
 				memberGoldQueryService.createMember(createMemberResult);
+
+				// 发送消息
+				MemberDbo memberDbo = memberAuthQueryService.findMember(createMemberResult.getMemberId());
+				membersMsgService.createMember(memberDbo);
 
 				// unionid登录
 				String token = memberAuthService.thirdAuth("union.weixin", unionid);

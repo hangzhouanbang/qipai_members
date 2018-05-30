@@ -8,4 +8,6 @@ public interface MemberDboDao {
 
 	void update(String memberId, String nickname, String headimgurl);
 
+	MemberDbo findById(String id);
+
 }
