@@ -1,4 +1,4 @@
-package com.anbang.qipai.members.cqrs.c.domain;
+package com.anbang.qipai.members.cqrs.c.domain.member;
 
 import java.util.Map;
 import java.util.Random;

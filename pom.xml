@@ -31,10 +31,25 @@
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-stream</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-stream-kafka</artifactId>
+		</dependency>
+
 		<!-- dml依赖 -->
 		<dependency>
 			<groupId>users.dml</groupId>
 			<artifactId>users.dml</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>accounting.dml</groupId>
+			<artifactId>accounting.dml</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 

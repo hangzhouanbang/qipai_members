@@ -13,6 +13,8 @@ public class MemberDbo {
 
 	private String headimgurl;
 
+	private long createTime;
+
 	public String getId() {
 		return id;
 	}
@@ -43,6 +45,14 @@ public class MemberDbo {
 
 	public void setHeadimgurl(String headimgurl) {
 		this.headimgurl = headimgurl;
+	}
+
+	public long getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(long createTime) {
+		this.createTime = createTime;
 	}
 
 }

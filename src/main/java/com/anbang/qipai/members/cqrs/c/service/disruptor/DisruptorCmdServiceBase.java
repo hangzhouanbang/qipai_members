@@ -14,7 +14,8 @@ public abstract class DisruptorCmdServiceBase {
 	@Autowired
 	protected DisruptorFactory disruptorFactory;
 
-	protected <T> T publishEvent(Disruptor<CommandEvent> disruptor, CommonCommand cmd, Callable<T> callable) {
+	protected <T> DeferredResult<T> publishEvent(Disruptor<CommandEvent> disruptor, CommonCommand cmd,
+			Callable<T> callable) {
 		DeferredResult<T> deferredResult = new DeferredResult<>();
 		disruptor.publishEvent((event, sequence) -> {
 			event.setCmd(cmd);
@@ -22,25 +23,25 @@ public abstract class DisruptorCmdServiceBase {
 				T returnObj = null;
 				try {
 					returnObj = callable.call();
+					deferredResult.setResult(returnObj);
 				} catch (Exception e) {
 					e.printStackTrace();
+					deferredResult.setExceptionResult(e);
 				}
-				deferredResult.setResult(returnObj);
 				return null;
 			});
 
 		});
-		T result = getResult(deferredResult);
-		return result;
+		// T result = getResult(deferredResult);
+		return deferredResult;
 	}
 
-	private <T> T getResult(DeferredResult<T> deferredResult) {
-		try {
-			return deferredResult.getResult();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+	// private <T> T getResult(DeferredResult<T> deferredResult) {
+	// try {
+	// return deferredResult.getResult();
+	// } catch (Exception e) {
+	// return null;
+	// }
+	// }
 
 }

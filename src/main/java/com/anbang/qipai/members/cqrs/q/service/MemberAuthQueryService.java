@@ -28,6 +28,7 @@ public class MemberAuthQueryService {
 	public void createMemberAndAddThirdAuth(String memberId, String publisher, String uuid) {
 		MemberDbo memberDbo = new MemberDbo();
 		memberDbo.setId(memberId);
+		memberDbo.setCreateTime(System.currentTimeMillis());
 		memberDboDao.save(memberDbo);
 
 		AuthorizationDbo authDbo = new AuthorizationDbo();
@@ -45,6 +46,10 @@ public class MemberAuthQueryService {
 		authDbo.setThirdAuth(true);
 		authDbo.setUuid(uuid);
 		authorizationDboDao.save(authDbo);
+	}
+
+	public MemberDbo findMember(String memberId) {
+		return memberDboDao.findById(memberId);
 	}
 
 }
