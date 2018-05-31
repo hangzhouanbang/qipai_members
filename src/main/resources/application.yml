@@ -13,7 +13,6 @@ spring:
           autoAddPartitions: false
         bindings:
           members:
-            contentType: 
             producer:
               configuration:
                 request:
