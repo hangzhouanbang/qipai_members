@@ -31,9 +31,9 @@ import com.google.gson.Gson;
 @RequestMapping("/thirdauth")
 public class MemberThirdAuthController {
 
-	private static String APPID = "wx91c0b0f25d1cb67d";
+	private static String APPID = "wxb841e562b0100c95";
 
-	private static String APPSECRET = "c0a93347508774f9c83f3d2f1b6aa1cd";
+	private static String APPSECRET = "c411423c15fdd51bde4ec432732d26df";
 
 	private Gson gson = new Gson();
 
