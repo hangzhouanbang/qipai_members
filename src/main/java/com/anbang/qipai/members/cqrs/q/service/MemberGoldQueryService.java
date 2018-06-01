@@ -45,4 +45,8 @@ public class MemberGoldQueryService {
 		memberGoldAccountDboDao.update(account.getId(), (int) accountingRecord.getBalanceAfter());
 	}
 
+	public MemberGoldAccountDbo findMemberGoldAccount(String memberId) {
+		return memberGoldAccountDboDao.findByMemberId(memberId);
+	}
+
 }

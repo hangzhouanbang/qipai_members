@@ -6,4 +6,6 @@ import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
 
 public interface MemberGoldAccountDboRepository extends MongoRepository<MemberGoldAccountDbo, String> {
 
+	MemberGoldAccountDbo findOneByMemberId(String memberId);
+
 }

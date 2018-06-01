@@ -8,4 +8,6 @@ public interface MemberGoldAccountDboDao {
 
 	void update(String id, int balance);
 
+	MemberGoldAccountDbo findByMemberId(String memberId);
+
 }

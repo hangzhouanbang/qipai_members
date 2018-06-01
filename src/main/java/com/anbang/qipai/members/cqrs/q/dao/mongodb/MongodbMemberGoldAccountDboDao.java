@@ -31,4 +31,9 @@ public class MongodbMemberGoldAccountDboDao implements MemberGoldAccountDboDao {
 				MemberGoldAccountDbo.class);
 	}
 
+	@Override
+	public MemberGoldAccountDbo findByMemberId(String memberId) {
+		return repository.findOneByMemberId(memberId);
+	}
+
 }
