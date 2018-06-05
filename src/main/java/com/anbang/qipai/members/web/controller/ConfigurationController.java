@@ -24,7 +24,6 @@ public class ConfigurationController {
 	@ResponseBody
 	public CommonVO createmember(int goldForNewMember) {
 		configurationService.saveCreateMemberConfiguration(goldForNewMember);
-		System.out.println("************s");
 		//查询金币信息 
 		CreateMemberConfiguration member = configurationService.findCreateMemberConfiguration();
 		//发送消息给管理系统
