@@ -29,6 +29,12 @@ spring:
           contentType: application/json
           producer:
             partitionCount: 1
+            
+        createmember:
+          destination: createmember
+          contentType: application/json
+          producer:
+            partitionCount: 1
       
       
   application:
