@@ -16,12 +16,9 @@ public class MemberIdManager {
 		Random random = new Random(seed);
 		String newId;
 		while (true) {
-			int charCount = 0;
-			int numCount = 0;
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < 6; i++) {
 				int charIdx = random.nextInt(charsForId.length);
-				charCount++;
 				sb.append(charsForId[charIdx]);
 			}
 			newId = sb.toString();
