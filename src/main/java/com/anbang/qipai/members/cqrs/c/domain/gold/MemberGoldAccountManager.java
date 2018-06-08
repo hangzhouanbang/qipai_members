@@ -36,13 +36,13 @@ public class MemberGoldAccountManager {
 		return account.getId();
 	}
 
-	public AccountingRecord giveGoldToMember(String memberId, int giveGoldAmount, AccountingSummary accountingSummary)
-			throws MemberNotFoundException {
+	public AccountingRecord giveGoldToMember(String memberId, int giveGoldAmount, AccountingSummary accountingSummary,
+			long giveTime) throws MemberNotFoundException {
 		if (!memberIdAccountIdMap.containsKey(memberId)) {
 			throw new MemberNotFoundException();
 		}
 		Account account = idAccountMap.get(memberIdAccountIdMap.get(memberId));
-		AccountingRecord record = account.deposit(giveGoldAmount, accountingSummary);
+		AccountingRecord record = account.deposit(giveGoldAmount, accountingSummary, giveTime);
 		return record;
 	}
 

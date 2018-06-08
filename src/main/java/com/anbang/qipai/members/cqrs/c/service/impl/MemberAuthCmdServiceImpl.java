@@ -43,7 +43,7 @@ public class MemberAuthCmdServiceImpl extends CmdServiceBase implements MemberAu
 					.getEntity(MemberGoldAccountManager.class);
 			String accountId = memberGoldAccountManager.createGoldAccountForNewMember(memberId);
 			AccountingRecord ar = memberGoldAccountManager.giveGoldToMember(memberId, goldForNewMember,
-					new TextAccountingSummary("new member"));
+					new TextAccountingSummary("new member"), currentTime);
 			return new CreateMemberResult(memberId, accountId, ar);
 		} catch (AuthorizationAlreadyExistsException e) {
 			memberIdManager.removeMemberId(memberId);
