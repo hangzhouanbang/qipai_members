@@ -58,4 +58,10 @@ public class MemberVO {
 		this.gold = gold;
 	}
 
+	@Override
+	public String toString() {
+		return "MemberVO [success=" + success + ", memberId=" + memberId + ", nickname=" + nickname + ", headimgurl="
+				+ headimgurl + ", gold=" + gold + "]";
+	}
+
 }

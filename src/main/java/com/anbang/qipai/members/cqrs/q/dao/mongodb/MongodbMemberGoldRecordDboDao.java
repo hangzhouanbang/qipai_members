@@ -1,6 +1,9 @@
 package com.anbang.qipai.members.cqrs.q.dao.mongodb;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.members.cqrs.q.dao.MemberGoldRecordDboDao;
@@ -16,6 +19,17 @@ public class MongodbMemberGoldRecordDboDao implements MemberGoldRecordDboDao {
 	@Override
 	public void save(MemberGoldRecordDbo dbo) {
 		repository.save(dbo);
+	}
+
+	@Override
+	public long getCount() {
+		return repository.count();
+	}
+
+	@Override
+	public List<MemberGoldRecordDbo> findMemberGoldRecords(String accountId,PageRequest pageRequest) {
+//		return repository.findByAccountId(accountId,pageRequest);
+		return repository.findAll();
 	}
 
 }
