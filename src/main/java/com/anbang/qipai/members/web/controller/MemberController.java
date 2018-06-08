@@ -55,33 +55,33 @@ public class MemberController {
 		return vo;
 	}
 
-	@RequestMapping("/queryMember")
-	public DetailsVo queryMember(String token) {
-		String memberId = memberAuthService.getMemberIdBySessionId(token);
-		Member member = memberService.findMember(memberId);
-		DetailsVo dv = new DetailsVo();
-		dv.setVipLevel(member.getVipLevel());
-		dv.setPhone(member.getPhone());
-		long time = member.getVipEndTime();
-		long nowTime = System.currentTimeMillis();
-		long day = (time - nowTime) / (1000 * 60 * 60 * 24);
-		dv.setVipEndTime("剩余" + day + "天");
-		return dv;
-	}
-
-	@RequestMapping("/registerPhone")
-	public Map<String, Object> registerPhone(String phone, String token) {
-		String memberId = memberAuthService.getMemberIdBySessionId(token);
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("phone", phone);
-		if (memberId == null || phone == null) {
-			map.put("result", false);
-			return map;
-		}
-		memberService.registerPhone(memberId, phone);
-		map.put("result", true);
-		return map;
-	}
+//	@RequestMapping("/queryMember")
+//	public DetailsVo queryMember(String token) {
+//		String memberId = memberAuthService.getMemberIdBySessionId(token);
+//		Member member = memberService.findMember(memberId);
+//		DetailsVo dv = new DetailsVo();
+//		dv.setVipLevel(member.getVipLevel());
+//		dv.setPhone(member.getPhone());
+//		long time = member.getVipEndTime();
+//		long nowTime = System.currentTimeMillis();
+//		long day = (time - nowTime) / (1000 * 60 * 60 * 24);
+//		dv.setVipEndTime("剩余" + day + "天");
+//		return dv;
+//	}
+//
+//	@RequestMapping("/registerPhone")
+//	public Map<String, Object> registerPhone(String phone, String token) {
+//		String memberId = memberAuthService.getMemberIdBySessionId(token);
+//		Map<String, Object> map = new HashMap<String, Object>();
+//		map.put("phone", phone);
+//		if (memberId == null || phone == null) {
+//			map.put("result", false);
+//			return map;
+//		}
+//		memberService.registerPhone(memberId, phone);
+//		map.put("result", true);
+//		return map;
+//	}
 
 	@RequestMapping("/checkAccount")
 	public Map<String, Object> checkAccount(@RequestParam(name = "page", defaultValue = "1") Integer page,
