@@ -1,9 +1,7 @@
 package com.anbang.qipai.members.web.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,9 +14,12 @@ import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
 import com.anbang.qipai.members.plan.domain.Member;
 import com.anbang.qipai.members.plan.service.MemberService;
+import com.anbang.qipai.members.web.vo.CommonVO;
 import com.anbang.qipai.members.web.vo.DetailsVo;
 import com.anbang.qipai.members.web.vo.MemberVO;
+import com.highto.framework.web.page.ListPage;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/member")
 public class MemberController {
@@ -55,40 +56,58 @@ public class MemberController {
 		return vo;
 	}
 
-//	@RequestMapping("/queryMember")
-//	public DetailsVo queryMember(String token) {
-//		String memberId = memberAuthService.getMemberIdBySessionId(token);
-//		Member member = memberService.findMember(memberId);
-//		DetailsVo dv = new DetailsVo();
-//		dv.setVipLevel(member.getVipLevel());
-//		dv.setPhone(member.getPhone());
-//		long time = member.getVipEndTime();
-//		long nowTime = System.currentTimeMillis();
-//		long day = (time - nowTime) / (1000 * 60 * 60 * 24);
-//		dv.setVipEndTime("剩余" + day + "天");
-//		return dv;
-//	}
-//
-//	@RequestMapping("/registerPhone")
-//	public Map<String, Object> registerPhone(String phone, String token) {
-//		String memberId = memberAuthService.getMemberIdBySessionId(token);
-//		Map<String, Object> map = new HashMap<String, Object>();
-//		map.put("phone", phone);
-//		if (memberId == null || phone == null) {
-//			map.put("result", false);
-//			return map;
-//		}
-//		memberService.registerPhone(memberId, phone);
-//		map.put("result", true);
-//		return map;
-//	}
-
-	@RequestMapping("/checkAccount")
-	public Map<String, Object> checkAccount(@RequestParam(name = "page", defaultValue = "1") Integer page,
-			@RequestParam(name = "size", defaultValue = "10") Integer size, String token) {
+	@RequestMapping("/querymember")
+	public DetailsVo queryMember(String token) {
+		DetailsVo vo = new DetailsVo();
 		String memberId = memberAuthService.getMemberIdBySessionId(token);
+		if (memberId == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
+		Member member = memberService.findMember(memberId);
+		vo.setVipLevel(member.getVipLevel());
+		vo.setPhone(member.getPhone());
+		long time = member.getVipEndTime();
+		long nowTime = System.currentTimeMillis();
+		long day = (time - nowTime) / (1000 * 60 * 60 * 24);
+		vo.setVipEndTime("剩余" + day + "天");
+		vo.setSuccess(true);
+		vo.setMsg("information");
+		return vo;
+	}
+
+	@RequestMapping("/registerphone")
+	public CommonVO registerPhone(String phone, String token) {
+		CommonVO vo = new CommonVO();
+		String memberId = memberAuthService.getMemberIdBySessionId(token);
+		if (memberId == null || phone == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
+		memberService.registerPhone(memberId, phone);
+		vo.setSuccess(true);
+		vo.setMsg("register success");
+		vo.setData(phone);
+		return vo;
+	}
+
+	@RequestMapping("/checkaccount")
+	public CommonVO checkAccount(@RequestParam(name = "page", defaultValue = "1") Integer page,
+			@RequestParam(name = "size", defaultValue = "10") Integer size, String token) {
+		CommonVO vo = new CommonVO();
+		String memberId = memberAuthService.getMemberIdBySessionId(token);
+		if (memberId == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
 		MemberGoldAccountDbo accountId = memberGoldQueryService.findMemberGoldAccount(memberId);
-		Map<String, Object> map = memberGoldQueryService.findMemberGoldRecords(page, size, accountId.getId());
-		return map;
+		ListPage listPage = memberGoldQueryService.findMemberGoldRecords(page, size, accountId.getId());
+		vo.setSuccess(true);
+		vo.setMsg("个人流水");
+		vo.setData(listPage);
+		return vo;
 	}
 }

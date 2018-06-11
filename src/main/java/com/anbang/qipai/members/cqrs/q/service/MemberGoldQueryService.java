@@ -1,8 +1,6 @@
 package com.anbang.qipai.members.cqrs.q.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +12,7 @@ import com.anbang.qipai.members.cqrs.q.dao.MemberGoldRecordDboDao;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
 import com.dml.accounting.AccountingRecord;
+import com.highto.framework.web.page.ListPage;
 
 @Component
 public class MemberGoldQueryService {
@@ -56,14 +55,12 @@ public class MemberGoldQueryService {
 		return memberGoldAccountDboDao.findByMemberId(memberId);
 	}
 
-	public Map<String, Object> findMemberGoldRecords(int page, int size, String accountId) {
+	public ListPage findMemberGoldRecords(int page, int size, String accountId) {
 		PageRequest pageRequest = new PageRequest(page, size);
-		Map<String, Object> map = new HashMap<String, Object>();
 		List<MemberGoldRecordDbo> recordList = memberGoldRecordDboDao.findMemberGoldRecords(accountId, pageRequest);
 		long amount = memberGoldRecordDboDao.getCount();
-		long pageNumber = (amount == 0) ? 1 : ((amount % size == 0) ? (amount / size) : (amount / size + 1));
-		map.put("pageNumber", pageNumber);
-		map.put("recordList", recordList);
-		return map;
+		long pageNum = (amount == 0) ? 1 : ((amount % size == 0) ? (amount / size) : (amount / size + 1));
+		ListPage listPage = new ListPage(recordList, (int) pageNum, size, (int) amount);
+		return listPage;
 	}
 }
