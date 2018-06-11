@@ -6,8 +6,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.plan.dao.MemberDao;
-import com.anbang.qipai.members.plan.domain.Member;
 
 @Service
 public class MemberService {
@@ -15,7 +15,7 @@ public class MemberService {
 	@Autowired
 	private MemberDao memberDao;
 
-	public Member findMember(String memberId) {
+	public MemberDbo findMember(String memberId) {
 		Query query = new Query(Criteria.where("id").is(memberId));
 		return memberDao.findMember(query);
 	}
