@@ -92,6 +92,7 @@ public class MemberThirdAuthController {
 				return vo;
 			} else {
 				int goldForNewMember = 0;
+				// TODO:更具普通会员权益设置决定赠送的金币数
 				// 查询创建会员赠送的金币数
 				CreateMemberConfiguration createMemberConfiguration = configurationService
 						.findCreateMemberConfiguration();
@@ -101,6 +102,8 @@ public class MemberThirdAuthController {
 				// 创建会员和unionid授权
 				CreateMemberResult createMemberResult = memberAuthCmdService.createMemberAndAddThirdAuth("union.weixin",
 						unionid, goldForNewMember, System.currentTimeMillis());
+
+				// TODO:更具普通会员权益设置添加rights
 				memberAuthQueryService.createMemberAndAddThirdAuth(createMemberResult.getMemberId(), "union.weixin",
 						unionid);
 
