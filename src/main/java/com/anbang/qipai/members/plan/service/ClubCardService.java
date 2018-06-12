@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import com.anbang.qipai.members.plan.dao.ClubCardDao;
 import com.anbang.qipai.members.plan.domain.ClubCard;
 import com.anbang.qipai.members.plan.domain.Order;
-import com.anbang.qipai.members.plan.domain.UnifiedOrderRequest;
 import com.anbang.qipai.members.web.util.MD5Util;
 import com.anbang.qipai.members.web.util.XMLObjectConvertUtil;
 
@@ -37,24 +36,14 @@ public class ClubCardService {
 		return clubCardDao.getAllClubCard();
 	}
 
-	public UnifiedOrderRequest createOrder(Order order) throws MalformedURLException, IOException {
-		UnifiedOrderRequest orderRequest = new UnifiedOrderRequest();
-		String orderInfo = createOrderInfo(order, orderRequest);
-		Map<String, String> resultMap = order(orderInfo);
-		if ("SUCCESS".equals(resultMap.get("return_code"))) {
-			if ("wxb841e562b0100c95".equals(resultMap.get("appid")) || "".equals(resultMap.get("mch_id"))) {
-				orderRequest.setResult_code(resultMap.get("result_code"));
-				orderRequest.setErr_code(resultMap.get("err_code"));
-				orderRequest.setErr_code_des(resultMap.get("err_code_des"));
-				orderRequest.setTrade_type(resultMap.get("trade_type"));
-				orderRequest.setPrepay_id(resultMap.get("prepay_id"));
-			} else {
-				orderRequest.setReturn_msg("invalid appid or mch_id");
-			}
-		} else {
-			orderRequest.setReturn_msg(resultMap.get("return_msg"));
+	public Map<String, String> createOrder(Order order) throws MalformedURLException, IOException {
+		String orderInfo = createOrderInfo(order);
+		SortedMap<String, String> responseMap = order(orderInfo);
+		String newSign = createSign(responseMap);
+		if (newSign.equals(responseMap.get("sign"))) {
+			return responseMap;
 		}
-		return orderRequest;
+		return null;
 	}
 
 	public String receiveNotify(HttpServletRequest request) {
@@ -66,7 +55,6 @@ public class ClubCardService {
 			// 接受数据
 			String line = null;
 			// 将输入流中的信息放在sb中
-
 			while ((line = reader.readLine()) != null) {
 				sb.append(line);
 			}
@@ -74,7 +62,7 @@ public class ClubCardService {
 			e.printStackTrace();
 			return "<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[参数格式校验错误]]></return_msg></xml>";
 		}
-		TreeMap<String, String> responseMap = XMLObjectConvertUtil.praseXMLToMap(sb.toString());
+		SortedMap<String, String> responseMap = XMLObjectConvertUtil.praseXMLToMap(sb.toString());
 		String newSign = createSign(responseMap);
 		if (newSign.equals(responseMap.get("sign"))) {
 			return "<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>";
@@ -106,7 +94,11 @@ public class ClubCardService {
 			sb.append(line);
 		}
 		SortedMap<String, String> responseMap = XMLObjectConvertUtil.praseXMLToMap(sb.toString());
-		return responseMap;
+		String newSign = createSign(responseMap);
+		if (newSign.equals(responseMap.get("sign"))) {
+			return responseMap;
+		}
+		return null;
 	}
 
 	/**
@@ -117,7 +109,7 @@ public class ClubCardService {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	private Map<String, String> order(String orderInfo) throws MalformedURLException, IOException {
+	private SortedMap<String, String> order(String orderInfo) throws MalformedURLException, IOException {
 		// 微信统一下单接口
 		String url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 		// 连接微信统一下单接口
@@ -149,25 +141,26 @@ public class ClubCardService {
 	 * @param clubCardId
 	 * @return
 	 */
-	private String createOrderInfo(Order order, UnifiedOrderRequest orderRequest) {
+	private String createOrderInfo(Order order) {
 		// 创建可排序的Map集合
 		SortedMap<String, String> parameters = new TreeMap<String, String>();
 		parameters.put("appid", "wxb841e562b0100c95");
 		parameters.put("mch_id", "");
 		parameters.put("nonce_str", UUID.randomUUID().toString().substring(0, 30));
 		parameters.put("body", "购买" + order.getClubCardName());
-		parameters.put("out_trade_no", "");
+		parameters.put("out_trade_no", order.getOut_trade_no());
 		parameters.put("total_fee", Integer.toString((int) (100 * order.getClubCardPrice() * order.getNumber())));
 		parameters.put("spbill_create_ip", "");
 		parameters.put("notify_url", "");
 		parameters.put("trade_type", "APP");
 		parameters.put("sign", createSign(parameters));
-		orderRequest.setSign(parameters.get("sign"));
 		String xml = XMLObjectConvertUtil.praseMapToXML(parameters);
 		return xml;
 	}
 
-	/**生成查询订单信息
+	/**
+	 * 生成查询订单信息
+	 * 
 	 * @param transaction_id
 	 * @return
 	 */
@@ -207,5 +200,5 @@ public class ClubCardService {
 		String sign = MD5Util.getMD5(sb.toString(), "utf-8").toUpperCase();
 		return sign;
 	}
-	
+
 }

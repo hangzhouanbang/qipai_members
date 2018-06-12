@@ -6,5 +6,5 @@ public interface OrderDao {
 
 	public void addOrder(Order order);
 
-	public Boolean updateOrder(String orderId, int status);
+	public Boolean updateOrder(String out_trade_no, int status);
 }

@@ -2,6 +2,8 @@ package com.anbang.qipai.members.plan.domain;
 
 public class Order {
 	private String id;
+	private String out_trade_no;
+	private String transaction_id;
 	private Integer status;// 0:未支付,1:支付成功,-1:支付失敗
 	private String memberId;
 	private String nickname;
@@ -108,6 +110,22 @@ public class Order {
 
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
+	}
+
+	public String getOut_trade_no() {
+		return out_trade_no;
+	}
+
+	public void setOut_trade_no(String out_trade_no) {
+		this.out_trade_no = out_trade_no;
+	}
+
+	public String getTransaction_id() {
+		return transaction_id;
+	}
+
+	public void setTransaction_id(String transaction_id) {
+		this.transaction_id = transaction_id;
 	}
 
 }

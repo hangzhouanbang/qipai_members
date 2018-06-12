@@ -23,8 +23,8 @@ public class MongodbOrderDao implements OrderDao {
 	}
 
 	@Override
-	public Boolean updateOrder(String orderId, int status) {
-		Query query = new Query(Criteria.where("id").is(orderId));
+	public Boolean updateOrder(String out_trade_no, int status) {
+		Query query = new Query(Criteria.where("out_trade_no").is(out_trade_no));
 		Update update = new Update();
 		update.set("status", status);
 		WriteResult writeResult = mongoTemplate.updateFirst(query, update, Order.class);

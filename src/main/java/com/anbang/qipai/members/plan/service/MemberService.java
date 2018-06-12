@@ -11,6 +11,7 @@ import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
 import com.anbang.qipai.members.plan.dao.ClubCardDao;
 import com.anbang.qipai.members.plan.dao.MemberDao;
+import com.anbang.qipai.members.plan.dao.OrderDao;
 import com.anbang.qipai.members.plan.domain.ClubCard;
 import com.dml.accounting.AccountingRecord;
 import com.dml.accounting.TextAccountingSummary;
@@ -21,6 +22,9 @@ public class MemberService {
 
 	@Autowired
 	private MemberDao memberDao;
+
+	@Autowired
+	private OrderDao orderDao;
 
 	@Autowired
 	private ClubCardDao clubCardDao;
@@ -42,7 +46,7 @@ public class MemberService {
 		memberDao.updateMemberPhone(memberId, phone);
 	}
 
-	public void deliver(String memberId, String clubCardId, long currentTime) {
+	public void deliver(String memberId, String out_trade_no, String clubCardId, long currentTime) {
 		MemberDbo member = memberDao.findMemberById(memberId);
 		ClubCard clubCard = clubCardDao.getClubCardById(clubCardId);
 		long vipEndTime = member.getVipEndTime() + clubCard.getTime();
@@ -66,5 +70,7 @@ public class MemberService {
 		dbo.setAccountingTime(accountingRecord.getAccountingTime());
 		memberGoldRecordDboDao.save(dbo);
 		memberGoldAccountDboDao.update(accountingRecord.getAccountId(), (int) accountingRecord.getBalanceAfter());
+
+		orderDao.updateOrder(out_trade_no, 1);
 	}
 }

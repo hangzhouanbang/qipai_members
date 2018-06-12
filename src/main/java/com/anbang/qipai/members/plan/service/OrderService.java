@@ -1,8 +1,7 @@
 package com.anbang.qipai.members.plan.service;
 
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.plan.dao.ClubCardDao;
@@ -11,6 +10,7 @@ import com.anbang.qipai.members.plan.dao.OrderDao;
 import com.anbang.qipai.members.plan.domain.ClubCard;
 import com.anbang.qipai.members.plan.domain.Order;
 
+@Service
 public class OrderService {
 
 	@Autowired
@@ -24,8 +24,6 @@ public class OrderService {
 
 	public Order addOrder(String memberId, String clubCardId, Integer number) {
 		Order order = new Order();
-		String orderId = UUID.randomUUID().toString();
-		order.setId(orderId);
 		order.setStatus(0);
 		order.setMemberId(memberId);
 		MemberDbo member = memberDao.findMemberById(memberId);
