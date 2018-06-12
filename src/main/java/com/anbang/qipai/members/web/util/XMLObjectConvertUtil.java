@@ -2,16 +2,14 @@ package com.anbang.qipai.members.web.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-
-import com.anbang.qipai.members.plan.domain.UnifiedOrderRequest;
 
 public class XMLObjectConvertUtil {
 
@@ -21,10 +19,10 @@ public class XMLObjectConvertUtil {
 	 * @param xml
 	 * @return
 	 */
-	public static Map<String, String> praseXMLToMap(String xml) {
-		Map<String, String> map = null;
+	public static TreeMap<String, String> praseXMLToMap(String xml) {
+		TreeMap<String, String> map = null;
 		try {
-			map = new HashMap<String, String>();
+			map = new TreeMap<String, String>();
 			SAXReader reader = new SAXReader();
 			InputStream inputStream = new ByteArrayInputStream(xml.getBytes("utf-8"));
 			Document document = reader.read(inputStream);
@@ -68,22 +66,6 @@ public class XMLObjectConvertUtil {
 			filed.setText(value);
 		}
 		String xml = document.toString();
-		return xml;
-	}
-
-	public static String praseOrderToXML(UnifiedOrderRequest order) {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("appid", order.getAppid());
-		map.put("mch_id", order.getMch_id());
-		map.put("nonce_str", order.getNonce_str());
-		map.put("sign", order.getSign());
-		map.put("body", order.getBody());
-		map.put("out_trade_no", order.getOut_trade_no());
-		map.put("total_fee", order.getTotal_fee());
-		map.put("spbill_create_ip", order.getSpbill_create_ip());
-		map.put("notify_url", order.getNotify_url());
-		map.put("trade_type", order.getTrade_type());
-		String xml = XMLObjectConvertUtil.praseMapToXML(map);
 		return xml;
 	}
 }

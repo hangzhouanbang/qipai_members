@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.anbang.qipai.members.cqrs.c.service.MemberAuthService;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
@@ -36,9 +35,6 @@ public class MemberController {
 	private MemberGoldQueryService memberGoldQueryService;
 
 	@Autowired
-	private MemberAuthService memberAuthService;
-
-	@Autowired
 	private MemberService memberService;
 
 	@RequestMapping(value = "/info")
@@ -62,15 +58,9 @@ public class MemberController {
 	}
 
 	@RequestMapping("/querymember")
-	public DetailsVo queryMember(String token) {
+	public DetailsVo queryMember(String memberId) {
 		DetailsVo vo = new DetailsVo();
-		String memberId = memberAuthService.getMemberIdBySessionId(token);
-		if (memberId == null) {
-			vo.setSuccess(false);
-			vo.setMsg("invalid token");
-			return vo;
-		}
-		MemberDbo member = memberService.findMember(memberId);
+		MemberDbo member = memberService.findMemberById(memberId);
 		vo.setVipLevel(member.getVipLevel());
 		vo.setPhone(member.getPhone());
 		long time = member.getVipEndTime();
@@ -83,14 +73,8 @@ public class MemberController {
 	}
 
 	@RequestMapping("/registerphone")
-	public CommonVO registerPhone(String phone, String token) {
+	public CommonVO registerPhone(String phone, String memberId) {
 		CommonVO vo = new CommonVO();
-		String memberId = memberAuthService.getMemberIdBySessionId(token);
-		if (memberId == null || phone == null) {
-			vo.setSuccess(false);
-			vo.setMsg("invalid token");
-			return vo;
-		}
 		memberService.registerPhone(memberId, phone);
 		vo.setSuccess(true);
 		vo.setMsg("register success");
@@ -100,14 +84,8 @@ public class MemberController {
 
 	@RequestMapping("/checkaccount")
 	public CommonVO checkAccount(@RequestParam(name = "page", defaultValue = "1") Integer page,
-			@RequestParam(name = "size", defaultValue = "10") Integer size, String token) {
+			@RequestParam(name = "size", defaultValue = "10") Integer size, String memberId) {
 		CommonVO vo = new CommonVO();
-		// String memberId = memberAuthService.getMemberIdBySessionId(token);
-		// if (memberId == null) {
-		// vo.setSuccess(false);
-		// vo.setMsg("invalid token");
-		// return vo;
-		// }
 		// MemberGoldAccountDbo accountId =
 		// memberGoldQueryService.findMemberGoldAccount(memberId);
 		// ListPage listPage = memberGoldQueryService.findMemberGoldRecords(page, size,
