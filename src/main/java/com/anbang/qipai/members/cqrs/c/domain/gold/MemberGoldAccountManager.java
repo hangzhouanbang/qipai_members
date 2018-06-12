@@ -8,6 +8,7 @@ import com.dml.accounting.Account;
 import com.dml.accounting.AccountingRecord;
 import com.dml.accounting.AccountingSubject;
 import com.dml.accounting.AccountingSummary;
+import com.dml.accounting.InsufficientBalanceException;
 
 public class MemberGoldAccountManager {
 
@@ -43,6 +44,16 @@ public class MemberGoldAccountManager {
 		}
 		Account account = idAccountMap.get(memberIdAccountIdMap.get(memberId));
 		AccountingRecord record = account.deposit(giveGoldAmount, accountingSummary, giveTime);
+		return record;
+	}
+
+	public AccountingRecord withdraw(String memberId, int amount, AccountingSummary accountingSummary,
+			long withdrawTime) throws MemberNotFoundException, InsufficientBalanceException {
+		if (!memberIdAccountIdMap.containsKey(memberId)) {
+			throw new MemberNotFoundException();
+		}
+		Account account = idAccountMap.get(memberIdAccountIdMap.get(memberId));
+		AccountingRecord record = account.withdraw(amount, accountingSummary, withdrawTime);
 		return record;
 	}
 
