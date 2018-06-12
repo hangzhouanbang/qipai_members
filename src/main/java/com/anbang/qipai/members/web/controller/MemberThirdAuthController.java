@@ -117,6 +117,8 @@ public class MemberThirdAuthController {
 				MemberDbo memberDbo = memberAuthQueryService.findMember(createMemberResult.getMemberId());
 				membersMsgService.createMember(memberDbo);
 
+				// TODO: 发送金币记账消息
+
 				// unionid登录
 				String token = memberAuthService.thirdAuth("union.weixin", unionid);
 				vo.setSuccess(true);

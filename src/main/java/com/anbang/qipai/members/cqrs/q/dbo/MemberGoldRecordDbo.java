@@ -1,10 +1,7 @@
 package com.anbang.qipai.members.cqrs.q.dbo;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import com.dml.accounting.AccountingSummary;
 
-@Document(collection="membergoldrecorddbo")
 public class MemberGoldRecordDbo {
 
 	private String id;
@@ -18,7 +15,7 @@ public class MemberGoldRecordDbo {
 	private int balanceAfter;
 
 	private AccountingSummary summary;
-	
+
 	private long accountingTime;
 
 	public String getId() {

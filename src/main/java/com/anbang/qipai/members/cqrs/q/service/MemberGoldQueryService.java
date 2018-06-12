@@ -63,4 +63,18 @@ public class MemberGoldQueryService {
 		ListPage listPage = new ListPage(recordList, (int) pageNum, size, (int) amount);
 		return listPage;
 	}
+
+	public void withdraw(String memberId, AccountingRecord accountingRecord) {
+
+		MemberGoldRecordDbo dbo = new MemberGoldRecordDbo();
+		dbo.setAccountId(accountingRecord.getAccountId());
+		dbo.setAccountingAmount((int) accountingRecord.getAccountingAmount());
+		dbo.setAccountingNo(accountingRecord.getAccountingNo());
+		dbo.setBalanceAfter((int) accountingRecord.getBalanceAfter());
+		dbo.setSummary(accountingRecord.getSummary());
+		dbo.setAccountingTime(accountingRecord.getAccountingTime());
+		memberGoldRecordDboDao.save(dbo);
+
+		memberGoldAccountDboDao.update(accountingRecord.getAccountId(), (int) accountingRecord.getBalanceAfter());
+	}
 }
