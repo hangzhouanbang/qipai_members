@@ -37,6 +37,18 @@ public class ClubCardService {
 		return clubCardDao.getAllClubCard();
 	}
 
+	public void addClubCard(ClubCard clubCard) {
+		clubCardDao.addClubCard(clubCard);
+	}
+
+	public Boolean deleteClubCards(String[] clubCardIds) {
+		return clubCardDao.deleteClubCardByIds(clubCardIds);
+	}
+
+	public Boolean updateClubCard(ClubCard clubCard) {
+		return clubCardDao.updateClubCard(clubCard);
+	}
+
 	public Map<String, String> createOrder(Order order, String reqIp) throws MalformedURLException, IOException {
 		String orderInfo = createOrderInfo(order, reqIp);
 		SortedMap<String, String> responseMap = order(orderInfo);

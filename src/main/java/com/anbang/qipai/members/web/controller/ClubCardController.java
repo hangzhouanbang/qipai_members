@@ -7,6 +7,7 @@ import java.util.SortedMap;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,8 +41,46 @@ public class ClubCardController {
 		CommonVO vo = new CommonVO();
 		List<ClubCard> cardList = clubCardService.showClubCard();
 		vo.setSuccess(true);
-		vo.setMsg("会员卡列表");
+		vo.setMsg("clubCardList");
 		vo.setData(cardList);
+		return vo;
+	}
+
+	@RequestMapping("/addclubcard")
+	public CommonVO addClubCard(@RequestBody ClubCard clubCard) {
+		CommonVO vo = new CommonVO();
+		clubCardService.addClubCard(clubCard);
+		vo.setSuccess(true);
+		vo.setMsg("member add success");
+		vo.setData(clubCard);
+		return vo;
+	}
+
+	@RequestMapping("/deleteclubcards")
+	public CommonVO deleteClubCards(@RequestBody String[] clubCardIds) {
+		CommonVO vo = new CommonVO();
+		if (clubCardService.deleteClubCards(clubCardIds)) {
+			vo.setSuccess(true);
+			vo.setMsg("member delete success");
+			vo.setData(clubCardIds);
+		} else {
+			vo.setSuccess(false);
+			vo.setMsg("member delete fail");
+		}
+		return vo;
+	}
+
+	@RequestMapping("/updateclubcard")
+	public CommonVO updateClubCards(@RequestBody ClubCard clubCard) {
+		CommonVO vo = new CommonVO();
+		if (clubCardService.updateClubCard(clubCard)) {
+			vo.setSuccess(true);
+			vo.setMsg("member update success");
+			vo.setData(clubCard);
+		} else {
+			vo.setSuccess(false);
+			vo.setMsg("member update fail");
+		}
 		return vo;
 	}
 
@@ -69,13 +108,13 @@ public class ClubCardController {
 	}
 
 	@RequestMapping("/queryresult")
-	public CommonVO queryOrderResult(String transaction_id, String out_trade_no, String memberId, String clubCardId) {
+	public CommonVO queryOrderResult(String transaction_id, String out_trade_no) {
 		CommonVO vo = new CommonVO();
 		try {
 			SortedMap<String, String> responseMap = clubCardService.queryOrderResult(transaction_id);
 			if (responseMap != null && "SUCCESS".equals(responseMap.get("return_code"))
 					&& "SUCCESS".equals(responseMap.get("result_code"))) {
-				memberService.deliver(memberId, out_trade_no, clubCardId, System.currentTimeMillis());
+				memberService.deliver(out_trade_no, System.currentTimeMillis());
 				if (!orderService.updateTransaction_id(out_trade_no, transaction_id)) {
 					vo.setSuccess(false);
 					vo.setMsg("update transaction_id fail");

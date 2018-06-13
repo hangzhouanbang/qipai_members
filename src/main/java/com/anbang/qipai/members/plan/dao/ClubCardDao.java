@@ -9,4 +9,10 @@ public interface ClubCardDao {
 	List<ClubCard> getAllClubCard();
 
 	ClubCard getClubCardById(String clubCardId);
+
+	void addClubCard(ClubCard clubCard);
+
+	Boolean deleteClubCardByIds(String[] clubCardIds);
+
+	Boolean updateClubCard(ClubCard clubCard);
 }

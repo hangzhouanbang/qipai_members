@@ -1,8 +1,5 @@
 package com.anbang.qipai.members.web.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,15 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
-import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
 import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
 import com.anbang.qipai.members.plan.service.MemberService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.anbang.qipai.members.web.vo.DetailsVo;
 import com.anbang.qipai.members.web.vo.MemberVO;
-import com.dml.accounting.AccountingSummary;
-import com.dml.accounting.TextAccountingSummary;
 import com.highto.framework.web.page.ListPage;
 
 @CrossOrigin
@@ -86,25 +80,10 @@ public class MemberController {
 	public CommonVO checkAccount(@RequestParam(name = "page", defaultValue = "1") Integer page,
 			@RequestParam(name = "size", defaultValue = "10") Integer size, String memberId) {
 		CommonVO vo = new CommonVO();
-		// MemberGoldAccountDbo accountId =
-		// memberGoldQueryService.findMemberGoldAccount(memberId);
-		// ListPage listPage = memberGoldQueryService.findMemberGoldRecords(page, size,
-		// accountId.getId());
-		List<MemberGoldRecordDbo> items = new ArrayList<MemberGoldRecordDbo>();
-		MemberGoldRecordDbo record = new MemberGoldRecordDbo();
-		record.setId("001");
-		record.setAccountId("02155");
-		record.setAccountingAmount(1000);
-		record.setAccountingNo(6);
-		record.setAccountingTime(2132132321);
-		record.setBalanceAfter(3256);
-		AccountingSummary summary = new TextAccountingSummary("消费原因");
-		record.setSummary(summary);
-		items.add(record);
-		items.add(record);
-		ListPage listPage = new ListPage(items, 1, 5, 5);
+		MemberGoldAccountDbo accountId = memberGoldQueryService.findMemberGoldAccount(memberId);
+		ListPage listPage = memberGoldQueryService.findMemberGoldRecords(page, size, accountId.getId());
 		vo.setSuccess(true);
-		vo.setMsg("个人流水");
+		vo.setMsg("accout");
 		vo.setData(listPage);
 		return vo;
 	}
