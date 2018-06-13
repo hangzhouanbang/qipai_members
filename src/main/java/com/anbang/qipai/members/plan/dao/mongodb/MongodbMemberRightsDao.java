@@ -2,6 +2,9 @@ package com.anbang.qipai.members.plan.dao.mongodb;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.members.plan.dao.MemberRightsDao;
@@ -27,6 +30,47 @@ public class MongodbMemberRightsDao implements MemberRightsDao {
 	public MemberRights savevipuser(MemberRights createMemberConfiguration) {
 		mongoTemplate.save(createMemberConfiguration);
 		return createMemberConfiguration;
+	}
+
+	@Override
+	public void setPlanMembersRights(float planGrowIntegralSpeed, int goldForNewNember) {
+		mongoTemplate.updateFirst(new Query(Criteria.where("id").is("1")), new Update()
+				.set("planGrowIntegralSpeed", planGrowIntegralSpeed).set("goldForNewNember", goldForNewNember),
+				MemberRights.class);
+	}
+
+	@Override
+	public void setVipMembersRights(float vipGrowGradeSpeed) {
+		mongoTemplate.updateFirst(new Query(Criteria.where("id").is("1")), new Update()
+				.set("vipGrowGradeSpeed", vipGrowGradeSpeed),
+				MemberRights.class);
+	}
+
+	@Override
+	public void updatePlanMembersRights(int signGoldNumber, int goldForNewNember, int shareIntegralNumber,
+			int shareGoldNumber, int inviteIntegralNumber, float planGrowIntegralSpeed) {
+		mongoTemplate.updateMulti(new Query(Criteria.where("id").is("1")),
+				new Update().set("signGoldNumber", signGoldNumber)
+						.set("goldForNewNember", goldForNewNember)
+						.set("shareIntegralNumber", shareIntegralNumber)
+						.set("shareGoldNumber", shareGoldNumber)
+						.set("inviteIntegralNumber", inviteIntegralNumber)
+						.set("planGrowIntegralSpeed", planGrowIntegralSpeed),
+						MemberRights.class);
+	}
+	
+	@Override
+	public void updateVipMembersRights(int signGoldNumber,int shareIntegralNumber,int shareGoldNumber,
+			int inviteIntegralNumber,float vipGrowIntegralSpeed,float vipGrowGradeSpeed) {
+		mongoTemplate.updateMulti(new Query(Criteria.where("id").is("1")),
+				new Update().set("signGoldNumber", signGoldNumber)
+						.set("shareIntegralNumber", shareIntegralNumber)
+						.set("shareGoldNumber", shareGoldNumber)
+						.set("inviteIntegralNumber", inviteIntegralNumber)
+						.set("vipGrowIntegralSpeed", vipGrowIntegralSpeed)
+						.set("inviteIntegralNumber", inviteIntegralNumber)
+						.set("vipGrowGradeSpeed", vipGrowGradeSpeed),
+						MemberRights.class);
 	}
 
 }

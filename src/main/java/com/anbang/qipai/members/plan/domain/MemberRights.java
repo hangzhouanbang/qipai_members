@@ -13,15 +13,15 @@ public class MemberRights {
 	 */
 	private String id;
 	
-	private Integer signGoldNumber;//普通用户签到得金币数量
+	private int signGoldNumber;//普通用户签到得金币数量
 	
-	private Integer goldForNewNember;//新用户注册赠送的金币数量
+	private int goldForNewNember;//新用户注册赠送的金币数量
 	
-	private Integer shareIntegralNumber;//分享得积分数量
+	private int shareIntegralNumber;//分享得积分数量
 	
-	private Integer shareGoldNumber;//分享得金币数量
+	private int shareGoldNumber;//分享得金币数量
 	
-	private Integer inviteIntegralNumber;//邀请得积分数量
+	private int inviteIntegralNumber;//邀请得积分数量
 	
 	private float vipGrowIntegralSpeed;//会员积分增长速度
 	private float planGrowIntegralSpeed;//普通会员增长速度
@@ -36,43 +36,43 @@ public class MemberRights {
 		this.id = id;
 	}
 
-	public Integer getSignGoldNumber() {
+	public int getSignGoldNumber() {
 		return signGoldNumber;
 	}
 
-	public void setSignGoldNumber(Integer signGoldNumber) {
+	public void setSignGoldNumber(int signGoldNumber) {
 		this.signGoldNumber = signGoldNumber;
 	}
 
-	public Integer getGoldForNewNember() {
+	public int getGoldForNewNember() {
 		return goldForNewNember;
 	}
 
-	public void setGoldForNewNember(Integer goldForNewNember) {
+	public void setGoldForNewNember(int goldForNewNember) {
 		this.goldForNewNember = goldForNewNember;
 	}
 
-	public Integer getShareIntegralNumber() {
+	public int getShareIntegralNumber() {
 		return shareIntegralNumber;
 	}
 
-	public void setShareIntegralNumber(Integer shareIntegralNumber) {
+	public void setShareIntegralNumber(int shareIntegralNumber) {
 		this.shareIntegralNumber = shareIntegralNumber;
 	}
 
-	public Integer getShareGoldNumber() {
+	public int getShareGoldNumber() {
 		return shareGoldNumber;
 	}
 
-	public void setShareGoldNumber(Integer shareGoldNumber) {
+	public void setShareGoldNumber(int shareGoldNumber) {
 		this.shareGoldNumber = shareGoldNumber;
 	}
 
-	public Integer getInviteIntegralNumber() {
+	public int getInviteIntegralNumber() {
 		return inviteIntegralNumber;
 	}
 
-	public void setInviteIntegralNumber(Integer inviteIntegralNumber) {
+	public void setInviteIntegralNumber(int inviteIntegralNumber) {
 		this.inviteIntegralNumber = inviteIntegralNumber;
 	}
 
@@ -100,5 +100,5 @@ public class MemberRights {
 		this.vipGrowGradeSpeed = vipGrowGradeSpeed;
 	}
 
-	
+
 }
