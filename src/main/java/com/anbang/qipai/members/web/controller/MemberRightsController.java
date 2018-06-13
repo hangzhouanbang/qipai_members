@@ -25,8 +25,8 @@ public class MemberRightsController {
 	 * **/
 	@RequestMapping(value = "/commonuser")
 	@ResponseBody
-	public CommonVO commonuser(Integer signGoldNumber,Integer goldForNewNember,Integer shareIntegralNumber,Integer shareGoldNumber,
-			Integer inviteIntegralNumber,float planGrowIntegralSpeed) {
+	public CommonVO commonuser(int signGoldNumber,int goldForNewNember,int shareIntegralNumber,int shareGoldNumber,
+			int inviteIntegralNumber,float planGrowIntegralSpeed) {
 		memberShipConfigurationService.savePlanShipConfiguration(signGoldNumber,goldForNewNember,shareIntegralNumber,shareGoldNumber,inviteIntegralNumber,planGrowIntegralSpeed);
 		//查询普通用户权益
 		MemberRights createMemberConfiguration = memberShipConfigurationService.findMemberCreateMemberConfiguration();
@@ -40,11 +40,14 @@ public class MemberRightsController {
 	 * **/
 	@RequestMapping("/vipuser")
 	@ResponseBody
-	public CommonVO vipuser(Integer signGoldNumber,Integer shareIntegralNumber,Integer shareGoldNumber,
-			Integer inviteIntegralNumber,float vipGrowIntegralSpeed,float vipGrowGradeSpeed) {
+	public CommonVO vipuser(int signGoldNumber,int shareIntegralNumber,int shareGoldNumber,
+			int inviteIntegralNumber,float vipGrowIntegralSpeed,float vipGrowGradeSpeed) {
+		System.out.println("1111"+signGoldNumber+shareIntegralNumber+shareGoldNumber+inviteIntegralNumber+vipGrowIntegralSpeed+vipGrowGradeSpeed);
 		memberShipConfigurationService.saveVipShipConfiguration(signGoldNumber,shareIntegralNumber,shareGoldNumber,inviteIntegralNumber,vipGrowIntegralSpeed,vipGrowGradeSpeed);
 		//查询vip用户权益
 		MemberRights createMemberConfiguration = memberShipConfigurationService.findMemberCreateMemberConfiguration();
+		System.out.println(createMemberConfiguration.getGoldForNewNember()+"sssssssss");
+		System.out.println(createMemberConfiguration.getShareIntegralNumber()+"sssssssss");
 		//发送消息给管理系统
 		memberShipRightsMsgService.savevipuser(createMemberConfiguration);
 		return new CommonVO();
