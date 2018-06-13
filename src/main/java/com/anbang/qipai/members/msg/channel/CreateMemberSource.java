@@ -6,6 +6,6 @@ import org.springframework.messaging.MessageChannel;
 public interface CreateMemberSource {
 	
 	@Output
-	MessageChannel createmember();
+	MessageChannel membershiprights();
 
 }

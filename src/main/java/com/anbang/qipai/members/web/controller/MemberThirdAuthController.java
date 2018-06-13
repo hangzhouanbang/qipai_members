@@ -22,8 +22,8 @@ import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
-import com.anbang.qipai.members.plan.domain.CreateMemberConfiguration;
-import com.anbang.qipai.members.plan.service.ConfigurationService;
+import com.anbang.qipai.members.plan.domain.MemberRights;
+import com.anbang.qipai.members.plan.service.MemberRightsService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.google.gson.Gson;
 
@@ -50,7 +50,7 @@ public class MemberThirdAuthController {
 	private MemberAuthService memberAuthService;
 
 	@Autowired
-	private ConfigurationService configurationService;
+	private MemberRightsService configurationService;
 
 	@Autowired
 	private MemberGoldQueryService memberGoldQueryService;
@@ -94,10 +94,10 @@ public class MemberThirdAuthController {
 				int goldForNewMember = 0;
 				// TODO:更具普通会员权益设置决定赠送的金币数
 				// 查询创建会员赠送的金币数
-				CreateMemberConfiguration createMemberConfiguration = configurationService
-						.findCreateMemberConfiguration();
+				MemberRights createMemberConfiguration = configurationService
+						.findMemberCreateMemberConfiguration();
 				if (createMemberConfiguration != null) {
-					goldForNewMember = createMemberConfiguration.getGoldForNewMember();
+					goldForNewMember = createMemberConfiguration.getGoldForNewNember();
 				}
 				// 创建会员和unionid授权
 				CreateMemberResult createMemberResult = memberAuthCmdService.createMemberAndAddThirdAuth("union.weixin",

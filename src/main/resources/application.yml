@@ -33,6 +33,17 @@ spring:
                   ms: 5
                 batch:
                   size: 16384
+                  
+          membershiprights:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
 
       bindings:
         members:
@@ -41,8 +52,8 @@ spring:
           producer:
             partitionCount: 1
             
-        createmember:
-          destination: createmember
+        membershiprights:
+          destination: membershiprights
           contentType: application/json
           producer:
             partitionCount: 1
