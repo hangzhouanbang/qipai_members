@@ -2,8 +2,8 @@ package com.anbang.qipai.members.plan.domain;
 
 public class Order {
 	private String id;
-	private String out_trade_no;
-	private String transaction_id;
+	private String out_trade_no;// 商户订单号
+	private String transaction_id;// 微信订单号
 	private Integer status;// 0:未支付,1:支付成功,-1:支付失敗
 	private String memberId;
 	private String nickname;

@@ -47,30 +47,32 @@ public class MemberService {
 	}
 
 	public void deliver(String memberId, String out_trade_no, String clubCardId, long currentTime) {
-		MemberDbo member = memberDao.findMemberById(memberId);
-		ClubCard clubCard = clubCardDao.getClubCardById(clubCardId);
-		long vipEndTime = member.getVipEndTime() + clubCard.getTime();
-		memberDao.updateMemberVIP(memberId, vipEndTime);
+		if (orderDao.findOrderByOut_trade_no(out_trade_no).getStatus() == 0) {
+			MemberDbo member = memberDao.findMemberById(memberId);
+			ClubCard clubCard = clubCardDao.getClubCardById(clubCardId);
+			long vipEndTime = member.getVipEndTime() + clubCard.getTime();
+			memberDao.updateMemberVIP(memberId, vipEndTime);
 
-		MemberGoldAccountManager memberGoldAccountManager = singletonEntityRepository
-				.getEntity(MemberGoldAccountManager.class);
-		AccountingRecord accountingRecord = null;
-		try {
-			accountingRecord = memberGoldAccountManager.giveGoldToMember(memberId, clubCard.getGold(),
-					new TextAccountingSummary("buy" + clubCard.getName()), currentTime);
-		} catch (MemberNotFoundException e) {
-			e.printStackTrace();
+			MemberGoldAccountManager memberGoldAccountManager = singletonEntityRepository
+					.getEntity(MemberGoldAccountManager.class);
+			AccountingRecord accountingRecord = null;
+			try {
+				accountingRecord = memberGoldAccountManager.giveGoldToMember(memberId, clubCard.getGold(),
+						new TextAccountingSummary("buy" + clubCard.getName()), currentTime);
+			} catch (MemberNotFoundException e) {
+				e.printStackTrace();
+			}
+			MemberGoldRecordDbo dbo = new MemberGoldRecordDbo();
+			dbo.setAccountId(accountingRecord.getAccountId());
+			dbo.setAccountingAmount((int) accountingRecord.getAccountingAmount());
+			dbo.setAccountingNo(accountingRecord.getAccountingNo());
+			dbo.setBalanceAfter((int) accountingRecord.getBalanceAfter());
+			dbo.setSummary(accountingRecord.getSummary());
+			dbo.setAccountingTime(accountingRecord.getAccountingTime());
+			memberGoldRecordDboDao.save(dbo);
+			memberGoldAccountDboDao.update(accountingRecord.getAccountId(), (int) accountingRecord.getBalanceAfter());
+
+			orderDao.updateOrderStatus(out_trade_no, 1);
 		}
-		MemberGoldRecordDbo dbo = new MemberGoldRecordDbo();
-		dbo.setAccountId(accountingRecord.getAccountId());
-		dbo.setAccountingAmount((int) accountingRecord.getAccountingAmount());
-		dbo.setAccountingNo(accountingRecord.getAccountingNo());
-		dbo.setBalanceAfter((int) accountingRecord.getBalanceAfter());
-		dbo.setSummary(accountingRecord.getSummary());
-		dbo.setAccountingTime(accountingRecord.getAccountingTime());
-		memberGoldRecordDboDao.save(dbo);
-		memberGoldAccountDboDao.update(accountingRecord.getAccountId(), (int) accountingRecord.getBalanceAfter());
-
-		orderDao.updateOrder(out_trade_no, 1);
 	}
 }

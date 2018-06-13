@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import com.anbang.qipai.members.plan.dao.ClubCardDao;
 import com.anbang.qipai.members.plan.domain.ClubCard;
 import com.anbang.qipai.members.plan.domain.Order;
+import com.anbang.qipai.members.plan.domain.RefundOrder;
 import com.anbang.qipai.members.web.util.MD5Util;
 import com.anbang.qipai.members.web.util.XMLObjectConvertUtil;
 
@@ -36,8 +37,8 @@ public class ClubCardService {
 		return clubCardDao.getAllClubCard();
 	}
 
-	public Map<String, String> createOrder(Order order) throws MalformedURLException, IOException {
-		String orderInfo = createOrderInfo(order);
+	public Map<String, String> createOrder(Order order, String reqIp) throws MalformedURLException, IOException {
+		String orderInfo = createOrderInfo(order, reqIp);
 		SortedMap<String, String> responseMap = order(orderInfo);
 		String newSign = createSign(responseMap);
 		if (newSign.equals(responseMap.get("sign"))) {
@@ -70,10 +71,10 @@ public class ClubCardService {
 		return "<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[签名失败]]></return_msg></xml>";
 	}
 
-	public SortedMap<String, String> queryResult(String transaction_id) throws MalformedURLException, IOException {
+	public SortedMap<String, String> queryOrderResult(String transaction_id) throws MalformedURLException, IOException {
 		// 微信查询订单接口
 		String url = "https://api.mch.weixin.qq.com/pay/orderquery";
-		String queryInfo = createQueryInfo(transaction_id);
+		String queryOrderInfo = createQueryOrderInfo(transaction_id);
 		// 连接 微信查询订单接口
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 		conn.setRequestMethod("POST");
@@ -81,7 +82,79 @@ public class ClubCardService {
 		conn.setDoOutput(true);
 		// 获取输出流
 		BufferedOutputStream buffer = new BufferedOutputStream(conn.getOutputStream());
-		buffer.write(queryInfo.getBytes());
+		buffer.write(queryOrderInfo.getBytes());
+		buffer.flush();
+		buffer.close();
+		// 获取输入流
+		BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		// 接受数据
+		String line = null;
+		StringBuffer sb = new StringBuffer();
+		// 将输入流中的信息放在sb中
+		while ((line = reader.readLine()) != null) {
+			sb.append(line);
+		}
+		SortedMap<String, String> responseMap = XMLObjectConvertUtil.praseXMLToMap(sb.toString());
+		String newSign = createSign(responseMap);
+		if (newSign.equals(responseMap.get("sign"))) {
+			return responseMap;
+		}
+		return null;
+	}
+
+	public SortedMap<String, String> closeOrder(String out_trade_no) throws MalformedURLException, IOException {
+		// 微信关闭订单接口
+		String url = "https://api.mch.weixin.qq.com/pay/closeorder";
+		String closeInfo = createCloseInfo(out_trade_no);
+		// 连接 微信关闭订单接口
+		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+		conn.setRequestMethod("POST");
+		// 打开传输输出流
+		conn.setDoOutput(true);
+		// 获取输出流
+		BufferedOutputStream buffer = new BufferedOutputStream(conn.getOutputStream());
+		buffer.write(closeInfo.getBytes());
+		buffer.flush();
+		buffer.close();
+		// 获取输入流
+		BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		// 接受数据
+		String line = null;
+		StringBuffer sb = new StringBuffer();
+		// 将输入流中的信息放在sb中
+		while ((line = reader.readLine()) != null) {
+			sb.append(line);
+		}
+		SortedMap<String, String> responseMap = XMLObjectConvertUtil.praseXMLToMap(sb.toString());
+		String newSign = createSign(responseMap);
+		if (newSign.equals(responseMap.get("sign"))) {
+			return responseMap;
+		}
+		return null;
+	}
+
+	public SortedMap<String, String> createRefund(RefundOrder refund) throws Exception {
+		String refundInfo = createRefundInfo(refund);
+		SortedMap<String, String> responseMap = refund(refundInfo);
+		String newSign = createSign(responseMap);
+		if (newSign.equals(responseMap.get("sign"))) {
+			return responseMap;
+		}
+		return null;
+	}
+
+	public SortedMap<String, String> queryRefundResult(String refund_id) throws Exception {
+		// 微信查询退款接口
+		String url = "https://api.mch.weixin.qq.com/pay/refundquery";
+		String queryRefundInfo = createQueryRefundInfo(refund_id);
+		// 连接 微信查询退款接口
+		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+		conn.setRequestMethod("POST");
+		// 打开传输输出流
+		conn.setDoOutput(true);
+		// 获取输出流
+		BufferedOutputStream buffer = new BufferedOutputStream(conn.getOutputStream());
+		buffer.write(queryRefundInfo.getBytes());
 		buffer.flush();
 		buffer.close();
 		// 获取输入流
@@ -135,13 +208,39 @@ public class ClubCardService {
 		return responseMap;
 	}
 
+	private SortedMap<String, String> refund(String refundInfo) throws MalformedURLException, IOException {
+		// 微信申请退款接口
+		String url = "https://api.mch.weixin.qq.com/secapi/pay/refund";
+		// 连接微信申请退款接口
+		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+		conn.setRequestMethod("POST");
+		// 打开传输输出流
+		conn.setDoOutput(true);
+		// 获取输出流
+		BufferedOutputStream buffer = new BufferedOutputStream(conn.getOutputStream());
+		buffer.write(refundInfo.getBytes());
+		buffer.flush();
+		buffer.close();
+		// 获取输入流
+		BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		// 接受数据
+		String line = null;
+		StringBuffer sb = new StringBuffer();
+		// 将输入流中的信息放在sb中
+		while ((line = reader.readLine()) != null) {
+			sb.append(line);
+		}
+		SortedMap<String, String> responseMap = XMLObjectConvertUtil.praseXMLToMap(sb.toString());
+		return responseMap;
+	}
+
 	/**
 	 * 生成预付单
 	 * 
 	 * @param clubCardId
 	 * @return
 	 */
-	private String createOrderInfo(Order order) {
+	private String createOrderInfo(Order order, String reqIp) {
 		// 创建可排序的Map集合
 		SortedMap<String, String> parameters = new TreeMap<String, String>();
 		parameters.put("appid", "wxb841e562b0100c95");
@@ -150,7 +249,7 @@ public class ClubCardService {
 		parameters.put("body", "购买" + order.getClubCardName());
 		parameters.put("out_trade_no", order.getOut_trade_no());
 		parameters.put("total_fee", Integer.toString((int) (100 * order.getClubCardPrice() * order.getNumber())));
-		parameters.put("spbill_create_ip", "");
+		parameters.put("spbill_create_ip", reqIp);
 		parameters.put("notify_url", "");
 		parameters.put("trade_type", "APP");
 		parameters.put("sign", createSign(parameters));
@@ -164,7 +263,7 @@ public class ClubCardService {
 	 * @param transaction_id
 	 * @return
 	 */
-	private String createQueryInfo(String transaction_id) {
+	private String createQueryOrderInfo(String transaction_id) {
 		// 创建可排序的Map集合
 		SortedMap<String, String> parameters = new TreeMap<String, String>();
 		parameters.put("appid", "wxb841e562b0100c95");
@@ -172,6 +271,61 @@ public class ClubCardService {
 		parameters.put("nonce_str", UUID.randomUUID().toString().substring(0, 30));
 		parameters.put("transaction_id", transaction_id);
 		// parameters.put("out_trade_no", "");//商户系统内部的订单号，当没提供transaction_id时需要传这个。
+		parameters.put("sign", createSign(parameters));
+		String xml = XMLObjectConvertUtil.praseMapToXML(parameters);
+		return xml;
+	}
+
+	/**
+	 * 生成关闭订单信息
+	 * 
+	 * @param out_trade_no
+	 * @return
+	 */
+	private String createCloseInfo(String out_trade_no) {
+		// 创建可排序的Map集合
+		SortedMap<String, String> parameters = new TreeMap<String, String>();
+		parameters.put("appid", "wxb841e562b0100c95");
+		parameters.put("mch_id", "");
+		parameters.put("nonce_str", UUID.randomUUID().toString().substring(0, 30));
+		parameters.put("out_trade_no", out_trade_no);
+		// parameters.put("out_trade_no", "");//商户系统内部的订单号，当没提供transaction_id时需要传这个。
+		parameters.put("sign", createSign(parameters));
+		String xml = XMLObjectConvertUtil.praseMapToXML(parameters);
+		return xml;
+	}
+
+	/**
+	 * 生成退款信息
+	 * 
+	 * @param refund
+	 * @return
+	 */
+	private String createRefundInfo(RefundOrder refund) {
+		// 创建可排序的Map集合
+		SortedMap<String, String> parameters = new TreeMap<String, String>();
+		parameters.put("appid", "wxb841e562b0100c95");
+		parameters.put("mch_id", "");
+		parameters.put("nonce_str", UUID.randomUUID().toString().substring(0, 30));
+		parameters.put("transaction_id", refund.getTransaction_id());
+		// parameters.put("out_trade_no", "");//商户系统内部的订单号，当没提供transaction_id时需要传这个。
+		parameters.put("out_refund_no", refund.getOut_refund_no());
+		parameters.put("total_fee", refund.getTotal_fee());
+		parameters.put("refund_fee	", refund.getRefund_fee());
+		parameters.put("refund_desc	", refund.getRefund_desc());
+		parameters.put("sign", createSign(parameters));
+		String xml = XMLObjectConvertUtil.praseMapToXML(parameters);
+		return xml;
+	}
+
+	private String createQueryRefundInfo(String refund_id) {
+		// 创建可排序的Map集合
+		SortedMap<String, String> parameters = new TreeMap<String, String>();
+		parameters.put("appid", "wxb841e562b0100c95");
+		parameters.put("mch_id", "");
+		parameters.put("nonce_str", UUID.randomUUID().toString().substring(0, 30));
+		// 微信订单号transaction_id、商户订单号out_trade_no、商户退款单号out_refund_no、微信退款单号refund_id四选一
+		parameters.put("refund_id", refund_id);
 		parameters.put("sign", createSign(parameters));
 		String xml = XMLObjectConvertUtil.praseMapToXML(parameters);
 		return xml;

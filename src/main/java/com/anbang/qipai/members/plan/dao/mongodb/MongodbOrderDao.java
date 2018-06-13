@@ -23,10 +23,25 @@ public class MongodbOrderDao implements OrderDao {
 	}
 
 	@Override
-	public Boolean updateOrder(String out_trade_no, int status) {
+	public Boolean updateOrderStatus(String out_trade_no, int status) {
 		Query query = new Query(Criteria.where("out_trade_no").is(out_trade_no));
 		Update update = new Update();
 		update.set("status", status);
+		WriteResult writeResult = mongoTemplate.updateFirst(query, update, Order.class);
+		return writeResult.getN() > 0;
+	}
+
+	@Override
+	public Order findOrderByOut_trade_no(String out_trade_no) {
+		Query query = new Query(Criteria.where("out_trade_no").is(out_trade_no));
+		return mongoTemplate.findOne(query, Order.class);
+	}
+
+	@Override
+	public Boolean updateTransaction_id(String out_trade_no, String transaction_id) {
+		Query query = new Query(Criteria.where("out_trade_no").is(out_trade_no));
+		Update update = new Update();
+		update.set("transaction_id", transaction_id);
 		WriteResult writeResult = mongoTemplate.updateFirst(query, update, Order.class);
 		return writeResult.getN() > 0;
 	}

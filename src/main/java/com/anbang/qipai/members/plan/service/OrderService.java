@@ -24,6 +24,7 @@ public class OrderService {
 
 	public Order addOrder(String memberId, String clubCardId, Integer number) {
 		Order order = new Order();
+		order.setOut_trade_no("");
 		order.setStatus(0);
 		order.setMemberId(memberId);
 		MemberDbo member = memberDao.findMemberById(memberId);
@@ -39,5 +40,25 @@ public class OrderService {
 		order.setCreateTime(System.currentTimeMillis());
 		orderDao.addOrder(order);
 		return order;
+	}
+
+	public Order findOrderByOut_trade_no(String out_trade_no) {
+		return orderDao.findOrderByOut_trade_no(out_trade_no);
+	}
+
+	public Boolean updateOrderStatus(String out_trade_no, int status) {
+		Order order = orderDao.findOrderByOut_trade_no(out_trade_no);
+		if (order.getStatus() == 0) {
+			return orderDao.updateOrderStatus(out_trade_no, status);
+		}
+		return false;
+	}
+
+	public Boolean updateTransaction_id(String out_trade_no, String transaction_id) {
+		Order order = orderDao.findOrderByOut_trade_no(out_trade_no);
+		if (order.getStatus() == 0) {
+			return orderDao.updateTransaction_id(out_trade_no, transaction_id);
+		}
+		return false;
 	}
 }
