@@ -43,7 +43,7 @@ spring:
                 linger:
                   ms: 5
                 batch:
-                  size: 16384
+                  size: 16384         
 
       bindings:
         members:

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.anbang.qipai.members.cqrs.c.domain.MemberNotFoundException;
 import com.anbang.qipai.members.cqrs.c.service.MemberGoldCmdService;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
 import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
 import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.web.vo.CommonVO;
@@ -35,9 +36,9 @@ public class MemberGoldController {
 		try {
 			AccountingRecord rcd = memberGoldCmdService.withdraw(memberId, amount, textSummary,
 					System.currentTimeMillis());
-			memberGoldQueryService.withdraw(memberId, rcd);
+			MemberGoldRecordDbo dbo = memberGoldQueryService.withdraw(memberId, rcd);
 			// TODO: rcd发kafka
-			goldsMsgService.withdraw(rcd);
+			goldsMsgService.withdraw(dbo);
 			return vo;
 		} catch (InsufficientBalanceException e) {
 			vo.setSuccess(false);

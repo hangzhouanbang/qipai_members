@@ -18,6 +18,7 @@ import com.anbang.qipai.members.plan.service.ClubCardService;
 import com.anbang.qipai.members.plan.service.MemberService;
 import com.anbang.qipai.members.plan.service.OrderService;
 import com.anbang.qipai.members.plan.service.RefundOrderService;
+import com.anbang.qipai.members.plan.service.WXpayService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 
 @RestController
@@ -35,6 +36,9 @@ public class ClubCardController {
 
 	@Autowired
 	private RefundOrderService refundOrderService;
+
+	@Autowired
+	private WXpayService wxPayService;
 
 	@RequestMapping("/showclubcard")
 	public CommonVO showClubCards() {
@@ -84,12 +88,12 @@ public class ClubCardController {
 		return vo;
 	}
 
-	@RequestMapping("/createorder")
-	public CommonVO createOrder(String memberId, String clubCardId, Integer number, HttpServletRequest request) {
+	@RequestMapping("/createwxorder")
+	public CommonVO createWXOrder(String memberId, String clubCardId, Integer number, HttpServletRequest request) {
 		CommonVO vo = new CommonVO();
 		Order order = orderService.addOrder(memberId, clubCardId, number);
 		try {
-			Map<String, String> resultMap = clubCardService.createOrder(order, request.getRemoteAddr());
+			Map<String, String> resultMap = wxPayService.createOrder(order, request.getRemoteAddr());
 			vo.setSuccess(true);
 			vo.setMsg("success");
 			vo.setData(resultMap);
@@ -102,16 +106,16 @@ public class ClubCardController {
 		return vo;
 	}
 
-	@RequestMapping("/receivenotify")
-	public String receiveNotify(HttpServletRequest request) {
-		return clubCardService.receiveNotify(request);
+	@RequestMapping("/receivewxnotify")
+	public String receiveWXNotify(HttpServletRequest request) {
+		return wxPayService.receiveNotify(request);
 	}
 
-	@RequestMapping("/queryresult")
-	public CommonVO queryOrderResult(String transaction_id, String out_trade_no) {
+	@RequestMapping("/querywxorderresult")
+	public CommonVO queryWXOrderResult(String transaction_id, String out_trade_no) {
 		CommonVO vo = new CommonVO();
 		try {
-			SortedMap<String, String> responseMap = clubCardService.queryOrderResult(transaction_id);
+			SortedMap<String, String> responseMap = wxPayService.queryOrderResult(transaction_id);
 			if (responseMap != null && "SUCCESS".equals(responseMap.get("return_code"))
 					&& "SUCCESS".equals(responseMap.get("result_code"))) {
 				memberService.deliver(out_trade_no, System.currentTimeMillis());
@@ -133,13 +137,13 @@ public class ClubCardController {
 		return vo;
 	}
 
-	@RequestMapping("/closeorder")
-	public CommonVO closeOrder(String out_trade_no) {
+	@RequestMapping("/closewxorder")
+	public CommonVO closeWXOrder(String out_trade_no) {
 		CommonVO vo = new CommonVO();
 		Order order = orderService.findOrderByOut_trade_no(out_trade_no);
 		if ((System.currentTimeMillis() - order.getCreateTime()) < 300000) {
 			try {
-				SortedMap<String, String> responseMap = clubCardService.closeOrder(out_trade_no);
+				SortedMap<String, String> responseMap = wxPayService.closeOrder(out_trade_no);
 				if (responseMap != null && "SUCCESS".equals(responseMap.get("return_code"))
 						&& "SUCCESS".equals(responseMap.get("result_code"))) {
 					if (!orderService.updateOrderStatus(out_trade_no, -1)) {
@@ -164,12 +168,12 @@ public class ClubCardController {
 		return vo;
 	}
 
-	@RequestMapping("/refund")
-	public CommonVO refund(String out_trade_no, String refund_fee, String refund_desc) {
+	@RequestMapping("/wxrefund")
+	public CommonVO refundWX(String out_trade_no, String refund_fee, String refund_desc) {
 		CommonVO vo = new CommonVO();
 		RefundOrder refundOrder = refundOrderService.addRefundOrder(out_trade_no, refund_fee, refund_desc);
 		try {
-			SortedMap<String, String> responseMap = clubCardService.createRefund(refundOrder);
+			SortedMap<String, String> responseMap = wxPayService.createRefund(refundOrder);
 			if (responseMap != null && "SUCCESS".equals(responseMap.get("return_code"))
 					&& "SUCCESS".equals(responseMap.get("result_code"))) {
 				if (!refundOrderService.updateRefundOrderStatus(refundOrder.getOut_refund_no(),
@@ -191,11 +195,11 @@ public class ClubCardController {
 		return vo;
 	}
 
-	@RequestMapping("/queryrefund")
-	public CommonVO queryRefund(String refund_id) {
+	@RequestMapping("/querywxrefund")
+	public CommonVO queryWXRefund(String refund_id) {
 		CommonVO vo = new CommonVO();
 		try {
-			SortedMap<String, String> responseMap = clubCardService.queryRefundResult(refund_id);
+			SortedMap<String, String> responseMap = wxPayService.queryRefundResult(refund_id);
 			vo.setSuccess(true);
 			vo.setMsg("success");
 			vo.setData(responseMap);

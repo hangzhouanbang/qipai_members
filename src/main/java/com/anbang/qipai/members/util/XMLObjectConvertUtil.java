@@ -1,4 +1,4 @@
-package com.anbang.qipai.members.web.util;
+package com.anbang.qipai.members.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
