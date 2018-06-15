@@ -2,7 +2,8 @@ package com.anbang.qipai.members.plan.domain;
 
 public class Order {
 	private String id;
-	private String out_trade_no;// 商户订单号
+	private Long out_trade_no;// 商户订单号
+	private String pay_type;//支付方式，支付宝或微信
 	private String transaction_id;// 微信订单号
 	private Integer status;// 0:未支付,1:支付成功,-1:支付失敗
 	private String memberId;
@@ -112,11 +113,11 @@ public class Order {
 		this.nickname = nickname;
 	}
 
-	public String getOut_trade_no() {
+	public Long getOut_trade_no() {
 		return out_trade_no;
 	}
 
-	public void setOut_trade_no(String out_trade_no) {
+	public void setOut_trade_no(Long out_trade_no) {
 		this.out_trade_no = out_trade_no;
 	}
 
@@ -126,6 +127,14 @@ public class Order {
 
 	public void setTransaction_id(String transaction_id) {
 		this.transaction_id = transaction_id;
+	}
+
+	public String getPay_type() {
+		return pay_type;
+	}
+
+	public void setPay_type(String pay_type) {
+		this.pay_type = pay_type;
 	}
 
 }

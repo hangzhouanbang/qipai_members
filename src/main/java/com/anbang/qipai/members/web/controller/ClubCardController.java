@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.anbang.qipai.members.plan.domain.ClubCard;
 import com.anbang.qipai.members.plan.domain.Order;
 import com.anbang.qipai.members.plan.domain.RefundOrder;
+import com.anbang.qipai.members.plan.service.AlipayService;
 import com.anbang.qipai.members.plan.service.ClubCardService;
 import com.anbang.qipai.members.plan.service.MemberService;
 import com.anbang.qipai.members.plan.service.OrderService;
@@ -38,7 +39,10 @@ public class ClubCardController {
 	private RefundOrderService refundOrderService;
 
 	@Autowired
-	private WXpayService wxPayService;
+	private WXpayService wxpayService;
+
+	@Autowired
+	private AlipayService alipayService;
 
 	@RequestMapping("/showclubcard")
 	public CommonVO showClubCards() {
@@ -88,12 +92,52 @@ public class ClubCardController {
 		return vo;
 	}
 
+	@RequestMapping("/createalipayorder")
+	public CommonVO createAliPayOrder(String memberId, String clubCardId, Integer number) {
+		CommonVO vo = new CommonVO();
+		Order order = orderService.addOrder(memberId, clubCardId, number, "alipay");
+		try {
+			String orderString = alipayService.order(order);
+			vo.setSuccess(true);
+			vo.setMsg("success");
+			vo.setData(orderString);
+		} catch (Exception e) {
+			e.printStackTrace();
+			e.printStackTrace();
+			vo.setSuccess(false);
+			vo.setMsg("fail");
+		}
+		return vo;
+	}
+
+	@RequestMapping("/alipaynotify")
+	public String alipayNotify(HttpServletRequest request) {
+		if (alipayService.alipayNotify(request)) {
+			return "success";
+		}
+		return "fail";
+	}
+
+	@RequestMapping("/checkalipay")
+	public CommonVO checkAlipay(Long out_trade_no) {
+		CommonVO vo = new CommonVO();
+		if (alipayService.checkAlipay(String.valueOf(out_trade_no)) == 1) {
+//			memberService.deliver(String.valueOf(out_trade_no), System.currentTimeMillis());
+			vo.setSuccess(true);
+			vo.setMsg("success");
+			return vo;
+		}
+		vo.setSuccess(false);
+		vo.setMsg("fail");
+		return vo;
+	}
+
 	@RequestMapping("/createwxorder")
 	public CommonVO createWXOrder(String memberId, String clubCardId, Integer number, HttpServletRequest request) {
 		CommonVO vo = new CommonVO();
-		Order order = orderService.addOrder(memberId, clubCardId, number);
+		Order order = orderService.addOrder(memberId, clubCardId, number, "WXpay");
 		try {
-			Map<String, String> resultMap = wxPayService.createOrder(order, request.getRemoteAddr());
+			Map<String, String> resultMap = wxpayService.createOrder(order, request.getRemoteAddr());
 			vo.setSuccess(true);
 			vo.setMsg("success");
 			vo.setData(resultMap);
@@ -108,14 +152,14 @@ public class ClubCardController {
 
 	@RequestMapping("/receivewxnotify")
 	public String receiveWXNotify(HttpServletRequest request) {
-		return wxPayService.receiveNotify(request);
+		return wxpayService.receiveNotify(request);
 	}
 
 	@RequestMapping("/querywxorderresult")
 	public CommonVO queryWXOrderResult(String transaction_id, String out_trade_no) {
 		CommonVO vo = new CommonVO();
 		try {
-			SortedMap<String, String> responseMap = wxPayService.queryOrderResult(transaction_id);
+			SortedMap<String, String> responseMap = wxpayService.queryOrderResult(transaction_id);
 			if (responseMap != null && "SUCCESS".equals(responseMap.get("return_code"))
 					&& "SUCCESS".equals(responseMap.get("result_code"))) {
 				memberService.deliver(out_trade_no, System.currentTimeMillis());
@@ -143,7 +187,7 @@ public class ClubCardController {
 		Order order = orderService.findOrderByOut_trade_no(out_trade_no);
 		if ((System.currentTimeMillis() - order.getCreateTime()) < 300000) {
 			try {
-				SortedMap<String, String> responseMap = wxPayService.closeOrder(out_trade_no);
+				SortedMap<String, String> responseMap = wxpayService.closeOrder(out_trade_no);
 				if (responseMap != null && "SUCCESS".equals(responseMap.get("return_code"))
 						&& "SUCCESS".equals(responseMap.get("result_code"))) {
 					if (!orderService.updateOrderStatus(out_trade_no, -1)) {
@@ -173,7 +217,7 @@ public class ClubCardController {
 		CommonVO vo = new CommonVO();
 		RefundOrder refundOrder = refundOrderService.addRefundOrder(out_trade_no, refund_fee, refund_desc);
 		try {
-			SortedMap<String, String> responseMap = wxPayService.createRefund(refundOrder);
+			SortedMap<String, String> responseMap = wxpayService.createRefund(refundOrder);
 			if (responseMap != null && "SUCCESS".equals(responseMap.get("return_code"))
 					&& "SUCCESS".equals(responseMap.get("result_code"))) {
 				if (!refundOrderService.updateRefundOrderStatus(refundOrder.getOut_refund_no(),
@@ -199,7 +243,7 @@ public class ClubCardController {
 	public CommonVO queryWXRefund(String refund_id) {
 		CommonVO vo = new CommonVO();
 		try {
-			SortedMap<String, String> responseMap = wxPayService.queryRefundResult(refund_id);
+			SortedMap<String, String> responseMap = wxpayService.queryRefundResult(refund_id);
 			vo.setSuccess(true);
 			vo.setMsg("success");
 			vo.setData(responseMap);

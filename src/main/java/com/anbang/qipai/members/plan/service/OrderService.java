@@ -21,10 +21,14 @@ public class OrderService {
 
 	@Autowired
 	private ClubCardDao clubCardDao;
+	
+	private static long out_trade_no;
 
-	public Order addOrder(String memberId, String clubCardId, Integer number) {
+	public Order addOrder(String memberId, String clubCardId, Integer number,String pay_type) {
 		Order order = new Order();
-		order.setOut_trade_no("");
+		order.setOut_trade_no(out_trade_no);
+		order.setPay_type(pay_type);
+		out_trade_no++;
 		order.setStatus(0);
 		order.setMemberId(memberId);
 		MemberDbo member = memberDao.findMemberById(memberId);
