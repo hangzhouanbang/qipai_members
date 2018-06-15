@@ -7,6 +7,8 @@ import com.anbang.qipai.members.cqrs.c.domain.MemberNotFoundException;
 import com.anbang.qipai.members.cqrs.c.domain.gold.MemberGoldAccountManager;
 import com.anbang.qipai.members.cqrs.c.domain.gold.MemberHasGoldAccountAlreadyException;
 import com.anbang.qipai.members.cqrs.c.domain.member.MemberIdManager;
+import com.anbang.qipai.members.cqrs.c.domain.score.MemberHasScoreAccountAlreadyException;
+import com.anbang.qipai.members.cqrs.c.domain.score.MemberScoreAccountManager;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthCmdService;
 import com.dml.accounting.AccountingRecord;
 import com.dml.accounting.TextAccountingSummary;
@@ -41,17 +43,24 @@ public class MemberAuthCmdServiceImpl extends CmdServiceBase implements MemberAu
 			usersManager.createUserWithAuth(memberId, auth);
 			MemberGoldAccountManager memberGoldAccountManager = singletonEntityRepository
 					.getEntity(MemberGoldAccountManager.class);
-			String accountId = memberGoldAccountManager.createGoldAccountForNewMember(memberId);
-			AccountingRecord ar = memberGoldAccountManager.giveGoldToMember(memberId, goldForNewMember,
+			String goldAccountId = memberGoldAccountManager.createGoldAccountForNewMember(memberId);
+			AccountingRecord goldAr = memberGoldAccountManager.giveGoldToMember(memberId, goldForNewMember,
 					new TextAccountingSummary("new member"), currentTime);
-			return new CreateMemberResult(memberId, accountId, ar);
+
+			MemberScoreAccountManager memberScoreAccountManager = singletonEntityRepository
+					.getEntity(MemberScoreAccountManager.class);
+			String scoreAccountId = memberScoreAccountManager.createScoreAccountForNewMember(memberId);
+
+			return new CreateMemberResult(memberId, goldAccountId, goldAr, scoreAccountId);
 		} catch (AuthorizationAlreadyExistsException e) {
 			memberIdManager.removeMemberId(memberId);
 			throw e;
 		} catch (MemberHasGoldAccountAlreadyException e) {
-			return new CreateMemberResult(null, null, null);
+			return new CreateMemberResult(null, null, null, null);
 		} catch (MemberNotFoundException e) {
-			return new CreateMemberResult(null, null, null);
+			return new CreateMemberResult(null, null, null, null);
+		} catch (MemberHasScoreAccountAlreadyException e) {
+			return new CreateMemberResult(null, null, null, null);
 		}
 	}
 
