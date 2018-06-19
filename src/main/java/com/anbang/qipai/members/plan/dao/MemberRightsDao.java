@@ -14,9 +14,7 @@ public interface MemberRightsDao {
 
 	void setVipMembersRights(float vipGrowGradeSpeed);
 	
-	void updatePlanMembersRights(int signGoldNumber, int goldForNewNember, int shareIntegralNumber,
-			int shareGoldNumber,int inviteIntegralNumber,float planGrowIntegralSpeed);
+	void updatePlanMembersRights(int signGoldNumber, int goldForNewNember,int inviteIntegralNumber,float planGrowIntegralSpeed);
 
-	void updateVipMembersRights(int signGoldNumber,int shareIntegralNumber,int shareGoldNumber,
-			int inviteIntegralNumber,float vipGrowIntegralSpeed,float vipGrowGradeSpeed);
+	void updateVipMembersRights(int signGoldNumber,int inviteIntegralNumber,float vipGrowIntegralSpeed,float vipGrowGradeSpeed);
 }

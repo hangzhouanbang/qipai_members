@@ -10,7 +10,9 @@ import com.anbang.qipai.members.plan.domain.MemberRights;
 import com.anbang.qipai.members.plan.service.MemberRightsService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 
-
+/**会员权益controller
+ * @author 程佳 2018.6.12
+ * **/
 @RestController
 @RequestMapping("/conf")
 public class MemberRightsController {
@@ -25,9 +27,9 @@ public class MemberRightsController {
 	 * **/
 	@RequestMapping(value = "/commonuser")
 	@ResponseBody
-	public CommonVO commonuser(int signGoldNumber,int goldForNewNember,int shareIntegralNumber,int shareGoldNumber,
+	public CommonVO commonuser(int signGoldNumber,int goldForNewNember,
 			int inviteIntegralNumber,float planGrowIntegralSpeed) {
-		memberShipConfigurationService.savePlanShipConfiguration(signGoldNumber,goldForNewNember,shareIntegralNumber,shareGoldNumber,inviteIntegralNumber,planGrowIntegralSpeed);
+		memberShipConfigurationService.savePlanShipConfiguration(signGoldNumber,goldForNewNember,inviteIntegralNumber,planGrowIntegralSpeed);
 		//查询普通用户权益
 		MemberRights createMemberConfiguration = memberShipConfigurationService.findMemberCreateMemberConfiguration();
 		//发送消息给管理系统
@@ -40,14 +42,10 @@ public class MemberRightsController {
 	 * **/
 	@RequestMapping("/vipuser")
 	@ResponseBody
-	public CommonVO vipuser(int signGoldNumber,int shareIntegralNumber,int shareGoldNumber,
-			int inviteIntegralNumber,float vipGrowIntegralSpeed,float vipGrowGradeSpeed) {
-		System.out.println("1111"+signGoldNumber+shareIntegralNumber+shareGoldNumber+inviteIntegralNumber+vipGrowIntegralSpeed+vipGrowGradeSpeed);
-		memberShipConfigurationService.saveVipShipConfiguration(signGoldNumber,shareIntegralNumber,shareGoldNumber,inviteIntegralNumber,vipGrowIntegralSpeed,vipGrowGradeSpeed);
+	public CommonVO vipuser(int signGoldNumber,int inviteIntegralNumber,float vipGrowIntegralSpeed,float vipGrowGradeSpeed) {
+		memberShipConfigurationService.saveVipShipConfiguration(signGoldNumber,inviteIntegralNumber,vipGrowIntegralSpeed,vipGrowGradeSpeed);
 		//查询vip用户权益
 		MemberRights createMemberConfiguration = memberShipConfigurationService.findMemberCreateMemberConfiguration();
-		System.out.println(createMemberConfiguration.getGoldForNewNember()+"sssssssss");
-		System.out.println(createMemberConfiguration.getShareIntegralNumber()+"sssssssss");
 		//发送消息给管理系统
 		memberShipRightsMsgService.savevipuser(createMemberConfiguration);
 		return new CommonVO();

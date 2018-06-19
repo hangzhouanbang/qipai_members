@@ -47,25 +47,19 @@ public class MongodbMemberRightsDao implements MemberRightsDao {
 	}
 
 	@Override
-	public void updatePlanMembersRights(int signGoldNumber, int goldForNewNember, int shareIntegralNumber,
-			int shareGoldNumber, int inviteIntegralNumber, float planGrowIntegralSpeed) {
+	public void updatePlanMembersRights(int signGoldNumber, int goldForNewNember,int inviteIntegralNumber, float planGrowIntegralSpeed) {
 		mongoTemplate.updateMulti(new Query(Criteria.where("id").is("1")),
 				new Update().set("signGoldNumber", signGoldNumber)
 						.set("goldForNewNember", goldForNewNember)
-						.set("shareIntegralNumber", shareIntegralNumber)
-						.set("shareGoldNumber", shareGoldNumber)
 						.set("inviteIntegralNumber", inviteIntegralNumber)
 						.set("planGrowIntegralSpeed", planGrowIntegralSpeed),
 						MemberRights.class);
 	}
 	
 	@Override
-	public void updateVipMembersRights(int signGoldNumber,int shareIntegralNumber,int shareGoldNumber,
-			int inviteIntegralNumber,float vipGrowIntegralSpeed,float vipGrowGradeSpeed) {
+	public void updateVipMembersRights(int signGoldNumber,int inviteIntegralNumber,float vipGrowIntegralSpeed,float vipGrowGradeSpeed) {
 		mongoTemplate.updateMulti(new Query(Criteria.where("id").is("1")),
 				new Update().set("signGoldNumber", signGoldNumber)
-						.set("shareIntegralNumber", shareIntegralNumber)
-						.set("shareGoldNumber", shareGoldNumber)
 						.set("inviteIntegralNumber", inviteIntegralNumber)
 						.set("vipGrowIntegralSpeed", vipGrowIntegralSpeed)
 						.set("inviteIntegralNumber", inviteIntegralNumber)

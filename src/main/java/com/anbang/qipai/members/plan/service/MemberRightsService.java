@@ -12,7 +12,7 @@ public class MemberRightsService {
 	@Autowired
 	private MemberRightsDao memberShipConfigurationDao;
 
-	public void savePlanShipConfiguration(int signGoldNumber,int goldForNewNember,int shareIntegralNumber,int shareGoldNumber,
+	public void savePlanShipConfiguration(int signGoldNumber,int goldForNewNember,
 			int inviteIntegralNumber,float planGrowIntegralSpeed) {
 		MemberRights memberRights = memberShipConfigurationDao.find();
 		if(memberRights == null) {
@@ -20,15 +20,13 @@ public class MemberRightsService {
 			create.setId("1");
 			create.setSignGoldNumber(signGoldNumber);
 			create.setGoldForNewNember(goldForNewNember);
-			create.setShareIntegralNumber(shareIntegralNumber);
-			create.setShareGoldNumber(shareGoldNumber);
 			create.setInviteIntegralNumber(inviteIntegralNumber);
 			create.setPlanGrowIntegralSpeed(planGrowIntegralSpeed);
 			memberShipConfigurationDao.savePlanShipConfiguration(create);
 		}else {
 			memberShipConfigurationDao.setPlanMembersRights(planGrowIntegralSpeed, goldForNewNember);
 		}
-		memberShipConfigurationDao.updatePlanMembersRights(signGoldNumber,goldForNewNember,shareIntegralNumber,shareGoldNumber,inviteIntegralNumber,planGrowIntegralSpeed);
+		memberShipConfigurationDao.updatePlanMembersRights(signGoldNumber,goldForNewNember,inviteIntegralNumber,planGrowIntegralSpeed);
 
 	}
 
@@ -36,15 +34,12 @@ public class MemberRightsService {
 		return memberShipConfigurationDao.find();
 	}
 	
-	public void saveVipShipConfiguration(int signGoldNumber,int shareIntegralNumber,int shareGoldNumber,
-			int inviteIntegralNumber,float vipGrowIntegralSpeed,float vipGrowGradeSpeed) {
+	public void saveVipShipConfiguration(int signGoldNumber,int inviteIntegralNumber,float vipGrowIntegralSpeed,float vipGrowGradeSpeed) {
 		MemberRights memberRights = memberShipConfigurationDao.find();
 		if(memberRights == null) {
 		MemberRights create = new MemberRights();
 		create.setId("1");
 		create.setSignGoldNumber(signGoldNumber);
-		create.setShareIntegralNumber(shareIntegralNumber);
-		create.setShareGoldNumber(shareGoldNumber);
 		create.setInviteIntegralNumber(inviteIntegralNumber);
 		create.setVipGrowIntegralSpeed(vipGrowIntegralSpeed);
 		create .setVipGrowGradeSpeed(vipGrowGradeSpeed);
@@ -52,7 +47,7 @@ public class MemberRightsService {
 		}else {
 			memberShipConfigurationDao.setVipMembersRights(vipGrowGradeSpeed);
 		}
-		memberShipConfigurationDao.updateVipMembersRights(signGoldNumber, shareIntegralNumber, shareGoldNumber, inviteIntegralNumber,vipGrowIntegralSpeed,vipGrowGradeSpeed );
+		memberShipConfigurationDao.updateVipMembersRights(signGoldNumber, inviteIntegralNumber,vipGrowIntegralSpeed,vipGrowGradeSpeed );
 	}
 
 }
