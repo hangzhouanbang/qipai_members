@@ -7,10 +7,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.anbang.qipai.members.cqrs.c.service.MemberAuthService;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreAccountDbo;
 import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
+import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
 import com.anbang.qipai.members.plan.service.MemberService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.anbang.qipai.members.web.vo.DetailsVo;
@@ -21,12 +24,16 @@ import com.highto.framework.web.page.ListPage;
 @RestController
 @RequestMapping("/member")
 public class MemberController {
-
+	@Autowired
+	private MemberAuthService memberAuthService;
 	@Autowired
 	private MemberAuthQueryService memberAuthQueryService;
 
 	@Autowired
 	private MemberGoldQueryService memberGoldQueryService;
+
+	@Autowired
+	private MemberScoreQueryService memberScoreQueryService;
 
 	@Autowired
 	private MemberService memberService;
@@ -76,15 +83,43 @@ public class MemberController {
 		return vo;
 	}
 
-	@RequestMapping("/checkaccount")
-	public CommonVO checkAccount(@RequestParam(name = "page", defaultValue = "1") Integer page,
-			@RequestParam(name = "size", defaultValue = "10") Integer size, String memberId) {
+	@RequestMapping("/querygoldaccount")
+	public CommonVO queryGoldAccount(@RequestParam(name = "page", defaultValue = "1") Integer page,
+			@RequestParam(name = "size", defaultValue = "10") Integer size, String token) {
 		CommonVO vo = new CommonVO();
-		MemberGoldAccountDbo accountId = memberGoldQueryService.findMemberGoldAccount(memberId);
-		ListPage listPage = memberGoldQueryService.findMemberGoldRecords(page, size, accountId.getId());
-		vo.setSuccess(true);
-		vo.setMsg("accout");
-		vo.setData(listPage);
+		String memberId = memberAuthService.getMemberIdBySessionId(token);
+		if (memberId != null) {
+			MemberGoldAccountDbo accountId = memberGoldQueryService.findMemberGoldAccount(memberId);
+			ListPage listPage = memberGoldQueryService.findMemberGoldRecords(page, size, accountId.getId());
+			// ListPage listPage = memberGoldQueryService.findMemberGoldRecords(page, size,
+			// "627532_gold_wallet");//测试用
+			vo.setSuccess(true);
+			vo.setMsg("goldaccout");
+			vo.setData(listPage);
+		} else {
+			vo.setSuccess(false);
+			vo.setMsg("No Such Member");
+		}
+		return vo;
+	}
+
+	@RequestMapping("/queryscoreaccount")
+	public CommonVO queryScoreAccount(@RequestParam(name = "page", defaultValue = "1") Integer page,
+			@RequestParam(name = "size", defaultValue = "10") Integer size, String token) {
+		CommonVO vo = new CommonVO();
+		String memberId = memberAuthService.getMemberIdBySessionId(token);
+		if (memberId != null) {
+			MemberScoreAccountDbo accountId = memberScoreQueryService.findMemberScoreAccount(memberId);
+			ListPage listPage = memberScoreQueryService.findMemberScoreRecords(page, size, accountId.getId());
+			// ListPage listPage = memberScoreQueryService.findMemberScoreRecords(page,
+			// size, "627532_gold_wallet");// 测试用
+			vo.setSuccess(true);
+			vo.setMsg("scoreaccout");
+			vo.setData(listPage);
+		} else {
+			vo.setSuccess(false);
+			vo.setMsg("No Such Member");
+		}
 		return vo;
 	}
 }

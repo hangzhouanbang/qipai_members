@@ -34,6 +34,17 @@ spring:
                 batch:
                   size: 16384
                   
+          scores:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+                  
           membershiprights:
             producer:
               configuration:
@@ -60,6 +71,12 @@ spring:
             
         golds:
           destination: golds
+          contentType: application/json
+          producer:
+            partitionCount: 1
+            
+        scores:
+          destination: scores
           contentType: application/json
           producer:
             partitionCount: 1

@@ -7,6 +7,7 @@ public class CreateMemberResult {
 	private String memberId;
 	private String goldAccountId;
 	private AccountingRecord accountingRecordForGiveGold;
+	private AccountingRecord accountingRecordForGiveScore;
 	private String scoreAccountId;
 
 	public CreateMemberResult(String memberId, String goldAccountId, AccountingRecord accountingRecordForGiveGold,
@@ -39,6 +40,14 @@ public class CreateMemberResult {
 
 	public void setAccountingRecordForGiveGold(AccountingRecord accountingRecordForGiveGold) {
 		this.accountingRecordForGiveGold = accountingRecordForGiveGold;
+	}
+
+	public AccountingRecord getAccountingRecordForGiveScore() {
+		return accountingRecordForGiveScore;
+	}
+
+	public void setAccountingRecordForGiveScore(AccountingRecord accountingRecordForGiveScore) {
+		this.accountingRecordForGiveScore = accountingRecordForGiveScore;
 	}
 
 	public String getScoreAccountId() {
