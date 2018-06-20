@@ -40,4 +40,25 @@ public class DisruptorMemberGoldCmdService extends DisruptorCmdServiceBase imple
 		}
 	}
 
+	@Override
+	public AccountingRecord giveGoldToMember(String memberId, Integer amount, String textSummary, Long currentTime)
+			throws MemberNotFoundException {
+		CommonCommand cmd = new CommonCommand(MemberGoldCmdServiceImpl.class.getName(), "giveGoldToMember", memberId,
+				amount, textSummary, currentTime);
+		DeferredResult<AccountingRecord> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
+			AccountingRecord accountingRecord = memberGoldCmdServiceImpl.giveGoldToMember(cmd.getParameter(),
+					cmd.getParameter(), cmd.getParameter(), cmd.getParameter());
+			return accountingRecord;
+		});
+		try {
+			return result.getResult();
+		} catch (Exception e) {
+			if (e instanceof MemberNotFoundException) {
+				throw (MemberNotFoundException) e;
+			} else {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
 }

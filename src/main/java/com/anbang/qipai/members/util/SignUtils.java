@@ -35,16 +35,16 @@ public class SignUtils {
 		return null;
 	}
 
-	public static boolean verify(String content, String sign, String ali_public_key, String input_charset) {
+	public static boolean verify(String content, String sign, String ali_public_key) {
 		try {
-			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+			KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM);
 			byte[] encodedKey = Base64.decode(ali_public_key);
 			PublicKey pubKey = keyFactory.generatePublic(new X509EncodedKeySpec(encodedKey));
 
 			java.security.Signature signature = java.security.Signature.getInstance(SIGN_ALGORITHMS);
 
 			signature.initVerify(pubKey);
-			signature.update(content.getBytes(input_charset));
+			signature.update(content.getBytes(DEFAULT_CHARSET));
 
 			boolean bverify = signature.verify(Base64.decode(sign));
 			return bverify;

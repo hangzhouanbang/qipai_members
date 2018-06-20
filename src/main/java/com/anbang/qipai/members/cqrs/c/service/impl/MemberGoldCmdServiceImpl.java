@@ -13,6 +13,15 @@ import com.dml.accounting.TextAccountingSummary;
 public class MemberGoldCmdServiceImpl extends CmdServiceBase implements MemberGoldCmdService {
 
 	@Override
+	public AccountingRecord giveGoldToMember(String memberId, Integer amount, String textSummary, Long currentTime)
+			throws MemberNotFoundException {
+		MemberGoldAccountManager memberGoldAccountManager = singletonEntityRepository
+				.getEntity(MemberGoldAccountManager.class);
+		return memberGoldAccountManager.giveGoldToMember(memberId, amount, new TextAccountingSummary(textSummary),
+				currentTime);
+	}
+
+	@Override
 	public AccountingRecord withdraw(String memberId, Integer amount, String textSummary, Long currentTime)
 			throws InsufficientBalanceException, MemberNotFoundException {
 		MemberGoldAccountManager memberGoldAccountManager = singletonEntityRepository
