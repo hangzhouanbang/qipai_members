@@ -3,8 +3,8 @@ package com.anbang.qipai.members.plan.domain;
 public class Order {
 	private String id;
 	private Long out_trade_no;// 商户订单号
-	private String pay_type;//支付方式，支付宝或微信
-	private String transaction_id;// 微信订单号
+	private String pay_type;// 支付方式，支付宝或微信
+	private String transaction_id;// 订单号
 	private Integer status;// 0:未支付,1:支付成功,-1:支付失敗
 	private String memberId;
 	private String nickname;
@@ -15,6 +15,7 @@ public class Order {
 	private Integer gold;// 单张会员卡赠送的金币
 	private Integer score;// 单张会员卡赠送的积分
 	private Long vipTime;// 单张会员卡赠送的VIP时间
+	private Double totalamount;// 总价
 	private Long createTime;// 订单创建时间
 
 	public String getId() {
@@ -25,12 +26,52 @@ public class Order {
 		this.id = id;
 	}
 
+	public Long getOut_trade_no() {
+		return out_trade_no;
+	}
+
+	public void setOut_trade_no(Long out_trade_no) {
+		this.out_trade_no = out_trade_no;
+	}
+
+	public String getPay_type() {
+		return pay_type;
+	}
+
+	public void setPay_type(String pay_type) {
+		this.pay_type = pay_type;
+	}
+
+	public String getTransaction_id() {
+		return transaction_id;
+	}
+
+	public void setTransaction_id(String transaction_id) {
+		this.transaction_id = transaction_id;
+	}
+
 	public Integer getStatus() {
 		return status;
 	}
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+
+	public String getMemberId() {
+		return memberId;
+	}
+
+	public void setMemberId(String memberId) {
+		this.memberId = memberId;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 
 	public String getClubCardId() {
@@ -89,52 +130,20 @@ public class Order {
 		this.vipTime = vipTime;
 	}
 
+	public Double getTotalamount() {
+		return totalamount;
+	}
+
+	public void setTotalamount(Double totalamount) {
+		this.totalamount = totalamount;
+	}
+
 	public Long getCreateTime() {
 		return createTime;
 	}
 
 	public void setCreateTime(Long createTime) {
 		this.createTime = createTime;
-	}
-
-	public String getMemberId() {
-		return memberId;
-	}
-
-	public void setMemberId(String memberId) {
-		this.memberId = memberId;
-	}
-
-	public String getNickname() {
-		return nickname;
-	}
-
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
-
-	public Long getOut_trade_no() {
-		return out_trade_no;
-	}
-
-	public void setOut_trade_no(Long out_trade_no) {
-		this.out_trade_no = out_trade_no;
-	}
-
-	public String getTransaction_id() {
-		return transaction_id;
-	}
-
-	public void setTransaction_id(String transaction_id) {
-		this.transaction_id = transaction_id;
-	}
-
-	public String getPay_type() {
-		return pay_type;
-	}
-
-	public void setPay_type(String pay_type) {
-		this.pay_type = pay_type;
 	}
 
 }

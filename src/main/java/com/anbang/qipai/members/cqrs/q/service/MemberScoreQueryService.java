@@ -4,69 +4,68 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.anbang.qipai.members.cqrs.c.domain.CreateMemberResult;
-import com.anbang.qipai.members.cqrs.q.dao.MemberGoldAccountDboDao;
-import com.anbang.qipai.members.cqrs.q.dao.MemberGoldRecordDboDao;
-import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
-import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
+import com.anbang.qipai.members.cqrs.q.dao.MemberScoreAccountDboDao;
+import com.anbang.qipai.members.cqrs.q.dao.MemberScoreRecordDboDao;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreAccountDbo;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreRecordDbo;
 import com.dml.accounting.AccountingRecord;
 import com.highto.framework.web.page.ListPage;
 
-@Component
-public class MemberGoldQueryService {
+@Service
+public class MemberScoreQueryService {
+	@Autowired
+	private MemberScoreRecordDboDao memberScoreRecordDboDao;
 
 	@Autowired
-	private MemberGoldRecordDboDao memberGoldRecordDboDao;
+	private MemberScoreAccountDboDao memberScoreAccountDboDao;
 
-	@Autowired
-	private MemberGoldAccountDboDao memberGoldAccountDboDao;
-
-	public void recordMemberGoldRecord(AccountingRecord accountingRecord) {
-		MemberGoldRecordDbo dbo = new MemberGoldRecordDbo();
+	public void recordMemberScoreRecord(AccountingRecord accountingRecord) {
+		MemberScoreRecordDbo dbo = new MemberScoreRecordDbo();
 		dbo.setAccountId(accountingRecord.getAccountId());
 		dbo.setAccountingAmount((int) accountingRecord.getAccountingAmount());
 		dbo.setAccountingNo(accountingRecord.getAccountingNo());
 		dbo.setBalanceAfter((int) accountingRecord.getBalanceAfter());
-		memberGoldRecordDboDao.save(dbo);
+		memberScoreRecordDboDao.save(dbo);
 	}
 
 	public void createMember(CreateMemberResult createMemberResult) {
-		MemberGoldAccountDbo account = new MemberGoldAccountDbo();
-		account.setId(createMemberResult.getGoldAccountId());
+		MemberScoreAccountDbo account = new MemberScoreAccountDbo();
+		account.setId(createMemberResult.getScoreAccountId());
 		account.setMemberId(createMemberResult.getMemberId());
-		memberGoldAccountDboDao.save(account);
+		memberScoreAccountDboDao.save(account);
 
-		AccountingRecord accountingRecord = createMemberResult.getAccountingRecordForGiveGold();
-		MemberGoldRecordDbo dbo = new MemberGoldRecordDbo();
+		AccountingRecord accountingRecord = createMemberResult.getAccountingRecordForGiveScore();
+		MemberScoreRecordDbo dbo = new MemberScoreRecordDbo();
 		dbo.setAccountId(accountingRecord.getAccountId());
 		dbo.setAccountingAmount((int) accountingRecord.getAccountingAmount());
 		dbo.setAccountingNo(accountingRecord.getAccountingNo());
 		dbo.setBalanceAfter((int) accountingRecord.getBalanceAfter());
 		dbo.setSummary(accountingRecord.getSummary());
 		dbo.setAccountingTime(accountingRecord.getAccountingTime());
-		memberGoldRecordDboDao.save(dbo);
+		memberScoreRecordDboDao.save(dbo);
 
-		memberGoldAccountDboDao.update(account.getId(), (int) accountingRecord.getBalanceAfter());
+		memberScoreAccountDboDao.update(account.getId(), (int) accountingRecord.getBalanceAfter());
 	}
 
-	public MemberGoldAccountDbo findMemberGoldAccount(String memberId) {
-		return memberGoldAccountDboDao.findByMemberId(memberId);
+	public MemberScoreAccountDbo findMemberScoreAccount(String memberId) {
+		return memberScoreAccountDboDao.findByMemberId(memberId);
 	}
 
-	public ListPage findMemberGoldRecords(int page, int size, String accountId) {
+	public ListPage findMemberScoreRecords(int page, int size, String accountId) {
 		PageRequest pageRequest = new PageRequest(page-1, size);
-		List<MemberGoldRecordDbo> recordList = memberGoldRecordDboDao.findMemberGoldRecords(accountId, pageRequest);
-		long amount = memberGoldRecordDboDao.getCount();
+		List<MemberScoreRecordDbo> recordList = memberScoreRecordDboDao.findMemberScoreRecords(accountId, pageRequest);
+		long amount = memberScoreRecordDboDao.getCount();
 		long pageNum = (amount == 0) ? 1 : ((amount % size == 0) ? (amount / size) : (amount / size + 1));
 		ListPage listPage = new ListPage(recordList, (int) pageNum, size, (int) amount);
 		return listPage;
 	}
 
-	public MemberGoldRecordDbo withdraw(String memberId, AccountingRecord accountingRecord) {
+	public MemberScoreRecordDbo withdraw(String memberId, AccountingRecord accountingRecord) {
 
-		MemberGoldRecordDbo dbo = new MemberGoldRecordDbo();
+		MemberScoreRecordDbo dbo = new MemberScoreRecordDbo();
 		dbo.setMemberId(memberId);
 		dbo.setAccountId(accountingRecord.getAccountId());
 		dbo.setAccountingAmount((int) accountingRecord.getAccountingAmount());
@@ -74,9 +73,9 @@ public class MemberGoldQueryService {
 		dbo.setBalanceAfter((int) accountingRecord.getBalanceAfter());
 		dbo.setSummary(accountingRecord.getSummary());
 		dbo.setAccountingTime(accountingRecord.getAccountingTime());
-		memberGoldRecordDboDao.save(dbo);
+		memberScoreRecordDboDao.save(dbo);
 
-		memberGoldAccountDboDao.update(accountingRecord.getAccountId(), (int) accountingRecord.getBalanceAfter());
+		memberScoreAccountDboDao.update(accountingRecord.getAccountId(), (int) accountingRecord.getBalanceAfter());
 		return dbo;
 	}
 }

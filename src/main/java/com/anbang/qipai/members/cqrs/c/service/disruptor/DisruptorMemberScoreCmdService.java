@@ -7,6 +7,7 @@ import com.anbang.qipai.members.cqrs.c.domain.MemberNotFoundException;
 import com.anbang.qipai.members.cqrs.c.service.MemberScoreCmdService;
 import com.anbang.qipai.members.cqrs.c.service.impl.MemberScoreCmdServiceImpl;
 import com.dml.accounting.AccountingRecord;
+import com.dml.accounting.InsufficientBalanceException;
 import com.highto.framework.concurrent.DeferredResult;
 import com.highto.framework.ddd.CommonCommand;
 
@@ -30,6 +31,29 @@ public class DisruptorMemberScoreCmdService extends DisruptorCmdServiceBase impl
 			return result.getResult();
 		} catch (Exception e) {
 			if (e instanceof MemberNotFoundException) {
+				throw (MemberNotFoundException) e;
+			} else {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
+	@Override
+	public AccountingRecord withdraw(String memberId, Integer amount, String textSummary, Long currentTime)
+			throws InsufficientBalanceException, MemberNotFoundException {
+		CommonCommand cmd = new CommonCommand(MemberScoreCmdServiceImpl.class.getName(), "withdraw", memberId, amount,
+				textSummary, currentTime);
+		DeferredResult<AccountingRecord> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
+			AccountingRecord accountingRecord = memberScoreCmdServiceImpl.withdraw(cmd.getParameter(),
+					cmd.getParameter(), cmd.getParameter(), cmd.getParameter());
+			return accountingRecord;
+		});
+		try {
+			return result.getResult();
+		} catch (Exception e) {
+			if (e instanceof InsufficientBalanceException) {
+				throw (InsufficientBalanceException) e;
+			} else if (e instanceof MemberNotFoundException) {
 				throw (MemberNotFoundException) e;
 			} else {
 				throw new RuntimeException(e);

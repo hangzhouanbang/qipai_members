@@ -21,14 +21,14 @@ public class OrderService {
 
 	@Autowired
 	private ClubCardDao clubCardDao;
-	
-	private static long out_trade_no;
 
-	public Order addOrder(String memberId, String clubCardId, Integer number,String pay_type) {
+	private static long out_trade_no;// 商户流水号
+
+	public Order addOrder(String memberId, String clubCardId, Integer number, String pay_type) {
 		Order order = new Order();
 		order.setOut_trade_no(out_trade_no);
-		order.setPay_type(pay_type);
 		out_trade_no++;
+		order.setPay_type(pay_type);
 		order.setStatus(0);
 		order.setMemberId(memberId);
 		MemberDbo member = memberDao.findMemberById(memberId);
@@ -41,6 +41,17 @@ public class OrderService {
 		order.setScore(clubCard.getScore());
 		order.setVipTime(clubCard.getTime());
 		order.setNumber(number);
+		order.setTotalamount(clubCard.getPrice() * number);
+		// order.setMemberId("001");
+		// order.setNickname("test");
+		// order.setClubCardId("001");
+		// order.setClubCardName("testcard");
+		// order.setClubCardPrice(12.01);
+		// order.setGold(1000);
+		// order.setScore(2000);
+		// order.setVipTime(Long.valueOf("12312"));
+		// order.setNumber(2);
+		// order.setTotalamount(0.001);
 		order.setCreateTime(System.currentTimeMillis());
 		orderDao.addOrder(order);
 		return order;

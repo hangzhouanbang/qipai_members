@@ -92,37 +92,35 @@ public class ClubCardController {
 		return vo;
 	}
 
+	/**生成支付宝订单
+	 * @param memberId 购买人
+	 * @param clubCardId 购买的会员卡
+	 * @param number 数量
+	 * @return 订单信息
+	 */
 	@RequestMapping("/createalipayorder")
 	public CommonVO createAliPayOrder(String memberId, String clubCardId, Integer number) {
 		CommonVO vo = new CommonVO();
 		Order order = orderService.addOrder(memberId, clubCardId, number, "alipay");
-		try {
-			String orderString = alipayService.order(order);
-			vo.setSuccess(true);
-			vo.setMsg("success");
-			vo.setData(orderString);
-		} catch (Exception e) {
-			e.printStackTrace();
-			e.printStackTrace();
-			vo.setSuccess(false);
-			vo.setMsg("fail");
-		}
+		String orderString = alipayService.getOrderInfo(order);
+		System.out.println(orderString);
+		vo.setSuccess(true);
+		vo.setMsg("sign orderInfo");
+		vo.setData(orderString);
 		return vo;
 	}
 
 	@RequestMapping("/alipaynotify")
 	public String alipayNotify(HttpServletRequest request) {
-		if (alipayService.alipayNotify(request)) {
-			return "success";
-		}
-		return "fail";
+		return alipayService.alipayNotify(request);
 	}
 
 	@RequestMapping("/checkalipay")
-	public CommonVO checkAlipay(Long out_trade_no) {
+	public CommonVO checkAlipay(HttpServletRequest request) {
 		CommonVO vo = new CommonVO();
-		if (alipayService.checkAlipay(String.valueOf(out_trade_no)) == 1) {
-//			memberService.deliver(String.valueOf(out_trade_no), System.currentTimeMillis());
+		if (alipayService.checkAlipay(request)) {
+			// memberService.deliver(String.valueOf(out_trade_no),
+			// System.currentTimeMillis());
 			vo.setSuccess(true);
 			vo.setMsg("success");
 			return vo;
