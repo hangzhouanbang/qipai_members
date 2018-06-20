@@ -36,7 +36,6 @@ public class MemberShareController {
 			co.setSuccess(false);
 			co.setMsg("invalid token");
 		}
-		System.out.println(memberId);
 		Integer integral = shareService.Shareupdatecount(memberId);
 		co.setData(integral);
 		return co;
