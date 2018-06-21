@@ -2,7 +2,7 @@ package com.anbang.qipai.members.plan.domain;
 
 public class Order {
 	private String id;
-	private Long out_trade_no;// 商户订单号
+	private Long out_trade_no;// 商户订单流水号
 	private String pay_type;// 支付方式，支付宝或微信
 	private String transaction_id;// 订单号
 	private Integer status;// 0:未支付,1:支付成功,-1:支付失敗

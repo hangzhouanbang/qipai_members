@@ -22,6 +22,6 @@ public class AlipayConfig {
 	public static final String CHARSET = "utf-8";
 	public static final String SIGN_TYPE = "RSA";
 	public static final String SELLER_ID = "baoanb@qq.com";
-	public static final String NOTIFY_URL = "http://192.168.0.106:82/clubcard/checkalipay";
+	public static final String NOTIFY_URL = "http://106.14.203.215:8080/";
 	public static final String PAYMENT_TYPE = "1";
 }
