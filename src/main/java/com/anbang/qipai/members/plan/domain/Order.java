@@ -2,7 +2,7 @@ package com.anbang.qipai.members.plan.domain;
 
 public class Order {
 	private String id;
-	private Long out_trade_no;// 商户订单流水号
+	private String out_trade_no;// 商户订单流水号
 	private String pay_type;// 支付方式，支付宝或微信
 	private String transaction_id;// 订单号
 	private Integer status;// 0:未支付,1:支付成功,-1:支付失敗
@@ -16,7 +16,9 @@ public class Order {
 	private Integer score;// 单张会员卡赠送的积分
 	private Long vipTime;// 单张会员卡赠送的VIP时间
 	private Double totalamount;// 总价
+	private String reqIP;// 终端ip
 	private Long createTime;// 订单创建时间
+	private Long deliveTime;// 发货时间
 
 	public String getId() {
 		return id;
@@ -26,11 +28,11 @@ public class Order {
 		this.id = id;
 	}
 
-	public Long getOut_trade_no() {
+	public String getOut_trade_no() {
 		return out_trade_no;
 	}
 
-	public void setOut_trade_no(Long out_trade_no) {
+	public void setOut_trade_no(String out_trade_no) {
 		this.out_trade_no = out_trade_no;
 	}
 
@@ -144,6 +146,22 @@ public class Order {
 
 	public void setCreateTime(Long createTime) {
 		this.createTime = createTime;
+	}
+
+	public String getReqIP() {
+		return reqIP;
+	}
+
+	public void setReqIP(String reqIP) {
+		this.reqIP = reqIP;
+	}
+
+	public Long getDeliveTime() {
+		return deliveTime;
+	}
+
+	public void setDeliveTime(Long deliveTime) {
+		this.deliveTime = deliveTime;
 	}
 
 }

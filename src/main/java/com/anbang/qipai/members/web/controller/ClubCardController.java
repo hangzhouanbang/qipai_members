@@ -20,6 +20,7 @@ import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
 import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
+import com.anbang.qipai.members.msg.service.OrdersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
 import com.anbang.qipai.members.plan.domain.ClubCard;
 import com.anbang.qipai.members.plan.domain.Order;
@@ -63,7 +64,8 @@ public class ClubCardController {
 	private GoldsMsgService goldsMsgService;
 	@Autowired
 	private RefundOrderService refundOrderService;
-
+	@Autowired
+	private OrdersMsgService ordersMsgService;
 	@Autowired
 	private WXpayService wxpayService;
 
@@ -130,9 +132,11 @@ public class ClubCardController {
 	 * @return 订单信息
 	 */
 	@RequestMapping("/createalipayorder")
-	public CommonVO createAliPayOrder(String memberId, String clubCardId, Integer number) {
+	public CommonVO createAliPayOrder(String memberId, String clubCardId, Integer number, HttpServletRequest request) {
 		CommonVO vo = new CommonVO();
-		Order order = orderService.addOrder(memberId, clubCardId, number, "alipay");
+		Order order = orderService.addOrder(memberId, clubCardId, number, "alipay", request.getRemoteAddr());
+		// kafka发消息
+		ordersMsgService.createOrder(order);
 		String orderString = alipayService.getOrderInfo(order);
 		vo.setSuccess(true);
 		vo.setMsg("sign orderInfo");
@@ -162,21 +166,30 @@ public class ClubCardController {
 		if (order == null) {
 			return "fail";
 		}
-		memberService.updateVIPTime(order.getMemberId(), order.getVipTime());
-		// 发送会员信息
-		membersMsgService.updateMember(memberService.findMemberById(order.getMemberId()));
-		try {
-			AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(order.getMemberId(),
-					order.getGold() * order.getNumber(), "give for buy clubcard", System.currentTimeMillis());
-			AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(order.getMemberId(),
-					order.getScore() * order.getNumber(), "give for buy clubcard", System.currentTimeMillis());
-			MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(order.getMemberId(), goldrcd);
-			MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(order.getMemberId(), scorercd);
-			// TODO: rcd发kafka
-			goldsMsgService.withdraw(golddbo);
-			scoresMsgService.withdraw(scoredbo);
-		} catch (MemberNotFoundException e) {
-			e.printStackTrace();
+		if (order.getStatus() == -1) {
+			ordersMsgService.updateStatus(order);
+		}
+		if (order.getStatus() == 0) {
+			memberService.updateVIPTime(order.getMemberId(), order.getVipTime());
+			// 发送会员信息
+			membersMsgService.updateMember(memberService.findMemberById(order.getMemberId()));
+			try {
+				AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(order.getMemberId(),
+						order.getGold() * order.getNumber(), "give for buy clubcard", System.currentTimeMillis());
+				AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(order.getMemberId(),
+						order.getScore() * order.getNumber(), "give for buy clubcard", System.currentTimeMillis());
+				MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(order.getMemberId(), goldrcd);
+				MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(order.getMemberId(), scorercd);
+				// TODO: rcd发kafka
+				goldsMsgService.withdraw(golddbo);
+				scoresMsgService.withdraw(scoredbo);
+				orderService.updateOrderStatus(order.getOut_trade_no(), 1);
+				// kafka发消息
+				order = orderService.findOrderByOut_trade_no(order.getOut_trade_no());
+				ordersMsgService.updateStatus(order);
+			} catch (MemberNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
 		return "success";
 	}
@@ -184,7 +197,9 @@ public class ClubCardController {
 	@RequestMapping("/createwxorder")
 	public CommonVO createWXOrder(String memberId, String clubCardId, Integer number, HttpServletRequest request) {
 		CommonVO vo = new CommonVO();
-		Order order = orderService.addOrder(memberId, clubCardId, number, "WXpay");
+		Order order = orderService.addOrder(memberId, clubCardId, number, "wxpay", request.getRemoteAddr());
+		// kafka发消息
+		ordersMsgService.createOrder(order);
 		try {
 			Map<String, String> resultMap = wxpayService.createOrder(order, request.getRemoteAddr());
 			vo.setSuccess(true);
@@ -205,20 +220,10 @@ public class ClubCardController {
 	}
 
 	@RequestMapping("/querywxorderresult")
-	public CommonVO queryWXOrderResult(String transaction_id, String out_trade_no) {
+	public CommonVO queryWXOrderResult(String transaction_id) {
 		CommonVO vo = new CommonVO();
 		try {
 			SortedMap<String, String> responseMap = wxpayService.queryOrderResult(transaction_id);
-			if (responseMap != null && "SUCCESS".equals(responseMap.get("return_code"))
-					&& "SUCCESS".equals(responseMap.get("result_code"))) {
-				// memberService.deliver(out_trade_no, System.currentTimeMillis());
-				if (!orderService.updateTransaction_id(out_trade_no, transaction_id)) {
-					vo.setSuccess(false);
-					vo.setMsg("update transaction_id fail");
-					vo.setData(responseMap);
-					return vo;
-				}
-			}
 			vo.setSuccess(true);
 			vo.setMsg("success");
 			vo.setData(responseMap);

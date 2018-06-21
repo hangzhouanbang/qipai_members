@@ -127,12 +127,13 @@ public class AlipayService {
 		String orderInfo = createLinkString(result);
 		// 验证签名
 		if (SignUtils.verify(orderInfo, params.get("sign"), AlipayConfig.ALI_PUBLIC_KEY)) {
-			// 业务验证
+			orderDao.updateTransaction_id(params.get("out_trade_no"), params.get("trade_no"));
 			Order order = orderDao.findOrderByOut_trade_no(params.get("out_trade_no"));
-			if (params.get("total_fee").equals(order.getTotalamount().toString())
-					&& params.get("seller_id").equals(AlipayConfig.SELLER_ID)) {
-				return order;
+			if (!"TRADE_FINISHED".equals(params.get("trade_status"))) {
+				order.setStatus(-1);
+				orderDao.updateOrderStatus(params.get("out_trade_no"), -1);
 			}
+			return order;
 		}
 		return null;
 	}

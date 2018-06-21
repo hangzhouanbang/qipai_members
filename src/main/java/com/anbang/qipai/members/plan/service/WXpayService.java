@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.anbang.qipai.members.plan.domain.Order;
 import com.anbang.qipai.members.plan.domain.RefundOrder;
+import com.anbang.qipai.members.plan.domain.config.WXConfig;
 import com.anbang.qipai.members.util.MD5Util;
 import com.anbang.qipai.members.util.XMLObjectConvertUtil;
 
@@ -28,9 +29,11 @@ public class WXpayService {
 	public Map<String, String> createOrder(Order order, String reqIp) throws MalformedURLException, IOException {
 		String orderInfo = createOrderInfo(order, reqIp);
 		SortedMap<String, String> responseMap = order(orderInfo);
-		String newSign = createSign(responseMap);
-		if (newSign.equals(responseMap.get("sign"))) {
-			return responseMap;
+		if ("SUCCESS".equals(responseMap.get("return_code"))) {
+			String newSign = createSign(responseMap);
+			if (newSign.equals(responseMap.get("sign"))) {
+				return responseMap;
+			}
 		}
 		return null;
 	}
@@ -52,16 +55,18 @@ public class WXpayService {
 			return "<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[参数格式校验错误]]></return_msg></xml>";
 		}
 		SortedMap<String, String> responseMap = XMLObjectConvertUtil.praseXMLToMap(sb.toString());
-		String newSign = createSign(responseMap);
-		if (newSign.equals(responseMap.get("sign"))) {
-			return "<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>";
+		if ("SUCCESS".equals(responseMap.get("return_code"))) {
+			String newSign = createSign(responseMap);
+			if (newSign.equals(responseMap.get("sign"))) {
+				return "<xml><return_code><![CDATA[SUCCESS]]></return_code></xml>";
+			}
 		}
 		return "<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[签名失败]]></return_msg></xml>";
 	}
 
 	public SortedMap<String, String> queryOrderResult(String transaction_id) throws MalformedURLException, IOException {
 		// 微信查询订单接口
-		String url = "https://api.mch.weixin.qq.com/pay/orderquery";
+		final String url = "https://api.mch.weixin.qq.com/pay/orderquery";
 		String queryOrderInfo = createQueryOrderInfo(transaction_id);
 		// 连接 微信查询订单接口
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
@@ -83,16 +88,18 @@ public class WXpayService {
 			sb.append(line);
 		}
 		SortedMap<String, String> responseMap = XMLObjectConvertUtil.praseXMLToMap(sb.toString());
-		String newSign = createSign(responseMap);
-		if (newSign.equals(responseMap.get("sign"))) {
-			return responseMap;
+		if ("SUCCESS".equals(responseMap.get("return_code"))) {
+			String newSign = createSign(responseMap);
+			if (newSign.equals(responseMap.get("sign"))) {
+				return responseMap;
+			}
 		}
 		return null;
 	}
 
 	public SortedMap<String, String> closeOrder(String out_trade_no) throws MalformedURLException, IOException {
 		// 微信关闭订单接口
-		String url = "https://api.mch.weixin.qq.com/pay/closeorder";
+		final String url = "https://api.mch.weixin.qq.com/pay/closeorder";
 		String closeInfo = createCloseInfo(out_trade_no);
 		// 连接 微信关闭订单接口
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
@@ -133,7 +140,7 @@ public class WXpayService {
 
 	public SortedMap<String, String> queryRefundResult(String refund_id) throws Exception {
 		// 微信查询退款接口
-		String url = "https://api.mch.weixin.qq.com/pay/refundquery";
+		final String url = "https://api.mch.weixin.qq.com/pay/refundquery";
 		String queryRefundInfo = createQueryRefundInfo(refund_id);
 		// 连接 微信查询退款接口
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
@@ -172,7 +179,7 @@ public class WXpayService {
 	 */
 	private SortedMap<String, String> order(String orderInfo) throws MalformedURLException, IOException {
 		// 微信统一下单接口
-		String url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+		final String url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 		// 连接微信统一下单接口
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 		conn.setRequestMethod("POST");
@@ -231,15 +238,24 @@ public class WXpayService {
 	private String createOrderInfo(Order order, String reqIp) {
 		// 创建可排序的Map集合
 		SortedMap<String, String> parameters = new TreeMap<String, String>();
-		parameters.put("appid", "wxb841e562b0100c95");
-		parameters.put("mch_id", "");
+		// 应用id
+		parameters.put("appid", WXConfig.APPID);
+		// 商户号
+		parameters.put("mch_id", WXConfig.MCH_ID);
+		// 随机字符串
 		parameters.put("nonce_str", UUID.randomUUID().toString().substring(0, 30));
+		// 商品描述
 		parameters.put("body", "购买" + order.getClubCardName());
+		// 商户流水号
 		parameters.put("out_trade_no", String.valueOf(order.getOut_trade_no()));
-		parameters.put("total_fee", Integer.toString((int) (100 * order.getClubCardPrice() * order.getNumber())));
+		// 支付总额
+		parameters.put("total_fee", "0.01");
+		// 用户端实际ip
 		parameters.put("spbill_create_ip", reqIp);
-		parameters.put("notify_url", "");
-		parameters.put("trade_type", "APP");
+		// 通知地址
+		parameters.put("notify_url", WXConfig.NOTIFY_URL);
+		// 交易类型
+		parameters.put("trade_type", WXConfig.TRADE_TYPE);
 		parameters.put("sign", createSign(parameters));
 		String xml = XMLObjectConvertUtil.praseMapToXML(parameters);
 		return xml;
@@ -338,7 +354,7 @@ public class WXpayService {
 			}
 		}
 		/* 拼接 key,设置路径:微信商户平台(pay.weixin.com)->账户设置->API安全-->秘钥设置 */
-		sb.append("key=" + "xxxxxxxxxxx");
+		sb.append("key=" + WXConfig.KEY);
 		String sign = MD5Util.getMD5(sb.toString(), "utf-8").toUpperCase();
 		return sign;
 	}
