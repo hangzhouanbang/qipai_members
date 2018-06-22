@@ -65,7 +65,7 @@ public class XMLObjectConvertUtil {
 			// 将key所对应的value放入node中
 			filed.setText(value);
 		}
-		String xml = document.toString();
+		String xml = document.asXML();
 		return xml;
 	}
 }

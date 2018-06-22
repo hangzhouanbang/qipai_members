@@ -16,8 +16,10 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.anbang.qipai.members.plan.dao.OrderDao;
 import com.anbang.qipai.members.plan.domain.Order;
 import com.anbang.qipai.members.plan.domain.RefundOrder;
 import com.anbang.qipai.members.plan.domain.config.WXConfig;
@@ -26,13 +28,26 @@ import com.anbang.qipai.members.util.XMLObjectConvertUtil;
 
 @Service
 public class WXpayService {
+
+	@Autowired
+	private OrderDao orderDao;
+
 	public Map<String, String> createOrder(Order order, String reqIp) throws MalformedURLException, IOException {
 		String orderInfo = createOrderInfo(order, reqIp);
 		SortedMap<String, String> responseMap = order(orderInfo);
 		if ("SUCCESS".equals(responseMap.get("return_code"))) {
 			String newSign = createSign(responseMap);
 			if (newSign.equals(responseMap.get("sign"))) {
-				return responseMap;
+				SortedMap<String, String> resultMap = new TreeMap<String, String>();
+				resultMap.put("appid", WXConfig.APPID);
+				resultMap.put("mch_id", WXConfig.MCH_ID);
+				resultMap.put("prepay_id", responseMap.get("prepay_id"));
+				resultMap.put("package", "Sign=WXPay");
+				resultMap.put("timestamp", String.valueOf(System.currentTimeMillis()));
+				resultMap.put("nonce_str", UUID.randomUUID().toString().substring(0, 30));
+				String sign = createSign(resultMap);
+				resultMap.put("sign", sign);
+				return resultMap;
 			}
 		}
 		return null;
@@ -58,6 +73,7 @@ public class WXpayService {
 		if ("SUCCESS".equals(responseMap.get("return_code"))) {
 			String newSign = createSign(responseMap);
 			if (newSign.equals(responseMap.get("sign"))) {
+				orderDao.updateTransaction_id(responseMap.get("out_trade_no"), responseMap.get("transaction_id"));
 				return "<xml><return_code><![CDATA[SUCCESS]]></return_code></xml>";
 			}
 		}
@@ -199,6 +215,7 @@ public class WXpayService {
 		while ((line = reader.readLine()) != null) {
 			sb.append(line);
 		}
+		System.out.println(sb);
 		SortedMap<String, String> responseMap = XMLObjectConvertUtil.praseXMLToMap(sb.toString());
 		return responseMap;
 	}
@@ -247,9 +264,9 @@ public class WXpayService {
 		// 商品描述
 		parameters.put("body", "购买" + order.getClubCardName());
 		// 商户流水号
-		parameters.put("out_trade_no", String.valueOf(order.getOut_trade_no()));
+		parameters.put("out_trade_no", UUID.randomUUID().toString().substring(0, 32));
 		// 支付总额
-		parameters.put("total_fee", "0.01");
+		parameters.put("total_fee", "1");
 		// 用户端实际ip
 		parameters.put("spbill_create_ip", reqIp);
 		// 通知地址
@@ -355,7 +372,7 @@ public class WXpayService {
 		}
 		/* 拼接 key,设置路径:微信商户平台(pay.weixin.com)->账户设置->API安全-->秘钥设置 */
 		sb.append("key=" + WXConfig.KEY);
-		String sign = MD5Util.getMD5(sb.toString(), "utf-8").toUpperCase();
+		String sign = MD5Util.getMD5(sb.toString(), WXConfig.CHARSET).toUpperCase();
 		return sign;
 	}
 
