@@ -1,22 +1,23 @@
 package com.anbang.qipai.members.plan.domain;
 
-/** 管理员设置的vip等级需要的金额
+/**
+ * 管理员设置的vip等级需要的金额
  * 
  * @author 程佳 2018.6.21
- * **/
+ **/
 public class MemberGrade {
-	
+
 	private String id;
-	
-	private long vip1;//vip1需要的金额
-	
-	private long vip2;//vip2需要的金额
-	
-	private long vip3;//vip3需要的金额
-	
-	private long vip4;//vip4需要的金额
-	
-	private long vip5;//vip5需要的金额
+
+	private long vip1;// vip1需要的金额
+
+	private long vip2;// vip2需要的金额
+
+	private long vip3;// vip3需要的金额
+
+	private long vip4;// vip4需要的金额
+
+	private long vip5;// vip5需要的金额
 
 	public String getId() {
 		return id;
@@ -66,4 +67,21 @@ public class MemberGrade {
 		this.vip5 = vip5;
 	}
 
+	public long getLevel(int level) {
+		switch (level) {
+		case 1:
+			return vip1;
+		case 2:
+			return vip2;
+		case 3:
+			return vip3;
+		case 4:
+			return vip4;
+		case 5:
+			return vip5;
+		default:
+			return 0;
+		}
+
+	}
 }

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.anbang.qipai.members.cqrs.c.domain.MemberNotFoundException;
@@ -132,7 +133,8 @@ public class ClubCardController {
 	 * @return 订单信息
 	 */
 	@RequestMapping("/createalipayorder")
-	public CommonVO createAliPayOrder(String memberId, String clubCardId, Integer number, HttpServletRequest request) {
+	public CommonVO createAliPayOrder(String memberId, String clubCardId,
+			@RequestParam(defaultValue = "1") Integer number, HttpServletRequest request) {
 		CommonVO vo = new CommonVO();
 		Order order = orderService.addOrder(memberId, clubCardId, number, "alipay", request.getRemoteAddr());
 		// kafka发消息
@@ -147,13 +149,6 @@ public class ClubCardController {
 	@RequestMapping("/checkalipay")
 	public CommonVO checkAlipay(String result) {
 		CommonVO vo = new CommonVO();
-		// if (alipayService.checkAlipay(request)) {
-		// // memberService.deliver(String.valueOf(out_trade_no),
-		// // System.currentTimeMillis());
-		// vo.setSuccess(true);
-		// vo.setMsg("success");
-		// return vo;
-		// }
 		System.out.println(result);
 		vo.setSuccess(true);
 		vo.setMsg("success");
@@ -170,7 +165,7 @@ public class ClubCardController {
 			ordersMsgService.updateOrder(order);
 		}
 		if (order.getStatus() == 0) {
-			memberService.updateVIPTime(order.getMemberId(), order.getVipTime());
+			memberService.updateVIP(order);
 			// 发送会员信息
 			membersMsgService.updateMember(memberService.findMemberById(order.getMemberId()));
 			try {
@@ -183,6 +178,7 @@ public class ClubCardController {
 				// TODO: rcd发kafka
 				goldsMsgService.withdraw(golddbo);
 				scoresMsgService.withdraw(scoredbo);
+				orderService.updateDeliveTime(order.getOut_trade_no(), System.currentTimeMillis());
 				orderService.updateOrderStatus(order.getOut_trade_no(), 1);
 				// kafka发消息
 				order = orderService.findOrderByOut_trade_no(order.getOut_trade_no());
@@ -195,7 +191,8 @@ public class ClubCardController {
 	}
 
 	@RequestMapping("/createwxorder")
-	public CommonVO createWXOrder(String memberId, String clubCardId, Integer number, HttpServletRequest request) {
+	public CommonVO createWXOrder(String memberId, String clubCardId, @RequestParam(defaultValue = "1") Integer number,
+			HttpServletRequest request) {
 		CommonVO vo = new CommonVO();
 		Order order = orderService.addOrder(memberId, clubCardId, number, "wxpay", request.getRemoteAddr());
 		// kafka发消息
@@ -226,31 +223,29 @@ public class ClubCardController {
 			SortedMap<String, String> responseMap = wxpayService.queryOrderResult(transaction_id);
 			if ("SUCCESS".equals(responseMap.get("result_code"))) {
 				Order order = orderService.findOrderByOut_trade_no(responseMap.get("out_trade_no"));
-				if ("SUCCESS".equals(responseMap.get("trade_state"))) {
-					if (order.getStatus() == 0) {
-						memberService.updateVIPTime(order.getMemberId(), order.getVipTime());
-						// 发送会员信息
-						membersMsgService.updateMember(memberService.findMemberById(order.getMemberId()));
-						try {
-							AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(order.getMemberId(),
-									order.getGold() * order.getNumber(), "give for buy clubcard",
-									System.currentTimeMillis());
-							AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(order.getMemberId(),
-									order.getScore() * order.getNumber(), "give for buy clubcard",
-									System.currentTimeMillis());
-							MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(order.getMemberId(), goldrcd);
-							MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(order.getMemberId(),
-									scorercd);
-							// TODO: rcd发kafka
-							goldsMsgService.withdraw(golddbo);
-							scoresMsgService.withdraw(scoredbo);
-							orderService.updateOrderStatus(order.getOut_trade_no(), 1);
-							// kafka发消息
-							order = orderService.findOrderByOut_trade_no(order.getOut_trade_no());
-							ordersMsgService.updateOrder(order);
-						} catch (MemberNotFoundException e) {
-							e.printStackTrace();
-						}
+				if ("SUCCESS".equals(responseMap.get("trade_state")) && order.getStatus() == 0) {
+					memberService.updateVIP(order);
+					// 发送会员信息
+					membersMsgService.updateMember(memberService.findMemberById(order.getMemberId()));
+					try {
+						AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(order.getMemberId(),
+								order.getGold() * order.getNumber(), "give for buy clubcard",
+								System.currentTimeMillis());
+						AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(order.getMemberId(),
+								order.getScore() * order.getNumber(), "give for buy clubcard",
+								System.currentTimeMillis());
+						MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(order.getMemberId(), goldrcd);
+						MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(order.getMemberId(), scorercd);
+						// TODO: rcd发kafka
+						goldsMsgService.withdraw(golddbo);
+						scoresMsgService.withdraw(scoredbo);
+						orderService.updateDeliveTime(order.getOut_trade_no(), System.currentTimeMillis());
+						orderService.updateOrderStatus(order.getOut_trade_no(), 1);
+						// kafka发消息
+						order = orderService.findOrderByOut_trade_no(order.getOut_trade_no());
+						ordersMsgService.updateOrder(order);
+					} catch (MemberNotFoundException e) {
+						e.printStackTrace();
 					}
 				} else {
 					orderService.updateOrderStatus(order.getOut_trade_no(), -1);

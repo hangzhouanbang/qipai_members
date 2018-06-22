@@ -11,4 +11,6 @@ public interface OrderDao {
 	public Boolean updateOrderStatus(String out_trade_no, int status);
 
 	public Boolean updateTransaction_id(String out_trade_no, String transaction_id);
+	
+	public Boolean updateDeliveTime(String out_trade_no, Long deliveTime);
 }

@@ -46,4 +46,13 @@ public class MongodbOrderDao implements OrderDao {
 		return writeResult.getN() > 0;
 	}
 
+	@Override
+	public Boolean updateDeliveTime(String out_trade_no, Long deliveTime) {
+		Query query = new Query(Criteria.where("out_trade_no").is(out_trade_no));
+		Update update = new Update();
+		update.set("deliveTime", deliveTime);
+		WriteResult writeResult = mongoTemplate.updateFirst(query, update, Order.class);
+		return writeResult.getN() > 0;
+	}
+
 }

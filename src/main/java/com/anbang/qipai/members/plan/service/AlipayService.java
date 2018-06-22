@@ -58,30 +58,25 @@ public class AlipayService {
 		params.put("subject", order.getClubCardName());
 
 		// 商品详情
-		params.put("body", order.getClubCardName() + order.getNumber());
+		params.put("body", "购买" + order.getClubCardName() + order.getNumber() + "张");
 
 		// 商品金额
-		params.put("total_fee", "0.01");
+		params.put("total_fee", order.getTotalamount().toString());
 
 		// 设置未付款交易的超时时间
 		// 默认30分钟，一旦超时，该笔交易就会自动被关闭。
 		// 取值范围：1m～15d。
 		// m-分钟，h-小时，d-天，1c-当天（无论交易何时创建，都在0点关闭）。
 		// 该参数数值不接受小数点，如1.5h，可转换为90m。
-		params.put("it_b_pay", "1m");
+		params.put("it_b_pay", "30m");
 
 		// 支付宝处理完请求后，当前页面跳转到商户指定页面的路径，可空
 		// orderInfo += "&return_url=\"m.alipay.com\"";
-
-		// sign_type需要进行签名
-		params.put("sign_type", AlipayConfig.SIGN_TYPE);
 		Map<String, String> result = paraFilter(params);
 		String orderInfo = createLinkString(result);
-		System.out.println(orderInfo);
 		String sign = SignUtils.sign(orderInfo, AlipayConfig.PRIVATE_KEY);
-		System.out.println(sign);
 		try {
-			orderInfo += "&sign=" + URLEncoder.encode(sign, "utf-8") + "&sign_type=RSA";
+			orderInfo += "&sign=" + URLEncoder.encode(sign, "utf-8") + "&sign_type=" + AlipayConfig.SIGN_TYPE;
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

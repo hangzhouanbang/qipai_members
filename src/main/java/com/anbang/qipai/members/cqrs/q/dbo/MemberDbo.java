@@ -7,6 +7,7 @@ public class MemberDbo {
 	private Boolean vip;// 是否VIP
 	private Integer vipLevel;// VIP等级
 	private Integer vipScore;// VIP积分
+	private Integer RMB;// 消费总额RMB
 	private String headimgurl;// 头像url
 	private String phone;// 会员手机
 	private Integer score;// 会员积分
@@ -126,6 +127,14 @@ public class MemberDbo {
 
 	public void setLoginIp(String loginIp) {
 		this.loginIp = loginIp;
+	}
+
+	public Integer getRMB() {
+		return RMB;
+	}
+
+	public void setRMB(Integer rMB) {
+		RMB = rMB;
 	}
 
 

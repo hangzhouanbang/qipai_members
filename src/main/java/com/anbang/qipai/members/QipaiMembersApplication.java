@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.anbang.qipai.members.cqrs.c.repository.SingletonEntityFactoryImpl;
 import com.anbang.qipai.members.cqrs.c.service.disruptor.CoreSnapshotFactory;
@@ -19,6 +20,7 @@ import com.highto.framework.ddd.SingletonEntityRepository;
 
 @EnableEurekaClient
 @SpringBootApplication
+@EnableScheduling
 public class QipaiMembersApplication {
 
 	@Autowired

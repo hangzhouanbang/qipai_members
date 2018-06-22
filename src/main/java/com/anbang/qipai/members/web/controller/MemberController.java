@@ -1,6 +1,9 @@
 package com.anbang.qipai.members.web.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +17,7 @@ import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreAccountDbo;
 import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
+import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.plan.service.MemberService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.anbang.qipai.members.web.vo.DetailsVo;
@@ -37,6 +41,9 @@ public class MemberController {
 
 	@Autowired
 	private MemberService memberService;
+
+	@Autowired
+	private MembersMsgService membersMsgService;
 
 	@RequestMapping(value = "/info")
 	@ResponseBody
@@ -92,7 +99,7 @@ public class MemberController {
 			MemberGoldAccountDbo accountId = memberGoldQueryService.findMemberGoldAccount(memberId);
 			ListPage listPage = memberGoldQueryService.findMemberGoldRecords(page, size, accountId.getId());
 			// ListPage listPage = memberGoldQueryService.findMemberGoldRecords(page, size,
-			// "627532_gold_wallet");//测试用
+			// "627532_gold_wallet");// 测试用
 			vo.setSuccess(true);
 			vo.setMsg("goldaccout");
 			vo.setData(listPage);
@@ -113,13 +120,31 @@ public class MemberController {
 			ListPage listPage = memberScoreQueryService.findMemberScoreRecords(page, size, accountId.getId());
 			// ListPage listPage = memberScoreQueryService.findMemberScoreRecords(page,
 			// size, "627532_gold_wallet");// 测试用
-			vo.setSuccess(true);
-			vo.setMsg("scoreaccout");
-			vo.setData(listPage);
+			 vo.setSuccess(true);
+			 vo.setMsg("scoreaccout");
+			 vo.setData(listPage);
 		} else {
 			vo.setSuccess(false);
 			vo.setMsg("No Such Member");
 		}
 		return vo;
+	}
+
+	@Scheduled(cron = "0 0 0 * * ?") // 每天凌晨
+	public void resetVIP() {
+		int size = 200;
+		long amount = memberService.getAmount();
+		long pageCount = amount / size > 0 ? amount / size + 1 : amount / size;
+		for (int page = 1; page <= pageCount; page++) {
+			List<MemberDbo> memberList = memberService.findMember(page, size);
+			for (MemberDbo member : memberList) {
+				if (member.getVipEndTime() < System.currentTimeMillis()) {
+					member.setVip(false);
+					memberService.resetVIP(member);
+					// kafka更新
+					membersMsgService.updateMember(member);
+				}
+			}
+		}
 	}
 }
