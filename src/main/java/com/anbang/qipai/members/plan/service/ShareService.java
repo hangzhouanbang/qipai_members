@@ -25,13 +25,12 @@ public class ShareService {
 
 	public Integer Shareupdatecount(String memberid) throws MemberNotFoundException {
 		Integer integral = 100;
-		String textSummary = "分享奖励";
 		Share share = new Share();
 		Share shares = shareDao.findShare(memberid);
 		if(shares == null) {
 			share.setId(memberid);
 			share.setFrequency(1);
-			memberScoreCmdService.giveScoreToMember(memberid, integral, textSummary, System.currentTimeMillis());
+			memberScoreCmdService.giveScoreToMember(memberid, integral, "share_reward", System.currentTimeMillis());
 		}else {
 			if(shares.getFrequency() == 3) {
 				share.setId(shares.getId());
@@ -39,7 +38,7 @@ public class ShareService {
 			}else {
 				share.setId(shares.getId());
 				share.setFrequency(shares.getFrequency()+1);
-				memberScoreCmdService.giveScoreToMember(memberid, integral, textSummary, System.currentTimeMillis());
+				memberScoreCmdService.giveScoreToMember(memberid, integral, "share_reward", System.currentTimeMillis());
 			}
 		}
 		shareDao.Shareupdatecount(share);

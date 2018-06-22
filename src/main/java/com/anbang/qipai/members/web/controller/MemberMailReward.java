@@ -29,10 +29,10 @@ public class MemberMailReward {
 	public CommonVO mail_reward(String memberId,Integer number,Integer integral,Integer vipcard) throws InsufficientBalanceException, MemberNotFoundException {
 		if(memberId != null) {
 			if(number != null) {
-				memberGoldCmdService.withdraw(memberId, number, "邮件奖励", System.currentTimeMillis());
+				memberGoldCmdService.withdraw(memberId, number, "mail_reward", System.currentTimeMillis());
 			}
 			if(integral != null) {
-				memberScoreCmdService.giveScoreToMember(memberId, integral, "邮件奖励", System.currentTimeMillis());
+				memberScoreCmdService.giveScoreToMember(memberId, integral, "mail_reward", System.currentTimeMillis());
 			}
 			if(vipcard != null) {
 				
