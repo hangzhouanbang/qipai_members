@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.anbang.qipai.members.plan.service.MemberGradeInFoService;
-import com.anbang.qipai.members.web.vo.CommonVO;
+import com.anbang.qipai.members.web.vo.GradeVo;
 
 /**会员充值记录controller
  * @author 程佳 2018.6.22
@@ -20,9 +20,9 @@ public class MemberGradeInFoController {
 	
 	@RequestMapping("/find_grade_info")
 	@ResponseBody
-	public CommonVO find_recharge_record() {
-		String memberId = "";//测试用
-		CommonVO co = memberGradeInFoService.find_grade_info(memberId);
-		return co;
+	public GradeVo find_recharge_record() {
+		String memberId = "881071";//测试用
+		GradeVo go = memberGradeInFoService.find_grade_info(memberId);
+		return go;
 	}
 }
