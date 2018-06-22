@@ -11,6 +11,8 @@ public class MemberDbo {
 	private String phone;// 会员手机
 	private Integer score;// 会员积分
 	private Integer gold;// 会员金币
+	private Integer onlineTime;//在线时长
+	private String loginIp;//登录ip
 	private Long createTime;// 注册时间
 	private Long vipEndTime;// VIP时间
 
@@ -109,5 +111,22 @@ public class MemberDbo {
 	public void setVipEndTime(Long vipEndTime) {
 		this.vipEndTime = vipEndTime;
 	}
+
+	public Integer getOnlineTime() {
+		return onlineTime;
+	}
+
+	public void setOnlineTime(Integer onlineTime) {
+		this.onlineTime = onlineTime;
+	}
+
+	public String getLoginIp() {
+		return loginIp;
+	}
+
+	public void setLoginIp(String loginIp) {
+		this.loginIp = loginIp;
+	}
+
 
 }

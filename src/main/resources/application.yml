@@ -65,6 +65,17 @@ spring:
                 linger:
                   ms: 5
                 batch:
+                  size: 16384 
+                  
+          grade:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
                   size: 16384         
 
       bindings:
@@ -76,6 +87,12 @@ spring:
             
         membershiprights:
           destination: membershiprights
+          contentType: application/json
+          producer:
+            partitionCount: 1
+            
+        grade:
+          destination: grade
           contentType: application/json
           producer:
             partitionCount: 1
