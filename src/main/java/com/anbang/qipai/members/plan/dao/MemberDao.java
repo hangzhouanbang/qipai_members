@@ -6,6 +6,8 @@ import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 
 public interface MemberDao {
 	List<MemberDbo> findMember(int page, int size);
+	
+	void update_score_gold(String memberid,MemberDbo memberDbo);
 
 	long getAmount();
 
