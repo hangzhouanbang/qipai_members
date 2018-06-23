@@ -54,7 +54,7 @@ public class MongodbMemberDao implements MemberDao {
 		update.set("vip", member.getVip());
 		update.set("vipLevel", member.getVipLevel());
 		update.set("vipScore", member.getVipScore());
-		update.set("RMB", member.getRMB());
+		update.set("cost", member.getCost());
 		mongoTemplate.updateFirst(query, update, MemberDbo.class);
 	}
 
@@ -64,6 +64,12 @@ public class MongodbMemberDao implements MemberDao {
 		Update update = new Update();
 		update.set("vip", member.getVip());
 		mongoTemplate.updateFirst(query, update, MemberDbo.class);
+	}
+
+	@Override
+	public void update_score_gold(String memberid,MemberDbo memberDbo) {
+		mongoTemplate.updateMulti(new Query(Criteria.where("id").is(memberid)),new Update().set("score",memberDbo.getScore())
+				.set("gold",memberDbo.getGold()), MemberDbo.class);
 	}
 
 }

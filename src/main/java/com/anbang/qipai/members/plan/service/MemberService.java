@@ -23,6 +23,10 @@ public class MemberService {
 	public MemberDbo findMemberById(String memberId) {
 		return memberDao.findMemberById(memberId);
 	}
+	
+	public void update_score_gold(String memberid,MemberDbo memberDbo) {
+		memberDao.update_score_gold(memberid, memberDbo);
+	}
 
 	public long getAmount() {
 		return memberDao.getAmount();
@@ -42,8 +46,8 @@ public class MemberService {
 		member.setVipEndTime(order.getVipTime() * order.getNumber() + System.currentTimeMillis());
 		int vipScore = (int) (order.getClubCardPrice() * order.getNumber() * 100) + member.getVipScore();
 		member.setVipScore(vipScore);
-		int rmb = (int) (order.getClubCardPrice() * order.getNumber() * 100) + member.getRMB();
-		member.setRMB(rmb);
+		int cost = (int) (order.getClubCardPrice() * order.getNumber() * 100) + member.getCost();
+		member.setCost(cost);
 		MemberGrade grade = memberGradeDao.find_grade("1");
 		int level = member.getVipLevel();
 		long score = grade.getLevel(level);

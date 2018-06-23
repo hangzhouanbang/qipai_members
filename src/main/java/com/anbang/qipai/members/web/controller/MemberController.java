@@ -5,12 +5,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.anbang.qipai.members.cqrs.c.domain.MemberNotFoundException;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthService;
+import com.anbang.qipai.members.cqrs.c.service.MemberGoldCmdService;
+import com.anbang.qipai.members.cqrs.c.service.MemberScoreCmdService;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreAccountDbo;
@@ -38,6 +42,12 @@ public class MemberController {
 
 	@Autowired
 	private MemberScoreQueryService memberScoreQueryService;
+	
+	@Autowired
+	private MemberGoldCmdService memberGoldCmdService;
+	
+	@Autowired
+	private MemberScoreCmdService memberScoreCmdService;
 
 	@Autowired
 	private MemberService memberService;
@@ -120,16 +130,51 @@ public class MemberController {
 			ListPage listPage = memberScoreQueryService.findMemberScoreRecords(page, size, accountId.getId());
 			// ListPage listPage = memberScoreQueryService.findMemberScoreRecords(page,
 			// size, "627532_gold_wallet");// 测试用
-			 vo.setSuccess(true);
-			 vo.setMsg("scoreaccout");
-			 vo.setData(listPage);
+			vo.setSuccess(true);
+			vo.setMsg("scoreaccout");
+			vo.setData(listPage);
 		} else {
 			vo.setSuccess(false);
 			vo.setMsg("No Such Member");
 		}
 		return vo;
 	}
+	/**管理后台赠送积分或金币，修改积分金币
+	 * @throws MemberNotFoundException 
+	 * **/
+	@RequestMapping("/update_score_gold")
+	@ResponseBody
+	public CommonVO update_score_gold(@RequestBody String[] ids,Integer score,Integer gold) throws MemberNotFoundException {
+		CommonVO vo = new CommonVO();
+		for(String id:ids) {
+			MemberDbo memberDbo = memberService.findMemberById(id);
+			if(memberDbo != null) {
+				if(score != null) {
+				memberDbo.setScore(memberDbo.getScore()+score);
+				memberService.update_score_gold(id,memberDbo);
+				//kafka更新
+				membersMsgService.updateMember(memberDbo);
+				//添加积分
+//					memberScoreCmdService.giveScoreToMember(id,score, "admin_give_score", System.currentTimeMillis());
+				}
+				if(gold != null) {
+				memberDbo.setGold(memberDbo.getGold()+gold);
+				memberService.update_score_gold(id,memberDbo);
+				//kafka更新
+				membersMsgService.updateMember(memberDbo);
+				//添加金币
+				//memberGoldCmdService.giveGoldToMember(id, gold, "admin_give_gold", System.currentTimeMillis());
+				}
+			}
+			
+		}
+		return vo;
+	}
 
+	/**
+	 * 会员到期判定
+	 * 
+	 */
 	@Scheduled(cron = "0 0 0 * * ?") // 每天凌晨
 	public void resetVIP() {
 		int size = 200;
