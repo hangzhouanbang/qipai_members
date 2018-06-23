@@ -66,4 +66,10 @@ public class MongodbMemberDao implements MemberDao {
 		mongoTemplate.updateFirst(query, update, MemberDbo.class);
 	}
 
+	@Override
+	public void update_score_gold(String memberid,MemberDbo memberDbo) {
+		mongoTemplate.updateMulti(new Query(Criteria.where("id").is(memberid)),new Update().set("score",memberDbo.getScore())
+				.set("gold",memberDbo.getGold()), MemberDbo.class);
+	}
+
 }

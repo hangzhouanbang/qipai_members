@@ -23,6 +23,10 @@ public class MemberService {
 	public MemberDbo findMemberById(String memberId) {
 		return memberDao.findMemberById(memberId);
 	}
+	
+	public void update_score_gold(String memberid,MemberDbo memberDbo) {
+		memberDao.update_score_gold(memberid, memberDbo);
+	}
 
 	public long getAmount() {
 		return memberDao.getAmount();
