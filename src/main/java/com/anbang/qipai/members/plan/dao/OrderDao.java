@@ -8,7 +8,7 @@ public interface OrderDao {
 
 	public void addOrder(Order order);
 
-	public Boolean updateOrderStatus(String out_trade_no, int status);
+	public Boolean updateOrderStatus(String out_trade_no, String status);
 
 	public Boolean updateTransaction_id(String out_trade_no, String transaction_id);
 	

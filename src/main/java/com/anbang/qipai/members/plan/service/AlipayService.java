@@ -81,7 +81,6 @@ public class AlipayService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(orderInfo);
 		return orderInfo;
 	}
 
@@ -121,13 +120,12 @@ public class AlipayService {
 		Map<String, String> result = paraFilter(params);
 		String orderInfo = createLinkString(result);
 		// 验证签名
-		if (SignUtils.verify(orderInfo, params.get("sign"), AlipayConfig.ALI_PUBLIC_KEY)) {
+		String sign = params.get("sign");
+		if (SignUtils.verify(orderInfo, sign, AlipayConfig.ALI_PUBLIC_KEY)) {
 			orderDao.updateTransaction_id(params.get("out_trade_no"), params.get("trade_no"));
+			String trade_status = params.get("trade_status");
+			orderDao.updateOrderStatus(params.get("out_trade_no"), trade_status);
 			Order order = orderDao.findOrderByOut_trade_no(params.get("out_trade_no"));
-			if (!"TRADE_FINISHED".equals(params.get("trade_status"))) {
-				order.setStatus(-1);
-				orderDao.updateOrderStatus(params.get("out_trade_no"), -1);
-			}
 			return order;
 		}
 		return null;

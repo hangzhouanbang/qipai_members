@@ -23,7 +23,7 @@ public class MongodbOrderDao implements OrderDao {
 	}
 
 	@Override
-	public Boolean updateOrderStatus(String out_trade_no, int status) {
+	public Boolean updateOrderStatus(String out_trade_no, String status) {
 		Query query = new Query(Criteria.where("out_trade_no").is(out_trade_no));
 		Update update = new Update();
 		update.set("status", status);

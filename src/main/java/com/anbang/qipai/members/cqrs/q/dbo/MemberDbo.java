@@ -7,13 +7,13 @@ public class MemberDbo {
 	private Boolean vip;// 是否VIP
 	private Integer vipLevel;// VIP等级
 	private Integer vipScore;// VIP积分
-	private Integer RMB;// 消费总额RMB
+	private Integer cost;// 消费总额RMB
 	private String headimgurl;// 头像url
 	private String phone;// 会员手机
 	private Integer score;// 会员积分
 	private Integer gold;// 会员金币
-	private Integer onlineTime;//在线时长
-	private String loginIp;//登录ip
+	private Integer onlineTime;// 在线时长
+	private String loginIp;// 登录ip
 	private Long createTime;// 注册时间
 	private Long vipEndTime;// VIP时间
 
@@ -129,13 +129,11 @@ public class MemberDbo {
 		this.loginIp = loginIp;
 	}
 
-	public Integer getRMB() {
-		return RMB;
+	public Integer getCost() {
+		return cost;
 	}
 
-	public void setRMB(Integer rMB) {
-		RMB = rMB;
+	public void setCost(Integer cost) {
+		this.cost = cost;
 	}
-
-
 }

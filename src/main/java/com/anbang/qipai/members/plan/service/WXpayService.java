@@ -34,7 +34,6 @@ public class WXpayService {
 
 	public Map<String, String> createOrder(Order order, String reqIp) throws MalformedURLException, IOException {
 		String orderInfo = createOrderInfo(order, reqIp);
-		System.out.println(orderInfo);
 		SortedMap<String, String> responseMap = order(orderInfo);
 		if ("SUCCESS".equals(responseMap.get("return_code"))) {
 			String newSign = createSign(responseMap);
@@ -48,7 +47,6 @@ public class WXpayService {
 				resultMap.put("noncestr", UUID.randomUUID().toString().substring(0, 30));
 				String sign = createSign(resultMap);
 				resultMap.put("sign", sign);
-				System.out.println(resultMap);
 				return resultMap;
 			}
 		}
@@ -217,7 +215,6 @@ public class WXpayService {
 		while ((line = reader.readLine()) != null) {
 			sb.append(line);
 		}
-		System.out.println(sb);
 		SortedMap<String, String> responseMap = XMLObjectConvertUtil.praseXMLToMap(sb.toString());
 		return responseMap;
 	}
@@ -264,11 +261,11 @@ public class WXpayService {
 		// 随机字符串
 		parameters.put("nonce_str", UUID.randomUUID().toString().substring(0, 30));
 		// 商品描述
-		parameters.put("body", "购买" + order.getClubCardName());
+		parameters.put("body", order.getClubCardName());
 		// 商户流水号
 		parameters.put("out_trade_no", order.getOut_trade_no());
 		// 支付总额
-		parameters.put("total_fee", String.valueOf((order.getTotalamount() * 100)));
+		parameters.put("total_fee", String.valueOf((int)(order.getTotalamount() * 100)));
 		// 用户端实际ip
 		parameters.put("spbill_create_ip", reqIp);
 		// 通知地址

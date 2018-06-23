@@ -161,10 +161,8 @@ public class ClubCardController {
 		if (order == null) {
 			return "fail";
 		}
-		if (order.getStatus() == -1) {
-			ordersMsgService.updateOrder(order);
-		}
-		if (order.getStatus() == 0) {
+		// 根据发货时间判断是否重复发货
+		if ("TRADE_SUCCESS".equals(order.getStatus()) && order.getDeliveTime() == null) {
 			memberService.updateVIP(order);
 			// 发送会员信息
 			membersMsgService.updateMember(memberService.findMemberById(order.getMemberId()));
@@ -179,14 +177,13 @@ public class ClubCardController {
 				goldsMsgService.withdraw(golddbo);
 				scoresMsgService.withdraw(scoredbo);
 				orderService.updateDeliveTime(order.getOut_trade_no(), System.currentTimeMillis());
-				orderService.updateOrderStatus(order.getOut_trade_no(), 1);
-				// kafka发消息
-				order = orderService.findOrderByOut_trade_no(order.getOut_trade_no());
-				ordersMsgService.updateOrder(order);
 			} catch (MemberNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
+		// kafka发消息
+		order = orderService.findOrderByOut_trade_no(order.getOut_trade_no());
+		ordersMsgService.updateOrder(order);
 		return "success";
 	}
 
@@ -211,7 +208,7 @@ public class ClubCardController {
 		return vo;
 	}
 
-	@RequestMapping("/receivewxnotify")
+	@RequestMapping("/wxnotify")
 	public String receiveWXNotify(HttpServletRequest request) {
 		return wxpayService.receiveNotify(request);
 	}
@@ -219,11 +216,15 @@ public class ClubCardController {
 	@RequestMapping("/querywxorderresult")
 	public CommonVO queryWXOrderResult(String transaction_id) {
 		CommonVO vo = new CommonVO();
+		vo.setSuccess(true);
+		vo.setMsg("query result");
 		try {
 			SortedMap<String, String> responseMap = wxpayService.queryOrderResult(transaction_id);
 			if ("SUCCESS".equals(responseMap.get("result_code"))) {
+				String trade_state = responseMap.get("trade_state");
+				orderService.updateOrderStatus(responseMap.get("out_trade_no"), trade_state);
 				Order order = orderService.findOrderByOut_trade_no(responseMap.get("out_trade_no"));
-				if ("SUCCESS".equals(responseMap.get("trade_state")) && order.getStatus() == 0) {
+				if ("SUCCESS".equals(order.getStatus()) && order.getDeliveTime() == null) {
 					memberService.updateVIP(order);
 					// 发送会员信息
 					membersMsgService.updateMember(memberService.findMemberById(order.getMemberId()));
@@ -240,20 +241,15 @@ public class ClubCardController {
 						goldsMsgService.withdraw(golddbo);
 						scoresMsgService.withdraw(scoredbo);
 						orderService.updateDeliveTime(order.getOut_trade_no(), System.currentTimeMillis());
-						orderService.updateOrderStatus(order.getOut_trade_no(), 1);
-						// kafka发消息
-						order = orderService.findOrderByOut_trade_no(order.getOut_trade_no());
-						ordersMsgService.updateOrder(order);
 					} catch (MemberNotFoundException e) {
 						e.printStackTrace();
 					}
-				} else {
-					orderService.updateOrderStatus(order.getOut_trade_no(), -1);
 				}
+				// kafka发消息
+				order = orderService.findOrderByOut_trade_no(responseMap.get("out_trade_no"));
+				ordersMsgService.updateOrder(order);
+				vo.setData(responseMap);
 			}
-			vo.setSuccess(true);
-			vo.setMsg("success");
-			vo.setData(responseMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 			vo.setSuccess(false);
@@ -269,15 +265,6 @@ public class ClubCardController {
 		if ((System.currentTimeMillis() - order.getCreateTime()) < 300000) {
 			try {
 				SortedMap<String, String> responseMap = wxpayService.closeOrder(out_trade_no);
-				if (responseMap != null && "SUCCESS".equals(responseMap.get("return_code"))
-						&& "SUCCESS".equals(responseMap.get("result_code"))) {
-					if (!orderService.updateOrderStatus(out_trade_no, -1)) {
-						vo.setSuccess(false);
-						vo.setMsg("update order status fail");
-						vo.setData(responseMap);
-						return vo;
-					}
-				}
 				vo.setSuccess(true);
 				vo.setMsg("success");
 				vo.setData(responseMap);

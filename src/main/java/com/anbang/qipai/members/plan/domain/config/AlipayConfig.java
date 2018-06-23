@@ -16,12 +16,12 @@ public class AlipayConfig {
 			+ "AqxbIeCbeDRCq++e7poEVtRcJaZxAkB/pzjLU40X9Ur3Cmoj+42/1HdMBWK7WnBu"
 			+ "NJQ+IkeJbQhu1muBN5NMZUB9/nLwiFdImUQAB14hRdQd1Mw9OM4HAkEA5V13rWfZ"
 			+ "p2b1g+p3LaHok5PEbLd28KXg4Y1ifdGwq0PfGNmLgg8eqHpbkJnViN/1zonXycpx" + "vcTzb6VWKE6ujQ==";
-	public static final String ALI_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDqRjaJlZ0SGD+yE28iHRJgQkeb"
-			+ "h7gpdiYOBrOSJO5P1lgZ7/OSJrAuwVX7F939ZfeNdOC/ydx+v0LzOO516RcQuzcD"
-			+ "wiB5urC2zU8BTHAt4vI0M8SsgOS/6jYGi/Q/esr0rk5uIbgBX6f6kXtgnHjVQDSZ" + "0NpweBoGrUHAKxpCmQIDAQAB";
+	public static final String ALI_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnxj/9qwVfgoUh/y2W89L6BkRA"
+			+ "FljhNhgPdyPuBV64bfQNN1PjbCzkIM6qRdKBoLPXmKKMiFYnkd6rAoprih3/PrQE"
+			+ "B/VsW8OoM8fxn67UDYuyBTqA23MML9q1+ilIZwBC2AQ2UBVOrFXfFl75p6/B5Ksi" + "NG9zpgmLCUYuLkxpLQIDAQAB";
 	public static final String CHARSET = "utf-8";
 	public static final String SIGN_TYPE = "RSA";
 	public static final String SELLER_ID = "baoanb@qq.com";
-	public static final String NOTIFY_URL = "http://106.14.203.215:8080/";
+	public static final String NOTIFY_URL = "http://21228q028k.iask.in:82/clubcard/alipaynotify";
 	public static final String PAYMENT_TYPE = "1";
 }

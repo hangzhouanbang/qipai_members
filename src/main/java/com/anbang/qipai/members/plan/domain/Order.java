@@ -5,7 +5,7 @@ public class Order {
 	private String out_trade_no;// 商户订单流水号
 	private String pay_type;// 支付方式，支付宝或微信
 	private String transaction_id;// 订单号
-	private Integer status;// 0:未支付,1:支付成功,-1:支付失敗
+	private String status;// 微信或支付宝状态码
 	private String memberId;
 	private String nickname;
 	private String clubCardId;
@@ -52,11 +52,11 @@ public class Order {
 		this.transaction_id = transaction_id;
 	}
 
-	public Integer getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(Integer status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
