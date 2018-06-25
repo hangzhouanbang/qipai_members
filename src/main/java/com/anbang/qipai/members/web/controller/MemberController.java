@@ -94,6 +94,9 @@ public class MemberController {
 	public CommonVO registerPhone(String phone, String memberId) {
 		CommonVO vo = new CommonVO();
 		memberService.registerPhone(memberId, phone);
+		MemberDbo memberdbo = memberService.findMemberById(memberId);
+		//kafka发消息更新
+		membersMsgService.updateMember(memberdbo);
 		vo.setSuccess(true);
 		vo.setMsg("register success");
 		vo.setData(phone);
@@ -159,7 +162,6 @@ public class MemberController {
 				}
 				if(gold != null && !gold.equals("") && gold.matches("^[0-9]*$")) {
 				memberDbo.setGold(memberDbo.getGold()+Integer.parseInt(gold));
-				System.out.println(gold+memberDbo.getGold());
 				memberService.update_score_gold(id,memberDbo);
 				//kafka更新
 				membersMsgService.updateMember(memberDbo);
@@ -170,7 +172,6 @@ public class MemberController {
 		}
 		return vo;
 	}
-
 	/**
 	 * 会员到期判定
 	 * 
