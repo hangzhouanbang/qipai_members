@@ -144,29 +144,29 @@ public class MemberController {
 	 * **/
 	@RequestMapping("/update_score_gold")
 	@ResponseBody
-	public CommonVO update_score_gold(@RequestBody String[] ids,Integer score,Integer gold) throws MemberNotFoundException {
+	public CommonVO update_score_gold(@RequestBody String[] ids,String score,String gold) throws MemberNotFoundException {
 		CommonVO vo = new CommonVO();
 		for(String id:ids) {
 			MemberDbo memberDbo = memberService.findMemberById(id);
 			if(memberDbo != null) {
-				if(score != null) {
-				memberDbo.setScore(memberDbo.getScore()+score);
+				if(score != null && !score.equals("") && score.matches("^[0-9]*$")) {
+				memberDbo.setScore(memberDbo.getScore()+Integer.parseInt(score));
 				memberService.update_score_gold(id,memberDbo);
 				//kafka更新
 				membersMsgService.updateMember(memberDbo);
 				//添加积分
-//					memberScoreCmdService.giveScoreToMember(id,score, "admin_give_score", System.currentTimeMillis());
+					//memberScoreCmdService.giveScoreToMember(id,Integer.parseInt(score), "admin_give_score", System.currentTimeMillis());
 				}
-				if(gold != null) {
-				memberDbo.setGold(memberDbo.getGold()+gold);
+				if(gold != null && !gold.equals("") && gold.matches("^[0-9]*$")) {
+				memberDbo.setGold(memberDbo.getGold()+Integer.parseInt(gold));
+				System.out.println(gold+memberDbo.getGold());
 				memberService.update_score_gold(id,memberDbo);
 				//kafka更新
 				membersMsgService.updateMember(memberDbo);
 				//添加金币
-				//memberGoldCmdService.giveGoldToMember(id, gold, "admin_give_gold", System.currentTimeMillis());
+				//memberGoldCmdService.giveGoldToMember(id, Integer.parseInt(gold), "admin_give_gold", System.currentTimeMillis());
 				}
 			}
-			
 		}
 		return vo;
 	}
