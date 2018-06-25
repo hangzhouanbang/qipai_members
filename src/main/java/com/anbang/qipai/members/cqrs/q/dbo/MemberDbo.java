@@ -14,6 +14,7 @@ public class MemberDbo {
 	private Integer gold;// 会员金币
 	private Integer onlineTime;// 在线时长
 	private String loginIp;// 登录ip
+	private Long lastLoginTime;// 最后登录时间
 	private Long createTime;// 注册时间
 	private Long vipEndTime;// VIP时间
 
@@ -135,5 +136,13 @@ public class MemberDbo {
 
 	public void setCost(Integer cost) {
 		this.cost = cost;
+	}
+
+	public Long getLastLoginTime() {
+		return lastLoginTime;
+	}
+
+	public void setLastLoginTime(Long lastLoginTime) {
+		this.lastLoginTime = lastLoginTime;
 	}
 }

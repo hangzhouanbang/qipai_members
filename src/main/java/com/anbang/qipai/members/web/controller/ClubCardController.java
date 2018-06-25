@@ -25,12 +25,10 @@ import com.anbang.qipai.members.msg.service.OrdersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
 import com.anbang.qipai.members.plan.domain.ClubCard;
 import com.anbang.qipai.members.plan.domain.Order;
-import com.anbang.qipai.members.plan.domain.RefundOrder;
 import com.anbang.qipai.members.plan.service.AlipayService;
 import com.anbang.qipai.members.plan.service.ClubCardService;
 import com.anbang.qipai.members.plan.service.MemberService;
 import com.anbang.qipai.members.plan.service.OrderService;
-import com.anbang.qipai.members.plan.service.RefundOrderService;
 import com.anbang.qipai.members.plan.service.WXpayService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.dml.accounting.AccountingRecord;
@@ -47,26 +45,31 @@ public class ClubCardController {
 
 	@Autowired
 	private MemberService memberService;
+
 	@Autowired
 	private MemberScoreCmdService memberScoreCmdService;
 
 	@Autowired
 	private MemberScoreQueryService memberScoreQueryService;
+
 	@Autowired
 	private ScoresMsgService scoresMsgService;
+
 	@Autowired
 	private MembersMsgService membersMsgService;
+
 	@Autowired
 	private MemberGoldCmdService memberGoldCmdService;
 
 	@Autowired
 	private MemberGoldQueryService memberGoldQueryService;
+
 	@Autowired
 	private GoldsMsgService goldsMsgService;
-	@Autowired
-	private RefundOrderService refundOrderService;
+
 	@Autowired
 	private OrdersMsgService ordersMsgService;
+
 	@Autowired
 	private WXpayService wxpayService;
 
@@ -163,20 +166,26 @@ public class ClubCardController {
 		}
 		// 根据发货时间判断是否重复发货
 		if ("TRADE_SUCCESS".equals(order.getStatus()) && order.getDeliveTime() == null) {
-			memberService.updateVIP(order);
-			// 发送会员信息
-			membersMsgService.updateMember(memberService.findMemberById(order.getMemberId()));
-			try {
-				AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(order.getMemberId(),
-						order.getGold() * order.getNumber(), "give for buy clubcard", System.currentTimeMillis());
-				AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(order.getMemberId(),
-						order.getScore() * order.getNumber(), "give for buy clubcard", System.currentTimeMillis());
-				MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(order.getMemberId(), goldrcd);
-				MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(order.getMemberId(), scorercd);
-				// TODO: rcd发kafka
-				goldsMsgService.withdraw(golddbo);
-				scoresMsgService.withdraw(scoredbo);
-				orderService.updateDeliveTime(order.getOut_trade_no(), System.currentTimeMillis());
+			 memberService.updateVIP(order);
+			 // 发送会员信息
+			 membersMsgService.updateMember(memberService.findMemberById(order.getMemberId()));
+			 try {
+			 AccountingRecord goldrcd =
+			 memberGoldCmdService.giveGoldToMember(order.getMemberId(),
+			 order.getGold() * order.getNumber(), "give for buy clubcard",
+			 System.currentTimeMillis());
+			 AccountingRecord scorercd =
+			 memberScoreCmdService.giveScoreToMember(order.getMemberId(),
+			 order.getScore() * order.getNumber(), "give for buy clubcard",
+			 System.currentTimeMillis());
+			 MemberGoldRecordDbo golddbo =
+			 memberGoldQueryService.withdraw(order.getMemberId(), goldrcd);
+			 MemberScoreRecordDbo scoredbo =
+			 memberScoreQueryService.withdraw(order.getMemberId(), scorercd);
+			 // TODO: rcd发kafka
+			 goldsMsgService.withdraw(golddbo);
+			 scoresMsgService.withdraw(scoredbo);
+			orderService.updateDeliveTime(order.getOut_trade_no(), System.currentTimeMillis());
 			} catch (MemberNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -209,8 +218,57 @@ public class ClubCardController {
 	}
 
 	@RequestMapping("/wxnotify")
-	public String receiveWXNotify(HttpServletRequest request) {
-		return wxpayService.receiveNotify(request);
+	public String wxNotify(HttpServletRequest request) {
+		SortedMap<String, String> resultMap = wxpayService.receiveNotify(request);
+		if (resultMap != null && "SUCCESS".equals(resultMap.get("return_code"))) {
+			String newSign = wxpayService.createSign(resultMap);
+			if (newSign.equals(resultMap.get("sign"))) {
+				orderService.updateTransaction_id(resultMap.get("out_trade_no"), resultMap.get("transaction_id"));
+				SortedMap<String, String> responseMap = null;
+				try {
+					responseMap = wxpayService.queryOrderResult(resultMap.get("transaction_id"));
+				} catch (Exception e) {
+					e.printStackTrace();
+					return "<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[参数格式校验错误]]></return_msg></xml>";
+				}
+				if (responseMap != null && "SUCCESS".equals(responseMap.get("result_code"))) {
+					String trade_state = responseMap.get("trade_state");
+					orderService.updateOrderStatus(responseMap.get("out_trade_no"), trade_state);
+					Order order = orderService.findOrderByOut_trade_no(responseMap.get("out_trade_no"));
+					if ("SUCCESS".equals(order.getStatus()) && order.getDeliveTime() == null) {
+						 memberService.updateVIP(order);
+						 // 发送会员信息
+						 membersMsgService.updateMember(memberService.findMemberById(order.getMemberId()));
+						 try {
+						 AccountingRecord goldrcd =
+						 memberGoldCmdService.giveGoldToMember(order.getMemberId(),
+						 order.getGold() * order.getNumber(), "give for buy clubcard",
+						 System.currentTimeMillis());
+						 AccountingRecord scorercd =
+						 memberScoreCmdService.giveScoreToMember(order.getMemberId(),
+						 order.getScore() * order.getNumber(), "give for buy clubcard",
+						 System.currentTimeMillis());
+						 MemberGoldRecordDbo golddbo =
+						 memberGoldQueryService.withdraw(order.getMemberId(), goldrcd);
+						 MemberScoreRecordDbo scoredbo =
+						 memberScoreQueryService.withdraw(order.getMemberId(),
+						 scorercd);
+						 // TODO: rcd发kafka
+						 goldsMsgService.withdraw(golddbo);
+						 scoresMsgService.withdraw(scoredbo);
+						orderService.updateDeliveTime(order.getOut_trade_no(), System.currentTimeMillis());
+						} catch (MemberNotFoundException e) {
+							e.printStackTrace();
+						}
+					}
+					// kafka发消息
+					order = orderService.findOrderByOut_trade_no(order.getOut_trade_no());
+					ordersMsgService.updateOrder(order);
+					return "<xml><return_code><![CDATA[SUCCESS]]></return_code></xml>";
+				}
+			}
+		}
+		return "<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[验签失败]]></return_msg></xml>";
 	}
 
 	@RequestMapping("/querywxorderresult")
@@ -258,68 +316,4 @@ public class ClubCardController {
 		return vo;
 	}
 
-	@RequestMapping("/closewxorder")
-	public CommonVO closeWXOrder(String out_trade_no) {
-		CommonVO vo = new CommonVO();
-		Order order = orderService.findOrderByOut_trade_no(out_trade_no);
-		if ((System.currentTimeMillis() - order.getCreateTime()) < 300000) {
-			try {
-				SortedMap<String, String> responseMap = wxpayService.closeOrder(out_trade_no);
-				vo.setSuccess(true);
-				vo.setMsg("success");
-				vo.setData(responseMap);
-			} catch (Exception e) {
-				e.printStackTrace();
-				vo.setSuccess(false);
-				vo.setMsg("fail");
-			}
-		} else {
-			vo.setSuccess(false);
-			vo.setMsg("try frequently");
-		}
-		return vo;
-	}
-
-	@RequestMapping("/wxrefund")
-	public CommonVO refundWX(String out_trade_no, String refund_fee, String refund_desc) {
-		CommonVO vo = new CommonVO();
-		RefundOrder refundOrder = refundOrderService.addRefundOrder(out_trade_no, refund_fee, refund_desc);
-		try {
-			SortedMap<String, String> responseMap = wxpayService.createRefund(refundOrder);
-			if (responseMap != null && "SUCCESS".equals(responseMap.get("return_code"))
-					&& "SUCCESS".equals(responseMap.get("result_code"))) {
-				if (!refundOrderService.updateRefundOrderStatus(refundOrder.getOut_refund_no(),
-						responseMap.get("refund_id"))) {
-					vo.setSuccess(false);
-					vo.setMsg("update refund_id fail");
-					vo.setData(responseMap);
-					return vo;
-				}
-			}
-			vo.setSuccess(true);
-			vo.setMsg("success");
-			vo.setData(responseMap);
-		} catch (Exception e) {
-			e.printStackTrace();
-			vo.setSuccess(false);
-			vo.setMsg("fail");
-		}
-		return vo;
-	}
-
-	@RequestMapping("/querywxrefund")
-	public CommonVO queryWXRefund(String refund_id) {
-		CommonVO vo = new CommonVO();
-		try {
-			SortedMap<String, String> responseMap = wxpayService.queryRefundResult(refund_id);
-			vo.setSuccess(true);
-			vo.setMsg("success");
-			vo.setData(responseMap);
-		} catch (Exception e) {
-			e.printStackTrace();
-			vo.setSuccess(false);
-			vo.setMsg("fail");
-		}
-		return vo;
-	}
 }

@@ -1,13 +1,17 @@
 package com.anbang.qipai.members.plan.service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.plan.dao.ClubCardDao;
 import com.anbang.qipai.members.plan.dao.MemberDao;
 import com.anbang.qipai.members.plan.dao.OrderDao;
+import com.anbang.qipai.members.plan.domain.ClubCard;
 import com.anbang.qipai.members.plan.domain.Order;
 
 @Service
@@ -24,32 +28,32 @@ public class OrderService {
 
 	public Order addOrder(String memberId, String clubCardId, Integer number, String pay_type, String reqIP) {
 		Order order = new Order();
-		order.setOut_trade_no(UUID.randomUUID().toString().substring(0, 32));
+		SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+		Date date = new Date();
+		order.setOut_trade_no(format.format(date) + memberId + UUID.randomUUID().toString().substring(0, 10));
 		order.setPay_type(pay_type);
 		order.setReqIP(reqIP);
 		order.setStatus("WAIT_BUYER_PAY");
-		// order.setMemberId(memberId);
-		// MemberDbo member = memberDao.findMemberById(memberId);
-		// order.setNickname(member.getNickname());
-		// order.setClubCardId(clubCardId);
-		// ClubCard clubCard = clubCardDao.getClubCardById(clubCardId);
-		// order.setClubCardName(clubCard.getName());
-		// order.setClubCardPrice(clubCard.getPrice());
-		// order.setGold(clubCard.getGold());
-		// order.setScore(clubCard.getScore());
-		// order.setVipTime(clubCard.getTime());
-		// order.setNumber(number);
-		// order.setTotalamount(clubCard.getPrice() * number);
-		order.setMemberId("001");
-		order.setNickname("test");
-		order.setClubCardId("001");
-		order.setClubCardName("周卡");
-		order.setClubCardPrice(12.01);
-		order.setGold(1000);
-		order.setScore(2000);
-		order.setVipTime(Long.valueOf("12312"));
-		order.setNumber(1);
-		order.setTotalamount(0.01);
+		order.setMemberId(memberId);
+		MemberDbo member = memberDao.findMemberById(memberId);
+		order.setNickname(member.getNickname());
+		order.setClubCardId(clubCardId);
+		ClubCard clubCard = clubCardDao.getClubCardById(clubCardId);
+		order.setClubCardName(clubCard.getName());
+		order.setClubCardPrice(clubCard.getPrice());
+		order.setGold(clubCard.getGold());
+		order.setScore(clubCard.getScore());
+		order.setVipTime(clubCard.getTime());
+		order.setNumber(number);
+		order.setTotalamount(clubCard.getPrice() * number);
+		// 测试代码
+		/*
+		 * order.setMemberId("001"); order.setNickname("test");
+		 * order.setClubCardId("001"); order.setClubCardName("周卡");
+		 * order.setClubCardPrice(12.01); order.setGold(1000); order.setScore(2000);
+		 * order.setVipTime(Long.valueOf("12312")); order.setNumber(1);
+		 * order.setTotalamount(0.01);
+		 */
 		order.setCreateTime(System.currentTimeMillis());
 		orderDao.addOrder(order);
 		return order;
