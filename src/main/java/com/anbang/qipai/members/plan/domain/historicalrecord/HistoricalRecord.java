@@ -8,7 +8,11 @@ public class HistoricalRecord implements Comparator<HistoricalRecord>{
 	
 	private String memberid;//用户编号
 	
+	private String headimgurl;// 头像url
+	
 	private String nickname;//会员名称
+	
+	private Integer viplevel;//vip等级
 	
 	private String roomid;//房间编号
 	
@@ -20,6 +24,10 @@ public class HistoricalRecord implements Comparator<HistoricalRecord>{
 	
 	private int totalscore;//总分
 	
+	private int reward;//奖励
+	
+	private int gamecount;//局数
+	
 	private long endtime;//结束时间
 
 	public String getId() {
@@ -28,6 +36,14 @@ public class HistoricalRecord implements Comparator<HistoricalRecord>{
 
 	public void setId(String id) {
 		this.id = id;
+	}
+	
+	public int getReward() {
+		return reward;
+	}
+
+	public void setReward(int reward) {
+		this.reward = reward;
 	}
 
 	public String getMemberid() {
@@ -93,7 +109,31 @@ public class HistoricalRecord implements Comparator<HistoricalRecord>{
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
-	
+
+	public Integer getViplevel() {
+		return viplevel;
+	}
+
+	public void setViplevel(Integer viplevel) {
+		this.viplevel = viplevel;
+	}
+
+	public int getGamecount() {
+		return gamecount;
+	}
+
+	public void setGamecount(int gamecount) {
+		this.gamecount = gamecount;
+	}
+
+	public String getHeadimgurl() {
+		return headimgurl;
+	}
+
+	public void setHeadimgurl(String headimgurl) {
+		this.headimgurl = headimgurl;
+	}
+
 	@Override
 	public int compare(HistoricalRecord o1, HistoricalRecord o2) {
 		if(o1.getTotalscore() > o2.getTotalscore()) {

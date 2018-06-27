@@ -23,21 +23,38 @@ public class MemberShareController {
 	@Autowired
 	private ShareService shareService;
 
-	/**分享成功，给用户增加奖励，每天3次
+	/**微信好友分享成功，给用户增加奖励，每天3次
 	 * @param token 获得会员id
 	 * @throws MemberNotFoundException 
 	 * **/
-	@RequestMapping("sharetime")
+	@RequestMapping("/wxfirends_sharetime")
 	@ResponseBody
-	public CommonVO sharetime(String token) throws MemberNotFoundException {
-		String memberId = memberAuthService.getMemberIdBySessionId(token);
-		CommonVO co = new CommonVO();
-		if(token == null) {
-			co.setSuccess(false);
-			co.setMsg("invalid token");
-		}
-		Integer integral = shareService.Shareupdatecount(memberId);
-		co.setData(integral);
+	public CommonVO wxfirends_sharetime(String token) throws MemberNotFoundException {
+//		String memberId = memberAuthService.getMemberIdBySessionId(token);
+//		if(token == null) {
+//			co.setSuccess(false);
+//			co.setMsg("invalid token");
+//		}
+		String memberId = "881071";//测试id
+		CommonVO co = shareService.wxfirends_sharetime(memberId);
+		return co;
+	}
+	
+	/**微信朋友圈分享成功，给用户增加奖励，每天1次
+	 * @param token 获得会员id
+	 * @throws MemberNotFoundException 
+	 * **/
+	@RequestMapping("/wxfirendscircle_sharetime")
+	@ResponseBody
+	public CommonVO wxfirendscircle_sharetime(String token) throws MemberNotFoundException {
+	
+		String memberId = "881071";//测试id
+//		String memberId = memberAuthService.getMemberIdBySessionId(token);
+//		if(token == null) {
+//			co.setSuccess(false);
+//			co.setMsg("invalid token");
+//		}
+		CommonVO co = shareService.wxfirendscircle_sharetime(memberId);
 		return co;
 	}
 }

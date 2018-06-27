@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 
 import com.anbang.qipai.members.cqrs.c.domain.MemberNotFoundException;
 import com.anbang.qipai.members.cqrs.c.service.MemberScoreCmdService;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.plan.dao.ShareDao;
 import com.anbang.qipai.members.plan.domain.Share;
+import com.anbang.qipai.members.web.vo.CommonVO;
 
 @Service
 public class ShareService {
@@ -23,26 +25,62 @@ public class ShareService {
 	@Autowired
 	private MemberScoreCmdService memberScoreCmdService;
 
-	public Integer Shareupdatecount(String memberid) throws MemberNotFoundException {
+	public CommonVO wxfirends_sharetime(String memberid) throws MemberNotFoundException {
+		CommonVO co = new CommonVO();
+		Integer integral = 100;
+		Share share = new Share();
+		Share shares = shareDao.findShare(memberid);
+		if(shares == null) {//新注册的用户第一次分享
+			share.setId(memberid);
+			share.setWxFriendsFrequency(1);
+			share.setWxFirendsCircleFrequency(0);
+			shareDao.Shareupdatecount(share);
+			//memberScoreCmdService.giveScoreToMember(memberid, integral, "share_reward", System.currentTimeMillis());
+			co.setData(integral);
+			return co;
+		}else {
+			if(shares.getWxFriendsFrequency() == 3) {
+				co.setSuccess(false);
+				return co;
+			}else {
+				share.setId(shares.getId());
+				share.setWxFriendsFrequency(shares.getWxFriendsFrequency()+1);
+				share.setWxFirendsCircleFrequency(shares.getWxFirendsCircleFrequency());
+				shareDao.Shareupdatecount(share);
+				//memberScoreCmdService.giveScoreToMember(memberid, integral, "share_reward", System.currentTimeMillis());
+				co.setData(integral);
+				return co;
+			}
+		}
+		
+	}
+	
+	public CommonVO wxfirendscircle_sharetime(String memberid) throws MemberNotFoundException {
+		CommonVO co = new CommonVO();
 		Integer integral = 100;
 		Share share = new Share();
 		Share shares = shareDao.findShare(memberid);
 		if(shares == null) {
 			share.setId(memberid);
-			share.setFrequency(1);
-			memberScoreCmdService.giveScoreToMember(memberid, integral, "share_reward", System.currentTimeMillis());
+			share.setWxFirendsCircleFrequency(1);
+			share.setWxFriendsFrequency(0);
+			shareDao.Shareupdatecount(share);
+			//memberScoreCmdService.giveScoreToMember(memberid, integral, "share_reward", System.currentTimeMillis());
+			co.setData(integral);
+			return co;
 		}else {
-			if(shares.getFrequency() == 3) {
+			if(shares.getWxFirendsCircleFrequency() == null) {
 				share.setId(shares.getId());
-				share.setFrequency(shares.getFrequency());
-			}else {
-				share.setId(shares.getId());
-				share.setFrequency(shares.getFrequency()+1);
-				memberScoreCmdService.giveScoreToMember(memberid, integral, "share_reward", System.currentTimeMillis());
+				share.setWxFirendsCircleFrequency(1);
+				share.setWxFriendsFrequency(shares.getWxFriendsFrequency());
+				shareDao.Shareupdatecount(share);
+				//memberScoreCmdService.giveScoreToMember(memberid, integral, "share_reward", System.currentTimeMillis());
+				co.setData(integral);
+				return co;
 			}
+			co.setSuccess(false);
+			return co;
 		}
-		shareDao.Shareupdatecount(share);
-		return integral;
 	}
 	
 	/**分享奖励定时器
@@ -57,7 +95,8 @@ public class ShareService {
 			Pageable pageable= new PageRequest(page-1, size);
 			List<Share> list = shareDao.pagingfind(query,pageable);
 			for (Share share : list) {//分页查询后的会员更改分享次数
-				share.setFrequency(0);
+				share.setWxFriendsFrequency(0);
+				share.setWxFirendsCircleFrequency(0);
 				shareDao.Shareupdatecount(share);
 			}
 			page++;

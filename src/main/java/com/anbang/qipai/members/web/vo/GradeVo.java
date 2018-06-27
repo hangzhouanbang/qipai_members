@@ -10,6 +10,8 @@ public class GradeVo {
 
 	private Object data;
 	
+	private Object vipcard;
+	
 	private long shortage;
 	
 	private BigDecimal ProgressBar;
@@ -52,6 +54,14 @@ public class GradeVo {
 
 	public void setProgressBar(BigDecimal progressBar) {
 		ProgressBar = progressBar;
+	}
+
+	public Object getVipcard() {
+		return vipcard;
+	}
+
+	public void setVipcard(Object vipcard) {
+		this.vipcard = vipcard;
 	}
 
 	

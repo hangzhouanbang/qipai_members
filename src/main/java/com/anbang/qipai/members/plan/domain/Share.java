@@ -4,7 +4,9 @@ public class Share {
 
 	private String id;//这里的id等于会员id
 	
-	private Integer frequency;//领取次数
+	private Integer wxFriendsFrequency;//微信好友领取次数
+	
+	private Integer wxFirendsCircleFrequency;//微信朋友圈次数
 
 	public String getId() {
 		return id;
@@ -14,14 +16,21 @@ public class Share {
 		this.id = id;
 	}
 
-	public Integer getFrequency() {
-		return frequency;
+	public Integer getWxFriendsFrequency() {
+		return wxFriendsFrequency;
 	}
 
-	public void setFrequency(Integer frequency) {
-		this.frequency = frequency;
+	public void setWxFriendsFrequency(Integer wxFriendsFrequency) {
+		this.wxFriendsFrequency = wxFriendsFrequency;
 	}
 
-	
+	public Integer getWxFirendsCircleFrequency() {
+		return wxFirendsCircleFrequency;
+	}
+
+	public void setWxFirendsCircleFrequency(Integer wxFirendsCircleFrequency) {
+		this.wxFirendsCircleFrequency = wxFirendsCircleFrequency;
+	}
+
 	
 }

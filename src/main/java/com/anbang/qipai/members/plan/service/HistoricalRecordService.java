@@ -30,15 +30,14 @@ public class HistoricalRecordService {
 		List<HistoricalRecord> lists = memberHistoricalRecord.getRecords();
 		Collections.sort(lists,lists.get(0));
 		Collections.reverse(lists);
-		System.out.println("排序后：");
-//		根据分数排名添加积分奖励
-//		int amount = 50;
+		//根据分数排名添加积分奖励
 		for(int i = 0;i < lists.size();i++) {
-//			memberScoreCmdService.giveScoreToMember(lists.get(i).getMemberid(), amount, "对战奖励", System.currentTimeMillis());
-//			amount = amount - 10;
+			//memberScoreCmdService.giveScoreToMember(lists.get(i).getMemberid(),lists.get(i).getReward(), "record_reward", System.currentTimeMillis());
 				MemberDbo memberdao = memberAuthQueryService.findMember(lists.get(i).getMemberid());
 				if(memberdao != null) {
 					lists.get(i).setNickname(memberdao.getNickname());
+					lists.get(i).setViplevel(memberdao.getVipLevel());
+					lists.get(i).setHeadimgurl(memberdao.getHeadimgurl());
 				}
 		}
 	
@@ -47,7 +46,7 @@ public class HistoricalRecordService {
 			memberHistoricalRecords.setMemberid(historicalRecord.getMemberid());
 			memberHistoricalRecords.setWanfa(memberHistoricalRecord.getWanfa());
 			memberHistoricalRecords.setRecords(lists);
-			memberHistoricalRecords.setEndtime(historicalRecord.getEndtime());
+			memberHistoricalRecords.setEndtime(memberHistoricalRecord.getEndtime());
 			historicalRecordDao.addrecord(memberHistoricalRecords);
 		}
 	}

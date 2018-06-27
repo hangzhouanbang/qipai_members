@@ -1,12 +1,14 @@
 package com.anbang.qipai.members.plan.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
+import com.anbang.qipai.members.plan.domain.ClubCard;
 import com.anbang.qipai.members.plan.domain.MemberGrade;
 import com.anbang.qipai.members.web.vo.GradeVo;
 
@@ -17,10 +19,14 @@ public class MemberGradeInFoService {
 	private MemberAuthQueryService memberAuthQueryService;
 	
 	@Autowired
+	private ClubCardService clubCardService;
+	
+	@Autowired
 	private MemberGradeService memberGradeService;
 	
 	public GradeVo find_grade_info(String memberId) {
 		GradeVo go = new GradeVo();
+		List<ClubCard> cardList = clubCardService.showClubCard();
 		MemberGrade memberGrade = memberGradeService.find_grade();
 		MemberDbo memberDbo = memberAuthQueryService.findMember(memberId);
 		long shortage = 0;
@@ -47,6 +53,7 @@ public class MemberGradeInFoService {
 		go.setShortage(shortage);
 		go.setProgressBar(new BigDecimal(ProgressBar).setScale(2,BigDecimal.ROUND_HALF_UP));
 		go.setData(memberDbo);
+		go.setVipcard(cardList);
 		return go;
 	}
 }

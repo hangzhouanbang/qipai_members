@@ -28,7 +28,7 @@ public class MongodbHistoricalRecordDao implements HistoricalRecordDao{
 	@Override
 	public List<MemberHistoricalRecord> findallrecord(String memberid) {
 		 Sort sort = new Sort(Sort.Direction.DESC, "endtime");
-		 Pageable pageable= new PageRequest(0,5,sort);
+		 Pageable pageable= new PageRequest(0,20,sort);
 		 Query query = new Query(Criteria.where("memberid").is(memberid));
 		return mongoTemplate.find(query.with(pageable), MemberHistoricalRecord.class);
 	}
