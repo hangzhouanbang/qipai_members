@@ -8,6 +8,8 @@ public interface MemberDboDao {
 
 	void update(String memberId, String nickname, String headimgurl);
 
+	void updateLoginTime(String memberId, long loginTime);
+
 	MemberDbo findById(String id);
 
 }

@@ -36,4 +36,10 @@ public class MongodbMemberDboDao implements MemberDboDao {
 		return repository.findOne(id);
 	}
 
+	@Override
+	public void updateLoginTime(String memberId, long loginTime) {
+		mongoTemplate.updateFirst(new Query(Criteria.where("id").is(memberId)),
+				new Update().set("lastLoginTime", loginTime), MemberDbo.class);
+	}
+
 }

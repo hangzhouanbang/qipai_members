@@ -71,7 +71,7 @@ public class MemberThirdAuthController {
 	 */
 	@RequestMapping(value = "/wechatidlogin")
 	@ResponseBody
-	public CommonVO wechatidlogin(String unionid, String openid, String nickname, String headimgurl, int sex) {
+	public CommonVO wechatidlogin(String unionid, String openid, String nickname, String headimgurl, Integer sex) {
 		CommonVO vo = new CommonVO();
 		try {
 			AuthorizationDbo unionidAuthDbo = memberAuthQueryService.findThirdAuthorizationDbo("union.weixin", unionid);
@@ -85,6 +85,12 @@ public class MemberThirdAuthController {
 				}
 				// openid登录
 				String token = memberAuthService.thirdAuth("open.weixin.app.qipai", openid);
+				// 更新登录时间
+				String memberId = memberAuthService.getMemberIdBySessionId(token);
+				memberAuthQueryService.updateLoginTime(memberId, System.currentTimeMillis());
+				// 发送消息
+				MemberDbo memberDbo = memberAuthQueryService.findMember(memberId);
+				membersMsgService.updateMember(memberDbo);
 				vo.setSuccess(true);
 				Map data = new HashMap();
 				data.put("token", token);
@@ -94,8 +100,7 @@ public class MemberThirdAuthController {
 				int goldForNewMember = 0;
 				// TODO:更具普通会员权益设置决定赠送的金币数
 				// 查询创建会员赠送的金币数
-				MemberRights createMemberConfiguration = configurationService
-						.findMemberCreateMemberConfiguration();
+				MemberRights createMemberConfiguration = configurationService.findMemberCreateMemberConfiguration();
 				if (createMemberConfiguration != null) {
 					goldForNewMember = createMemberConfiguration.getGoldForNewNember();
 				}
