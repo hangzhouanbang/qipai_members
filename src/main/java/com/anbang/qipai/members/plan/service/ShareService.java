@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.anbang.qipai.members.cqrs.c.domain.MemberNotFoundException;
 import com.anbang.qipai.members.cqrs.c.service.MemberScoreCmdService;
-import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.plan.dao.ShareDao;
 import com.anbang.qipai.members.plan.domain.Share;
 import com.anbang.qipai.members.web.vo.CommonVO;
@@ -35,7 +34,7 @@ public class ShareService {
 			share.setWxFriendsFrequency(1);
 			share.setWxFirendsCircleFrequency(0);
 			shareDao.Shareupdatecount(share);
-			//memberScoreCmdService.giveScoreToMember(memberid, integral, "share_reward", System.currentTimeMillis());
+			memberScoreCmdService.giveScoreToMember(memberid, integral, "share_reward", System.currentTimeMillis());
 			co.setData(integral);
 			return co;
 		}else {
@@ -47,7 +46,7 @@ public class ShareService {
 				share.setWxFriendsFrequency(shares.getWxFriendsFrequency()+1);
 				share.setWxFirendsCircleFrequency(shares.getWxFirendsCircleFrequency());
 				shareDao.Shareupdatecount(share);
-				//memberScoreCmdService.giveScoreToMember(memberid, integral, "share_reward", System.currentTimeMillis());
+				memberScoreCmdService.giveScoreToMember(memberid, integral, "share_reward", System.currentTimeMillis());
 				co.setData(integral);
 				return co;
 			}
@@ -65,7 +64,7 @@ public class ShareService {
 			share.setWxFirendsCircleFrequency(1);
 			share.setWxFriendsFrequency(0);
 			shareDao.Shareupdatecount(share);
-			//memberScoreCmdService.giveScoreToMember(memberid, integral, "share_reward", System.currentTimeMillis());
+			memberScoreCmdService.giveScoreToMember(memberid, integral, "share_reward", System.currentTimeMillis());
 			co.setData(integral);
 			return co;
 		}else {
@@ -74,7 +73,7 @@ public class ShareService {
 				share.setWxFirendsCircleFrequency(1);
 				share.setWxFriendsFrequency(shares.getWxFriendsFrequency());
 				shareDao.Shareupdatecount(share);
-				//memberScoreCmdService.giveScoreToMember(memberid, integral, "share_reward", System.currentTimeMillis());
+				memberScoreCmdService.giveScoreToMember(memberid, integral, "share_reward", System.currentTimeMillis());
 				co.setData(integral);
 				return co;
 			}

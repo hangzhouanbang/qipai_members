@@ -26,10 +26,10 @@ public class MemberMailReward {
 	
 	@RequestMapping("/mail_reward")
 	@ResponseBody
-	public CommonVO mail_reward(String memberId,Integer number,Integer integral,Integer vipcard) throws InsufficientBalanceException, MemberNotFoundException {
+	public CommonVO mail_Reward(String memberId,Integer number,Integer integral,Integer vipcard) throws InsufficientBalanceException, MemberNotFoundException {
 		if(memberId != null) {
 			if(number != null) {
-				memberGoldCmdService.withdraw(memberId, number, "mail_reward", System.currentTimeMillis());
+				memberGoldCmdService.giveGoldToMember(memberId, number, "mail_reward", System.currentTimeMillis());
 			}
 			if(integral != null) {
 				memberScoreCmdService.giveScoreToMember(memberId, integral, "mail_reward", System.currentTimeMillis());

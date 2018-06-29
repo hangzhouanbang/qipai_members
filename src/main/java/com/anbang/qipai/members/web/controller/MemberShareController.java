@@ -30,13 +30,12 @@ public class MemberShareController {
 	@RequestMapping("/wxfirends_sharetime")
 	@ResponseBody
 	public CommonVO wxfirends_sharetime(String token) throws MemberNotFoundException {
-//		String memberId = memberAuthService.getMemberIdBySessionId(token);
-//		if(token == null) {
-//			co.setSuccess(false);
-//			co.setMsg("invalid token");
-//		}
-		String memberId = "881071";//测试id
+		String memberId = memberAuthService.getMemberIdBySessionId(token);
 		CommonVO co = shareService.wxfirends_sharetime(memberId);
+		if(token == null) {
+			co.setSuccess(false);
+			co.setMsg("invalid token");
+		}
 		return co;
 	}
 	
@@ -47,14 +46,12 @@ public class MemberShareController {
 	@RequestMapping("/wxfirendscircle_sharetime")
 	@ResponseBody
 	public CommonVO wxfirendscircle_sharetime(String token) throws MemberNotFoundException {
-	
-		String memberId = "881071";//测试id
-//		String memberId = memberAuthService.getMemberIdBySessionId(token);
-//		if(token == null) {
-//			co.setSuccess(false);
-//			co.setMsg("invalid token");
-//		}
+		String memberId = memberAuthService.getMemberIdBySessionId(token);
 		CommonVO co = shareService.wxfirendscircle_sharetime(memberId);
+		if(token == null) {
+			co.setSuccess(false);
+			co.setMsg("invalid token");
+		}
 		return co;
 	}
 }

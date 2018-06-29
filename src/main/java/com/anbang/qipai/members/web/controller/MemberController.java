@@ -158,7 +158,7 @@ public class MemberController {
 				//kafka更新
 				membersMsgService.updateMember(memberDbo);
 				//添加积分
-					//memberScoreCmdService.giveScoreToMember(id,Integer.parseInt(score), "admin_give_score", System.currentTimeMillis());
+				memberScoreCmdService.giveScoreToMember(id,Integer.parseInt(score), "admin_give_score", System.currentTimeMillis());
 				}
 				if(gold != null && !gold.equals("") && gold.matches("^[0-9]*$")) {
 				memberDbo.setGold(memberDbo.getGold()+Integer.parseInt(gold));
@@ -166,7 +166,7 @@ public class MemberController {
 				//kafka更新
 				membersMsgService.updateMember(memberDbo);
 				//添加金币
-				//memberGoldCmdService.giveGoldToMember(id, Integer.parseInt(gold), "admin_give_gold", System.currentTimeMillis());
+				memberGoldCmdService.giveGoldToMember(id, Integer.parseInt(gold), "admin_give_gold", System.currentTimeMillis());
 				}
 			}
 		}

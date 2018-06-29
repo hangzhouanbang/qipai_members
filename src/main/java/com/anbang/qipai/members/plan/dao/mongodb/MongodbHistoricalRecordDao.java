@@ -21,20 +21,20 @@ public class MongodbHistoricalRecordDao implements HistoricalRecordDao{
 	private MongoTemplate mongoTemplate;
 
 	@Override
-	public void addrecord(MemberHistoricalRecord memberHistoricalRecord) {
+	public void addRecord(MemberHistoricalRecord memberHistoricalRecord) {
 		mongoTemplate.save(memberHistoricalRecord);
 	}
 
 	@Override
-	public List<MemberHistoricalRecord> findallrecord(String memberid) {
-		 Sort sort = new Sort(Sort.Direction.DESC, "endtime");
+	public List<MemberHistoricalRecord> findAllRecord(String memberid) {
+		 Sort sort = new Sort(Sort.Direction.DESC, "endTime");
 		 Pageable pageable= new PageRequest(0,20,sort);
-		 Query query = new Query(Criteria.where("memberid").is(memberid));
+		 Query query = new Query(Criteria.where("memberId").is(memberid));
 		return mongoTemplate.find(query.with(pageable), MemberHistoricalRecord.class);
 	}
 
 	@Override
-	public MemberHistoricalRecord findonerecord(String id) {
+	public MemberHistoricalRecord findOneRecord(String id) {
 		Query query = new Query(Criteria.where("id").is(id));
 		return mongoTemplate.findOne(query, MemberHistoricalRecord.class);
 	}

@@ -11,7 +11,7 @@ import com.anbang.qipai.members.cqrs.c.service.MemberScoreCmdService;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
 import com.anbang.qipai.members.plan.dao.HistoricalRecordDao;
-import com.anbang.qipai.members.plan.domain.historicalrecord.HistoricalRecord;
+import com.anbang.qipai.members.plan.domain.historicalrecord.RuianHistoricalRecord;
 import com.anbang.qipai.members.plan.domain.historicalrecord.MemberHistoricalRecord;
 
 @Service
@@ -26,37 +26,37 @@ public class HistoricalRecordService {
 	@Autowired
 	private MemberScoreCmdService memberScoreCmdService;
 
-	public void addrecord(MemberHistoricalRecord memberHistoricalRecord) throws MemberNotFoundException {
-		List<HistoricalRecord> lists = memberHistoricalRecord.getRecords();
+	public void addRecord(MemberHistoricalRecord memberHistoricalRecord) throws MemberNotFoundException {
+		List<RuianHistoricalRecord> lists = memberHistoricalRecord.getRuian();
 		Collections.sort(lists,lists.get(0));
 		Collections.reverse(lists);
 		//根据分数排名添加积分奖励
 		for(int i = 0;i < lists.size();i++) {
-			//memberScoreCmdService.giveScoreToMember(lists.get(i).getMemberid(),lists.get(i).getReward(), "record_reward", System.currentTimeMillis());
-				MemberDbo memberdao = memberAuthQueryService.findMember(lists.get(i).getMemberid());
+			memberScoreCmdService.giveScoreToMember(lists.get(i).getMemberId(),lists.get(i).getReward(), "record_reward", System.currentTimeMillis());
+				MemberDbo memberdao = memberAuthQueryService.findMember(lists.get(i).getMemberId());
 				if(memberdao != null) {
-					lists.get(i).setNickname(memberdao.getNickname());
-					lists.get(i).setViplevel(memberdao.getVipLevel());
-					lists.get(i).setHeadimgurl(memberdao.getHeadimgurl());
+					lists.get(i).setNickName(memberdao.getNickname());
+					lists.get(i).setVipLevel(memberdao.getVipLevel());
+					lists.get(i).setHeadImgUrl(memberdao.getHeadimgurl());
 				}
 		}
 	
-		for (HistoricalRecord historicalRecord : lists) {
+		for (RuianHistoricalRecord historicalRecord : lists) {
 			MemberHistoricalRecord memberHistoricalRecords = new MemberHistoricalRecord();
-			memberHistoricalRecords.setMemberid(historicalRecord.getMemberid());
-			memberHistoricalRecords.setWanfa(memberHistoricalRecord.getWanfa());
-			memberHistoricalRecords.setRecords(lists);
-			memberHistoricalRecords.setEndtime(memberHistoricalRecord.getEndtime());
-			historicalRecordDao.addrecord(memberHistoricalRecords);
+			memberHistoricalRecords.setMemberId(historicalRecord.getMemberId());
+			memberHistoricalRecords.setGame(memberHistoricalRecord.getGame());
+			memberHistoricalRecords.setRuian(lists);
+			memberHistoricalRecords.setEndTime(memberHistoricalRecord.getEndTime());
+			historicalRecordDao.addRecord(memberHistoricalRecords);
 		}
 	}
 	
-	public List<MemberHistoricalRecord> findallrecord(String memberid) {
-		return historicalRecordDao.findallrecord(memberid);
+	public List<MemberHistoricalRecord> findAllRecord(String memberid) {
+		return historicalRecordDao.findAllRecord(memberid);
 	}
 	
-	public MemberHistoricalRecord findonerecord(String id){
-		return historicalRecordDao.findonerecord(id);
+	public MemberHistoricalRecord findOneRecord(String id){
+		return historicalRecordDao.findOneRecord(id);
 	}
 	
 }

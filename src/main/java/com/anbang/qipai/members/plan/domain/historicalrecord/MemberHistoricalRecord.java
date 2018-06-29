@@ -6,14 +6,18 @@ public class MemberHistoricalRecord {
 
 	private String id;
 	
-	private String memberid;//会员id
+	private String memberId;//会员id
 	
-	private String wanfa;//玩法id
+	private Game game;//游戏名称
 	
-	private long endtime;//结束时间
+	private long endTime;//结束时间
 	
-	private List<HistoricalRecord> records;//多个用户战绩信息
-
+	private List<RuianHistoricalRecord> ruian;//瑞安麻将多个用户战绩信息
+	
+	private List<WenZhouHistoricalRecord> wenzhou;//温州麻将多个用户战绩信息
+	
+	private List<DianPaoHistoricalRecord> dianpao;//点炮麻将多个用户战绩信息
+	
 	public String getId() {
 		return id;
 	}
@@ -22,37 +26,54 @@ public class MemberHistoricalRecord {
 		this.id = id;
 	}
 
-	public String getMemberid() {
-		return memberid;
+	public Game getGame() {
+		return game;
 	}
 
-	public void setMemberid(String memberid) {
-		this.memberid = memberid;
+	public void setGame(Game game) {
+		this.game = game;
 	}
 
-	public String getWanfa() {
-		return wanfa;
+	public String getMemberId() {
+		return memberId;
 	}
 
-	public void setWanfa(String wanfa) {
-		this.wanfa = wanfa;
-	}
-	
-	public List<HistoricalRecord> getRecords() {
-		return records;
+	public void setMemberId(String memberId) {
+		this.memberId = memberId;
 	}
 
-	public void setRecords(List<HistoricalRecord> records) {
-		this.records = records;
+	public long getEndTime() {
+		return endTime;
 	}
 
-	public long getEndtime() {
-		return endtime;
+	public void setEndTime(long endTime) {
+		this.endTime = endTime;
 	}
 
-	public void setEndtime(long endtime) {
-		this.endtime = endtime;
+	public List<RuianHistoricalRecord> getRuian() {
+		return ruian;
 	}
+
+	public void setRuian(List<RuianHistoricalRecord> ruian) {
+		this.ruian = ruian;
+	}
+
+	public List<WenZhouHistoricalRecord> getWenzhou() {
+		return wenzhou;
+	}
+
+	public void setWenzhou(List<WenZhouHistoricalRecord> wenzhou) {
+		this.wenzhou = wenzhou;
+	}
+
+	public List<DianPaoHistoricalRecord> getDianpao() {
+		return dianpao;
+	}
+
+	public void setDianpao(List<DianPaoHistoricalRecord> dianpao) {
+		this.dianpao = dianpao;
+	}
+
 
 	
 	

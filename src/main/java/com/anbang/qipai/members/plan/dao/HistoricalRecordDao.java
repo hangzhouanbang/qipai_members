@@ -6,10 +6,10 @@ import com.anbang.qipai.members.plan.domain.historicalrecord.MemberHistoricalRec
 
 public interface HistoricalRecordDao {
 
-	void addrecord(MemberHistoricalRecord memberHistoricalRecord);
+	void addRecord(MemberHistoricalRecord memberHistoricalRecord);
 	
-	List<MemberHistoricalRecord> findallrecord(String memberid);
+	List<MemberHistoricalRecord> findAllRecord(String memberid);
 	
-	MemberHistoricalRecord findonerecord(String id);
+	MemberHistoricalRecord findOneRecord(String id);
 	
 }
