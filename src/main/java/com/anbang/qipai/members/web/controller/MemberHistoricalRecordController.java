@@ -42,7 +42,7 @@ public class MemberHistoricalRecordController {
 	@RequestMapping("/addrecord")
 	@ResponseBody
 	public CommonVO addRecord() throws MemberNotFoundException {
-		String json = "{\"id\": \"101\",\"memberId\": \"362812\",\"wanfa\": \"9\",\"endTime\": 1528539077777,\"records\": [{\"id\": \"5b1ba77a1fe520265c84b786\",\"memberid\": \"362812\",\"headimgurl\": \"http://p2.so.qhmsg.com/bdr/_240_/t01a4341599641be697.png\",\"roomid\": \"123456\",\"hucount\": 5,\"sfCount\": 5,\"mammonCount\": 5,\"gamecount\": 8,\"reward\": 30,\"paocount\": 15,\"maxhucount\": 120,\"totalscore\": 85,\"endtime\": 1528698790919}, {\"id\": \"5b1ba77a1fe520265c84b786\",\"memberid\": \"599329\",\"roomid\": \"123456\",\"hucount\": 4,\"paocount\": 14,\"maxhucount\": 119,\"gamecount\": 8,\"reward\": 40,\"totalscore\": 95,\"endtime\": 1528698790919}, {\"id\": \"5b1ba77a1fe520265c84b786\",\"memberid\": \"172762\",\"roomid\": \"123456\",\"hucount\": 3,\"paocount\": 13,\"maxhucount\": 100,\"gamecount\": 8,\"reward\": 50,\"totalscore\": 125,\"endtime\": 1528698790919}, {\"id\": \"5b1ba77a1fe520265c84b786\",\"memberid\": \"zlspz\",\"roomid\": \"123456\",\"hucount\": 2,\"paocount\": 2,\"maxhucount\": 12,\"gamecount\": 8,\"reward\": 20,\"totalscore\": 8,\"endtime\": 1528698790919}]}";
+		String json = "{\"id\": \"101\",\"memberId\": \"362812\",\"game\": \"ruianMajiang\",\"endTime\": 1528539077777,\"ruian\": [{\"id\": \"5b1ba77a1fe520265c84b786\",\"memberid\": \"362812\",\"headimgurl\": \"http://p2.so.qhmsg.com/bdr/_240_/t01a4341599641be697.png\",\"roomid\": \"123456\",\"hucount\": 5,\"gamecount\": 8,\"reward\": 30,\"paocount\": 15,\"maxhucount\": 120,\"totalscore\": 85,\"endtime\": 1528698790919}, {\"id\": \"5b1ba77a1fe520265c84b786\",\"memberid\": \"599329\",\"roomid\": \"123456\",\"hucount\": 4,\"paocount\": 14,\"maxhucount\": 119,\"gamecount\": 8,\"reward\": 40,\"totalscore\": 95,\"endtime\": 1528698790919}, {\"id\": \"5b1ba77a1fe520265c84b786\",\"memberid\": \"172762\",\"roomid\": \"123456\",\"hucount\": 3,\"paocount\": 13,\"maxhucount\": 100,\"gamecount\": 8,\"reward\": 50,\"totalscore\": 125,\"endtime\": 1528698790919}, {\"id\": \"5b1ba77a1fe520265c84b786\",\"memberid\": \"zlspz\",\"roomid\": \"123456\",\"hucount\": 2,\"paocount\": 2,\"maxhucount\": 12,\"gamecount\": 8,\"reward\": 20,\"totalscore\": 8,\"endtime\": 1528698790919}],\"wenzhou\": [{}],\"dianpao\": [{}]}";
 		JSONObject jsonobj = JSONObject.fromObject(json);
 		JSONArray array = jsonobj.getJSONArray("ruian");
 		JSONArray jsonarray = JSONArray.fromObject(array);
@@ -50,7 +50,7 @@ public class MemberHistoricalRecordController {
 		JSONArray jsonarray1 = JSONArray.fromObject(array1);
 		JSONArray array2 = jsonobj.getJSONArray("dianpao");
 		JSONArray jsonarray2 = JSONArray.fromObject(array2);
-		JSONObject jsongame = (JSONObject) jsonobj.get("game");
+		JSONObject jsongame = jsonobj.getJSONObject("game");
 		Game game = (Game) JSONObject.toBean(jsongame,Game.class);
 		List<RuianHistoricalRecord> lists = (List<RuianHistoricalRecord>) JSONArray.toCollection(jsonarray,RuianHistoricalRecord.class);
 		List<WenZhouHistoricalRecord> lists1 = (List<WenZhouHistoricalRecord>) JSONArray.toCollection(jsonarray1,WenZhouHistoricalRecord.class);
