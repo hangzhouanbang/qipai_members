@@ -37,7 +37,7 @@ public class HistoricalRecordService {
 			Collections.reverse(lists);
 			//根据分数排名添加积分奖励
 			for(int i = 0;i < lists.size();i++) {
-				memberScoreCmdService.giveScoreToMember(lists.get(i).getMemberId(),lists.get(i).getReward(), "record_reward", System.currentTimeMillis());
+				//memberScoreCmdService.giveScoreToMember(lists.get(i).getMemberId(),lists.get(i).getReward(), "record_reward", System.currentTimeMillis());
 					MemberDbo memberdao = memberAuthQueryService.findMember(lists.get(i).getMemberId());
 					if(memberdao != null) {
 						lists.get(i).setNickName(memberdao.getNickname());
@@ -59,7 +59,7 @@ public class HistoricalRecordService {
 			Collections.reverse(list1);
 			//根据分数排名添加积分奖励
 			for(int i = 0;i < list1.size();i++) {
-				memberScoreCmdService.giveScoreToMember(list1.get(i).getMemberId(),list1.get(i).getReward(), "record_reward", System.currentTimeMillis());
+				//memberScoreCmdService.giveScoreToMember(list1.get(i).getMemberId(),list1.get(i).getReward(), "record_reward", System.currentTimeMillis());
 					MemberDbo memberdao = memberAuthQueryService.findMember(list1.get(i).getMemberId());
 					if(memberdao != null) {
 						list1.get(i).setNickName(memberdao.getNickname());
@@ -77,11 +77,12 @@ public class HistoricalRecordService {
 			}
 		}
 		if(list2.size() > 0) {
+			System.out.println("666");
 			Collections.sort(list2,list2.get(0));
 			Collections.reverse(list2);
 			//根据分数排名添加积分奖励
 			for(int i = 0;i < list2.size();i++) {
-				memberScoreCmdService.giveScoreToMember(list2.get(i).getMemberId(),list2.get(i).getReward(), "record_reward", System.currentTimeMillis());
+			//	memberScoreCmdService.giveScoreToMember(list2.get(i).getMemberId(),list2.get(i).getReward(), "record_reward", System.currentTimeMillis());
 					MemberDbo memberdao = memberAuthQueryService.findMember(list2.get(i).getMemberId());
 					if(memberdao != null) {
 						list2.get(i).setNickName(memberdao.getNickname());
