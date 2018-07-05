@@ -30,7 +30,7 @@ public class OrderService {
 		Order order = new Order();
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
 		Date date = new Date();
-		order.setOut_trade_no(format.format(date) + memberId + UUID.randomUUID().toString().substring(0, 10));
+		order.setOut_trade_no(format.format(date) + memberId + UUID.randomUUID().toString().substring(22, 32));
 		order.setPay_type(pay_type);
 		order.setReqIP(reqIP);
 		order.setStatus("WAIT_BUYER_PAY");

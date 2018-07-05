@@ -7,8 +7,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.members.cqrs.c.domain.CreateMemberResult;
+import com.anbang.qipai.members.cqrs.q.dao.MemberDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberGoldAccountDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberGoldRecordDboDao;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
 import com.dml.accounting.AccountingRecord;
@@ -22,6 +24,9 @@ public class MemberGoldQueryService {
 
 	@Autowired
 	private MemberGoldAccountDboDao memberGoldAccountDboDao;
+
+	@Autowired
+	private MemberDboDao memberDboDao;
 
 	public void recordMemberGoldRecord(AccountingRecord accountingRecord) {
 		MemberGoldRecordDbo dbo = new MemberGoldRecordDbo();
@@ -56,7 +61,7 @@ public class MemberGoldQueryService {
 	}
 
 	public ListPage findMemberGoldRecords(int page, int size, String accountId) {
-		PageRequest pageRequest = new PageRequest(page-1, size);
+		PageRequest pageRequest = new PageRequest(page - 1, size);
 		List<MemberGoldRecordDbo> recordList = memberGoldRecordDboDao.findMemberGoldRecords(accountId, pageRequest);
 		long amount = memberGoldRecordDboDao.getCount();
 		long pageNum = (amount == 0) ? 1 : ((amount % size == 0) ? (amount / size) : (amount / size + 1));
@@ -75,6 +80,8 @@ public class MemberGoldQueryService {
 		dbo.setSummary(accountingRecord.getSummary());
 		dbo.setAccountingTime(accountingRecord.getAccountingTime());
 		memberGoldRecordDboDao.save(dbo);
+		MemberDbo member = memberDboDao.findById(memberId);
+		memberDboDao.updateGold(memberId, (int) (member.getGold() + accountingRecord.getAccountingAmount()));
 
 		memberGoldAccountDboDao.update(accountingRecord.getAccountId(), (int) accountingRecord.getBalanceAfter());
 		return dbo;

@@ -17,15 +17,20 @@ import com.anbang.qipai.members.cqrs.c.service.MemberGoldCmdService;
 import com.anbang.qipai.members.cqrs.c.service.MemberScoreCmdService;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreAccountDbo;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreRecordDbo;
 import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
+import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
+import com.anbang.qipai.members.msg.service.ScoresMsgService;
 import com.anbang.qipai.members.plan.service.MemberService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.anbang.qipai.members.web.vo.DetailsVo;
 import com.anbang.qipai.members.web.vo.MemberVO;
+import com.dml.accounting.AccountingRecord;
 import com.highto.framework.web.page.ListPage;
 
 @CrossOrigin
@@ -42,10 +47,10 @@ public class MemberController {
 
 	@Autowired
 	private MemberScoreQueryService memberScoreQueryService;
-	
+
 	@Autowired
 	private MemberGoldCmdService memberGoldCmdService;
-	
+
 	@Autowired
 	private MemberScoreCmdService memberScoreCmdService;
 
@@ -54,6 +59,10 @@ public class MemberController {
 
 	@Autowired
 	private MembersMsgService membersMsgService;
+	@Autowired
+	private GoldsMsgService goldsMsgService;
+	@Autowired
+	private ScoresMsgService scoresMsgService;
 
 	@RequestMapping(value = "/info")
 	@ResponseBody
@@ -95,7 +104,7 @@ public class MemberController {
 		CommonVO vo = new CommonVO();
 		memberService.registerPhone(memberId, phone);
 		MemberDbo memberdbo = memberService.findMemberById(memberId);
-		//kafka发消息更新
+		// kafka发消息更新
 		membersMsgService.updateMember(memberdbo);
 		vo.setSuccess(true);
 		vo.setMsg("register success");
@@ -142,36 +151,50 @@ public class MemberController {
 		}
 		return vo;
 	}
-	/**管理后台赠送积分或金币，修改积分金币
-	 * @throws MemberNotFoundException 
-	 * **/
+
+	/**
+	 * 管理后台赠送积分或金币，修改积分金币
+	 * 
+	 * @throws MemberNotFoundException
+	 **/
 	@RequestMapping("/update_score_gold")
 	@ResponseBody
-	public CommonVO update_score_gold(@RequestBody String[] ids,String score,String gold) throws MemberNotFoundException {
+	public CommonVO update_score_gold(@RequestBody String[] ids, String score, String gold) {
 		CommonVO vo = new CommonVO();
-		for(String id:ids) {
-			MemberDbo memberDbo = memberService.findMemberById(id);
-			if(memberDbo != null) {
-				if(score != null && !score.equals("") && score.matches("^[0-9]*$")) {
-				memberDbo.setScore(memberDbo.getScore()+Integer.parseInt(score));
-				memberService.update_score_gold(id,memberDbo);
-				//kafka更新
-				membersMsgService.updateMember(memberDbo);
-				//添加积分
-				memberScoreCmdService.giveScoreToMember(id,Integer.parseInt(score), "admin_give_score", System.currentTimeMillis());
+		vo.setSuccess(true);
+		for (String id : ids) {
+			try {
+				if (score != null && !score.equals("") && score.matches("^[0-9]*$")) {
+					// 添加积分
+					AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(id, Integer.parseInt(score),
+							"admin_give_score", System.currentTimeMillis());
+					MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(id, scorercd);
+					MemberDbo memberDbo = memberService.findMemberById(id);
+					// kafka更新
+					membersMsgService.updateMember(memberDbo);
+					// TODO: rcd发kafka
+					scoresMsgService.withdraw(scoredbo);
 				}
-				if(gold != null && !gold.equals("") && gold.matches("^[0-9]*$")) {
-				memberDbo.setGold(memberDbo.getGold()+Integer.parseInt(gold));
-				memberService.update_score_gold(id,memberDbo);
-				//kafka更新
-				membersMsgService.updateMember(memberDbo);
-				//添加金币
-				memberGoldCmdService.giveGoldToMember(id, Integer.parseInt(gold), "admin_give_gold", System.currentTimeMillis());
+				if (gold != null && !gold.equals("") && gold.matches("^[0-9]*$")) {
+					// 添加金币
+					AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(id, Integer.parseInt(gold),
+							"admin_give_gold", System.currentTimeMillis());
+					MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(id, goldrcd);
+					MemberDbo memberDbo = memberService.findMemberById(id);
+					// kafka更新
+					membersMsgService.updateMember(memberDbo);
+					// TODO: rcd发kafka
+					goldsMsgService.withdraw(golddbo);
 				}
+			} catch (MemberNotFoundException e) {
+				vo.setSuccess(false);
+				vo.setMsg("member not found");
+				e.printStackTrace();
 			}
 		}
 		return vo;
 	}
+
 	/**
 	 * 会员到期判定
 	 * 

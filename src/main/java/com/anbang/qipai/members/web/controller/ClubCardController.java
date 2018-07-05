@@ -15,6 +15,7 @@ import com.anbang.qipai.members.cqrs.c.domain.MemberNotFoundException;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthService;
 import com.anbang.qipai.members.cqrs.c.service.MemberGoldCmdService;
 import com.anbang.qipai.members.cqrs.c.service.MemberScoreCmdService;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreRecordDbo;
 import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
@@ -147,15 +148,6 @@ public class ClubCardController {
 		return vo;
 	}
 
-	@RequestMapping("/checkalipay")
-	public CommonVO checkAlipay(String result) {
-		CommonVO vo = new CommonVO();
-		System.out.println(result);
-		vo.setSuccess(true);
-		vo.setMsg("success");
-		return vo;
-	}
-
 	@RequestMapping("/alipaynotify")
 	public String alipayNotify(HttpServletRequest request) {
 		Order order = alipayService.alipayNotify(request);
@@ -178,6 +170,9 @@ public class ClubCardController {
 				goldsMsgService.withdraw(golddbo);
 				scoresMsgService.withdraw(scoredbo);
 				orderService.updateDeliveTime(order.getOut_trade_no(), System.currentTimeMillis());
+				MemberDbo memberDbo = memberService.findMemberById(order.getMemberId());
+				// kafka更新
+				membersMsgService.updateMember(memberDbo);
 			} catch (MemberNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -250,6 +245,9 @@ public class ClubCardController {
 							goldsMsgService.withdraw(golddbo);
 							scoresMsgService.withdraw(scoredbo);
 							orderService.updateDeliveTime(order.getOut_trade_no(), System.currentTimeMillis());
+							MemberDbo memberDbo = memberService.findMemberById(order.getMemberId());
+							// kafka更新
+							membersMsgService.updateMember(memberDbo);
 						} catch (MemberNotFoundException e) {
 							e.printStackTrace();
 						}

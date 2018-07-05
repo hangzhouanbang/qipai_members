@@ -10,6 +10,10 @@ public interface MemberDboDao {
 
 	void updateLoginTime(String memberId, long loginTime);
 
+	void updateGold(String memberId, int gold);
+
+	void updateScore(String memberId, int score);
+
 	MemberDbo findById(String id);
 
 }

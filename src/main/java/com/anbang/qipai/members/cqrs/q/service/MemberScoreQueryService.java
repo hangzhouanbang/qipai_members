@@ -7,8 +7,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.anbang.qipai.members.cqrs.c.domain.CreateMemberResult;
+import com.anbang.qipai.members.cqrs.q.dao.MemberDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberScoreAccountDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberScoreRecordDboDao;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreAccountDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreRecordDbo;
 import com.dml.accounting.AccountingRecord;
@@ -21,6 +23,9 @@ public class MemberScoreQueryService {
 
 	@Autowired
 	private MemberScoreAccountDboDao memberScoreAccountDboDao;
+
+	@Autowired
+	private MemberDboDao memberDboDao;
 
 	public void recordMemberScoreRecord(AccountingRecord accountingRecord) {
 		MemberScoreRecordDbo dbo = new MemberScoreRecordDbo();
@@ -55,7 +60,7 @@ public class MemberScoreQueryService {
 	}
 
 	public ListPage findMemberScoreRecords(int page, int size, String accountId) {
-		PageRequest pageRequest = new PageRequest(page-1, size);
+		PageRequest pageRequest = new PageRequest(page - 1, size);
 		List<MemberScoreRecordDbo> recordList = memberScoreRecordDboDao.findMemberScoreRecords(accountId, pageRequest);
 		long amount = memberScoreRecordDboDao.getCount();
 		long pageNum = (amount == 0) ? 1 : ((amount % size == 0) ? (amount / size) : (amount / size + 1));
@@ -74,6 +79,8 @@ public class MemberScoreQueryService {
 		dbo.setSummary(accountingRecord.getSummary());
 		dbo.setAccountingTime(accountingRecord.getAccountingTime());
 		memberScoreRecordDboDao.save(dbo);
+		MemberDbo member = memberDboDao.findById(memberId);
+		memberDboDao.updateScore(memberId, (int) (member.getScore() + accountingRecord.getAccountingAmount()));
 
 		memberScoreAccountDboDao.update(accountingRecord.getAccountId(), (int) accountingRecord.getBalanceAfter());
 		return dbo;
