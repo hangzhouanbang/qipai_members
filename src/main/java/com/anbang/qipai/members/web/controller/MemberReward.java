@@ -83,30 +83,30 @@ public class MemberReward {
 	
 	@RequestMapping("/task_reward")
 	@ResponseBody
-	public CommonVO task_reward(String rewardType,Integer rewardNum,String memberId) throws MemberNotFoundException {
-		if(rewardType != null && rewardNum != null && memberId != null) {
-			MemberDbo memberDbo = memberService.findMemberById(memberId);
-			if("金币".equals(rewardType)) {
-				int gold = rewardNum * 10000;
+	public CommonVO task_reward(Integer rewardGold,Integer rewardScore,Integer rewardVip,String memberId) throws MemberNotFoundException {
+		if(memberId != null) {
+		MemberDbo memberDbo = memberService.findMemberById(memberId);
+			if(rewardGold != null) {
+				int gold = rewardGold * 10000;
 				memberDbo.setGold(memberDbo.getGold()+gold);
 				AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(memberId, gold, "task_reward", System.currentTimeMillis());
 				//添加流水
 				MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(memberId, goldrcd);
 				goldsMsgService.withdraw(golddbo);
 			}
-			if("积分".equals(rewardType)) {
-				memberDbo.setScore(memberDbo.getScore()+rewardNum);
-				AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(memberId, rewardNum, "task_reward", System.currentTimeMillis());
+			if(rewardScore != null) {
+				memberDbo.setScore(memberDbo.getScore()+rewardScore);
+				AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(memberId, rewardScore, "task_reward", System.currentTimeMillis());
 				//添加流水
 				MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(memberId, scorercd);
 				scoresMsgService.withdraw(scoredbo);
 			}
-			if("会员卡".equals(rewardType)) {
-				long time = TimeUtil.getTimeOnDay(rewardNum);
+			if(rewardVip != null) {
+				long time = TimeUtil.getTimeOnDay(rewardVip);
 				memberDbo.setVipEndTime(memberDbo.getVipEndTime()+time);
 			}
 			membersMsgService.updateMember(memberDbo);
-		}
+		}	
 		return new CommonVO();
 	}
 	
