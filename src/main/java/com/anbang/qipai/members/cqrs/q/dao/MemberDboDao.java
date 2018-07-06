@@ -1,6 +1,7 @@
 package com.anbang.qipai.members.cqrs.q.dao;
 
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberRights;
 
 public interface MemberDboDao {
 
@@ -15,5 +16,9 @@ public interface MemberDboDao {
 	void updateScore(String memberId, int score);
 
 	MemberDbo findById(String id);
+
+	void updatePlanMembersRights(MemberRights memberRights);
+
+	void updateVipMembersRights(MemberRights memberRights);
 
 }

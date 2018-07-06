@@ -81,7 +81,8 @@ public class MemberGoldQueryService {
 		dbo.setAccountingTime(accountingRecord.getAccountingTime());
 		memberGoldRecordDboDao.save(dbo);
 		MemberDbo member = memberDboDao.findById(memberId);
-		memberDboDao.updateGold(memberId, (int) (member.getGold() + accountingRecord.getAccountingAmount()));
+		// memberDboDao.updateGold(memberId, (int) (member.getGold() +
+		// accountingRecord.getAccountingAmount()));
 
 		memberGoldAccountDboDao.update(accountingRecord.getAccountId(), (int) accountingRecord.getBalanceAfter());
 		return dbo;

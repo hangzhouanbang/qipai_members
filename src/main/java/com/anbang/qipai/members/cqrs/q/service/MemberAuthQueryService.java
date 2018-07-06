@@ -7,6 +7,8 @@ import com.anbang.qipai.members.cqrs.q.dao.AuthorizationDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberDboDao;
 import com.anbang.qipai.members.cqrs.q.dbo.AuthorizationDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberRights;
+import com.anbang.qipai.members.plan.domain.MemberRightsConfiguration;
 
 @Component
 public class MemberAuthQueryService {
@@ -29,7 +31,8 @@ public class MemberAuthQueryService {
 		memberDboDao.updateLoginTime(memberId, loginTime);
 	}
 
-	public void createMemberAndAddThirdAuth(String memberId, String publisher, String uuid) {
+	public void createMemberAndAddThirdAuth(String memberId, String publisher, String uuid,
+			MemberRightsConfiguration memberRightsConfiguration) {
 		MemberDbo memberDbo = new MemberDbo();
 		memberDbo.setId(memberId);
 		memberDbo.setVip(false);
@@ -38,6 +41,7 @@ public class MemberAuthQueryService {
 		memberDbo.setVipScore(0);
 		memberDbo.setLastLoginTime(System.currentTimeMillis());
 		memberDbo.setCreateTime(System.currentTimeMillis());
+		memberDbo.setRights(memberRightsConfiguration.generateRightsForPlanMembers());
 		memberDboDao.save(memberDbo);
 
 		AuthorizationDbo authDbo = new AuthorizationDbo();
@@ -59,6 +63,14 @@ public class MemberAuthQueryService {
 
 	public MemberDbo findMember(String memberId) {
 		return memberDboDao.findById(memberId);
+	}
+
+	public void updatePlanMembersRights(MemberRights memberRights) {
+		memberDboDao.updatePlanMembersRights(memberRights);
+	}
+
+	public void updateVipMembersRights(MemberRights memberRights) {
+		memberDboDao.updateVipMembersRights(memberRights);
 	}
 
 }

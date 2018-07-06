@@ -17,6 +17,7 @@ public class MemberDbo {
 	private Long lastLoginTime;// 最后登录时间
 	private Long createTime;// 注册时间
 	private Long vipEndTime;// VIP时间
+	private MemberRights rights;
 
 	public String getId() {
 		return id;
@@ -112,6 +113,14 @@ public class MemberDbo {
 
 	public void setVipEndTime(Long vipEndTime) {
 		this.vipEndTime = vipEndTime;
+	}
+
+	public MemberRights getRights() {
+		return rights;
+	}
+
+	public void setRights(MemberRights rights) {
+		this.rights = rights;
 	}
 
 	public Integer getOnlineTime() {

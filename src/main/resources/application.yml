@@ -56,7 +56,7 @@ spring:
                 batch:
                   size: 16384
                   
-          membershiprights:
+          memberrightsconfiguration:
             producer:
               configuration:
                 request:
@@ -96,8 +96,8 @@ spring:
           producer:
             partitionCount: 1
             
-        membershiprights:
-          destination: membershiprights
+        memberrightsconfiguration:
+          destination: memberrightsconfiguration
           contentType: application/json
           producer:
             partitionCount: 1

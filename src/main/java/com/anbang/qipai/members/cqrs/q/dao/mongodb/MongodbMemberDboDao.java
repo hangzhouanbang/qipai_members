@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.anbang.qipai.members.cqrs.q.dao.MemberDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.mongodb.repository.MemberDboRepository;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberRights;
 
 @Component
 public class MongodbMemberDboDao implements MemberDboDao {
@@ -51,6 +52,18 @@ public class MongodbMemberDboDao implements MemberDboDao {
 	@Override
 	public void updateScore(String memberId, int score) {
 		mongoTemplate.updateFirst(new Query(Criteria.where("id").is(memberId)), new Update().set("score", score),
+				MemberDbo.class);
+	}
+
+	@Override
+	public void updatePlanMembersRights(MemberRights memberRights) {
+		mongoTemplate.updateMulti(new Query(Criteria.where("vip").is(false)), new Update().set("rights", memberRights),
+				MemberDbo.class);
+	}
+
+	@Override
+	public void updateVipMembersRights(MemberRights memberRights) {
+		mongoTemplate.updateMulti(new Query(Criteria.where("vip").is(true)), new Update().set("rights", memberRights),
 				MemberDbo.class);
 	}
 

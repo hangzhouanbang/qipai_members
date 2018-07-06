@@ -22,8 +22,8 @@ import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
-import com.anbang.qipai.members.plan.domain.MemberRights;
-import com.anbang.qipai.members.plan.service.MemberRightsService;
+import com.anbang.qipai.members.plan.domain.MemberRightsConfiguration;
+import com.anbang.qipai.members.plan.service.MemberRightsConfigurationService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.google.gson.Gson;
 
@@ -50,13 +50,13 @@ public class MemberThirdAuthController {
 	private MemberAuthService memberAuthService;
 
 	@Autowired
-	private MemberRightsService configurationService;
-
-	@Autowired
 	private MemberGoldQueryService memberGoldQueryService;
 
 	@Autowired
 	private MembersMsgService membersMsgService;
+
+	@Autowired
+	private MemberRightsConfigurationService memberRightsConfigurationService;
 
 	/**
 	 * 客户端已经获取好了openid/unionid和微信用户信息
@@ -98,19 +98,17 @@ public class MemberThirdAuthController {
 				return vo;
 			} else {
 				int goldForNewMember = 0;
-				// TODO:更具普通会员权益设置决定赠送的金币数
-				// 查询创建会员赠送的金币数
-				MemberRights createMemberConfiguration = configurationService.findMemberCreateMemberConfiguration();
-				if (createMemberConfiguration != null) {
-					goldForNewMember = createMemberConfiguration.getGoldForNewNember();
+				MemberRightsConfiguration memberRightsConfiguration = memberRightsConfigurationService
+						.findMemberRightsConfiguration();
+				if (memberRightsConfiguration != null) {
+					goldForNewMember = memberRightsConfiguration.getGoldForNewNember();
 				}
 				// 创建会员和unionid授权
 				CreateMemberResult createMemberResult = memberAuthCmdService.createMemberAndAddThirdAuth("union.weixin",
 						unionid, goldForNewMember, System.currentTimeMillis());
 
-				// TODO:更具普通会员权益设置添加rights
 				memberAuthQueryService.createMemberAndAddThirdAuth(createMemberResult.getMemberId(), "union.weixin",
-						unionid);
+						unionid, memberRightsConfiguration);
 
 				// 填充用户信息
 				memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl);

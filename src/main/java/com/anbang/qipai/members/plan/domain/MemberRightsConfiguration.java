@@ -1,12 +1,14 @@
 package com.anbang.qipai.members.plan.domain;
 
+import com.anbang.qipai.members.cqrs.q.dbo.MemberRights;
+
 /**
  * 创建新会员的设置
  * 
  * @author neo
  *
  */
-public class MemberRights {
+public class MemberRightsConfiguration {
 
 	/**
 	 * 永远为1，只是为了数据库查询方便
@@ -22,9 +24,30 @@ public class MemberRights {
 	private int inviteIntegralNumber;// 邀请得积分数量
 
 	private float vipGrowIntegralSpeed;// 会员积分增长速度
-	private float planGrowIntegralSpeed;// 普通会员增长速度
+	private float planGrowIntegralSpeed;// 普通会员积分增长速度
 
 	private float vipGrowGradeSpeed;// 会员等级增长速度
+
+	public MemberRights generateRightsForPlanMembers() {
+		MemberRights rights = new MemberRights();
+		rights.setGoldForNewNember(goldForNewNember);
+		rights.setGrowIntegralSpeed(planGrowIntegralSpeed);
+		rights.setInviteIntegralNumber(inviteIntegralNumber);
+		rights.setScoreForNewNember(scoreForNewNember);
+		rights.setSignGoldNumber(signGoldNumber);
+		return rights;
+	}
+
+	public MemberRights generateRightsForVipMembers() {
+		MemberRights rights = new MemberRights();
+		rights.setGoldForNewNember(goldForNewNember);
+		rights.setGrowGradeSpeed(vipGrowGradeSpeed);
+		rights.setGrowIntegralSpeed(vipGrowIntegralSpeed);
+		rights.setInviteIntegralNumber(inviteIntegralNumber);
+		rights.setScoreForNewNember(scoreForNewNember);
+		rights.setSignGoldNumber(signGoldNumber);
+		return rights;
+	}
 
 	public String getId() {
 		return id;
