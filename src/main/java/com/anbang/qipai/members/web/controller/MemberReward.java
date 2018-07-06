@@ -9,10 +9,17 @@ import com.anbang.qipai.members.cqrs.c.domain.MemberNotFoundException;
 import com.anbang.qipai.members.cqrs.c.service.MemberGoldCmdService;
 import com.anbang.qipai.members.cqrs.c.service.MemberScoreCmdService;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreRecordDbo;
+import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
+import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
+import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
+import com.anbang.qipai.members.msg.service.ScoresMsgService;
 import com.anbang.qipai.members.plan.service.MemberService;
 import com.anbang.qipai.members.util.TimeUtil;
 import com.anbang.qipai.members.web.vo.CommonVO;
+import com.dml.accounting.AccountingRecord;
 import com.dml.accounting.InsufficientBalanceException;
 
 /**邮件奖励controller
@@ -32,6 +39,18 @@ public class MemberReward {
 	private MemberService memberService;
 	
 	@Autowired
+	private ScoresMsgService scoresMsgService;
+	
+	@Autowired
+	private GoldsMsgService goldsMsgService;
+	
+	@Autowired
+	private MemberGoldQueryService memberGoldQueryService;
+	
+	@Autowired
+	private MemberScoreQueryService memberScoreQueryService;
+	
+	@Autowired
 	private MembersMsgService membersMsgService;
 	
 	@RequestMapping("/mail_reward")
@@ -41,11 +60,17 @@ public class MemberReward {
 			MemberDbo memberDbo = memberService.findMemberById(memberId);
 			if(number != null) {
 				memberDbo.setGold(memberDbo.getGold()+number);
-				memberGoldCmdService.giveGoldToMember(memberId, number, "mail_reward", System.currentTimeMillis());
+				AccountingRecord goldrcd = 	memberGoldCmdService.giveGoldToMember(memberId, number, "mail_reward", System.currentTimeMillis());
+				//添加金币流水
+				MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(memberId, goldrcd);
+				goldsMsgService.withdraw(golddbo);
 			}
 			if(integral != null) {
 				memberDbo.setScore(memberDbo.getScore()+integral);
-				memberScoreCmdService.giveScoreToMember(memberId, integral, "mail_reward", System.currentTimeMillis());
+				AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(memberId, integral, "mail_reward", System.currentTimeMillis());
+				//添加积分流水
+				MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(memberId, scorercd);
+				scoresMsgService.withdraw(scoredbo);
 			}
 			if(vipcard != null) {
 				long time = TimeUtil.getTimeOnDay(vipcard);
@@ -64,11 +89,17 @@ public class MemberReward {
 			if("金币".equals(rewardType)) {
 				int gold = rewardNum * 10000;
 				memberDbo.setGold(memberDbo.getGold()+gold);
-				memberGoldCmdService.giveGoldToMember(memberId, gold, "task_reward", System.currentTimeMillis());
+				AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(memberId, gold, "task_reward", System.currentTimeMillis());
+				//添加流水
+				MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(memberId, goldrcd);
+				goldsMsgService.withdraw(golddbo);
 			}
 			if("积分".equals(rewardType)) {
 				memberDbo.setScore(memberDbo.getScore()+rewardNum);
-				memberScoreCmdService.giveScoreToMember(memberId, rewardNum, "task_reward", System.currentTimeMillis());
+				AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(memberId, rewardNum, "task_reward", System.currentTimeMillis());
+				//添加流水
+				MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(memberId, scorercd);
+				scoresMsgService.withdraw(scoredbo);
 			}
 			if("会员卡".equals(rewardType)) {
 				long time = TimeUtil.getTimeOnDay(rewardNum);
