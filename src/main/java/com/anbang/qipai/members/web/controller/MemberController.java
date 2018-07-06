@@ -85,8 +85,14 @@ public class MemberController {
 	}
 
 	@RequestMapping("/querymember")
-	public DetailsVo queryMember(String memberId) {
+	public DetailsVo queryMember(String token) {
 		DetailsVo vo = new DetailsVo();
+		String memberId = memberAuthService.getMemberIdBySessionId(token);
+		if (memberId == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
 		MemberDbo member = memberService.findMemberById(memberId);
 		vo.setVipLevel(member.getVipLevel());
 		vo.setPhone(member.getPhone());
@@ -100,8 +106,14 @@ public class MemberController {
 	}
 
 	@RequestMapping("/registerphone")
-	public CommonVO registerPhone(String phone, String memberId) {
+	public CommonVO registerPhone(String phone, String token) {
 		CommonVO vo = new CommonVO();
+		String memberId = memberAuthService.getMemberIdBySessionId(token);
+		if (memberId == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
 		memberService.registerPhone(memberId, phone);
 		MemberDbo memberdbo = memberService.findMemberById(memberId);
 		// kafka发消息更新
@@ -127,7 +139,7 @@ public class MemberController {
 			vo.setData(listPage);
 		} else {
 			vo.setSuccess(false);
-			vo.setMsg("No Such Member");
+			vo.setMsg("invalid token");
 		}
 		return vo;
 	}
@@ -147,7 +159,7 @@ public class MemberController {
 			vo.setData(listPage);
 		} else {
 			vo.setSuccess(false);
-			vo.setMsg("No Such Member");
+			vo.setMsg("invalid token");
 		}
 		return vo;
 	}
