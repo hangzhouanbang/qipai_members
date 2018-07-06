@@ -11,6 +11,7 @@ import com.anbang.qipai.members.cqrs.c.service.MemberScoreCmdService;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.plan.service.MemberService;
+import com.anbang.qipai.members.util.TimeUtil;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.dml.accounting.InsufficientBalanceException;
 
@@ -18,8 +19,8 @@ import com.dml.accounting.InsufficientBalanceException;
  * @author 程佳  2018.6.20
  * **/
 @RestController
-@RequestMapping("/game")
-public class MemberMailReward {
+@RequestMapping("/reward")
+public class MemberReward {
 	
 	@Autowired
 	private MemberGoldCmdService memberGoldCmdService;
@@ -47,10 +48,35 @@ public class MemberMailReward {
 				memberScoreCmdService.giveScoreToMember(memberId, integral, "mail_reward", System.currentTimeMillis());
 			}
 			if(vipcard != null) {
-				
+				long time = TimeUtil.getTimeOnDay(vipcard);
+				memberDbo.setVipEndTime(memberDbo.getVipEndTime()+time);
 			}
 			membersMsgService.updateMember(memberDbo);
 		}
 		return new CommonVO(); 
 	}
+	
+	@RequestMapping("/task_reward")
+	@ResponseBody
+	public CommonVO task_reward(String rewardType,Integer rewardNum,String memberId) throws MemberNotFoundException {
+		if(rewardType != null && rewardNum != null && memberId != null) {
+			MemberDbo memberDbo = memberService.findMemberById(memberId);
+			if("金币".equals(rewardType)) {
+				int gold = rewardNum * 10000;
+				memberDbo.setGold(memberDbo.getGold()+gold);
+				memberGoldCmdService.giveGoldToMember(memberId, gold, "task_reward", System.currentTimeMillis());
+			}
+			if("积分".equals(rewardType)) {
+				memberDbo.setScore(memberDbo.getScore()+rewardNum);
+				memberScoreCmdService.giveScoreToMember(memberId, rewardNum, "task_reward", System.currentTimeMillis());
+			}
+			if("会员卡".equals(rewardType)) {
+				long time = TimeUtil.getTimeOnDay(rewardNum);
+				memberDbo.setVipEndTime(memberDbo.getVipEndTime()+time);
+			}
+			membersMsgService.updateMember(memberDbo);
+		}
+		return new CommonVO();
+	}
+	
 }

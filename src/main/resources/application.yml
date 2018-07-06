@@ -76,7 +76,18 @@ spring:
                 linger:
                   ms: 5
                 batch:
-                  size: 16384         
+                  size: 16384     
+          
+          historicarecord:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384     
 
       bindings:
         members:
@@ -111,6 +122,12 @@ spring:
             
         orders:
           destination: orders
+          contentType: application/json
+          producer:
+            partitionCount: 1
+            
+        historicarecord:
+          destination: historicarecord
           contentType: application/json
           producer:
             partitionCount: 1

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.anbang.qipai.members.cqrs.c.domain.MemberNotFoundException;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthService;
+import com.anbang.qipai.members.msg.service.HistoricaRecordMsgService;
 import com.anbang.qipai.members.plan.domain.historicalrecord.RuianHistoricalRecord;
 import com.anbang.qipai.members.plan.domain.historicalrecord.WenZhouHistoricalRecord;
 import com.anbang.qipai.members.plan.domain.historicalrecord.DianPaoHistoricalRecord;
@@ -36,6 +37,9 @@ public class MemberHistoricalRecordController {
 
 	@Autowired
 	private HistoricalRecordService historicalRecordService;
+	
+	@Autowired
+	private HistoricaRecordMsgService historicaRecordMsgService;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping("/addrecord")
@@ -71,6 +75,7 @@ public class MemberHistoricalRecordController {
 		memberHistoricalRecord.setGame(game);
 		memberHistoricalRecord.setMemberId(jsonobj.getString("memberId"));
 		historicalRecordService.addRecord(memberHistoricalRecord);
+		historicaRecordMsgService.createHistoricaRecord(memberHistoricalRecord);
 		return new CommonVO();
 	}
 	
