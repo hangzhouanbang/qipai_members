@@ -22,92 +22,101 @@ import com.anbang.qipai.members.web.vo.CommonVO;
 import com.dml.accounting.AccountingRecord;
 import com.dml.accounting.InsufficientBalanceException;
 
-/**邮件奖励controller
- * @author 程佳  2018.6.20
- * **/
+/**
+ * 邮件奖励controller
+ * 
+ * @author 程佳 2018.6.20
+ **/
 @RestController
 @RequestMapping("/reward")
-public class MemberReward {
-	
+public class MemberRewardController {
+
 	@Autowired
 	private MemberGoldCmdService memberGoldCmdService;
-	
+
 	@Autowired
 	private MemberScoreCmdService memberScoreCmdService;
-	
+
 	@Autowired
 	private MemberService memberService;
-	
+
 	@Autowired
 	private ScoresMsgService scoresMsgService;
-	
+
 	@Autowired
 	private GoldsMsgService goldsMsgService;
-	
+
 	@Autowired
 	private MemberGoldQueryService memberGoldQueryService;
-	
+
 	@Autowired
 	private MemberScoreQueryService memberScoreQueryService;
-	
+
 	@Autowired
 	private MembersMsgService membersMsgService;
-	
+
 	@RequestMapping("/mail_reward")
 	@ResponseBody
-	public CommonVO mail_Reward(String memberId,Integer number,Integer integral,Integer vipcard) throws InsufficientBalanceException, MemberNotFoundException {
-		if(memberId != null) {
+	public CommonVO mail_Reward(String memberId, Integer number, Integer integral, Integer vipcard)
+			throws InsufficientBalanceException, MemberNotFoundException {
+		if (memberId != null) {
 			MemberDbo memberDbo = memberService.findMemberById(memberId);
-			if(number != null) {
-				memberDbo.setGold(memberDbo.getGold()+number);
-				AccountingRecord goldrcd = 	memberGoldCmdService.giveGoldToMember(memberId, number, "mail_reward", System.currentTimeMillis());
-				//添加金币流水
+			if (number != null) {
+				memberDbo.setGold(memberDbo.getGold() + number);
+				AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(memberId, number, "mail_reward",
+						System.currentTimeMillis());
+				// 添加金币流水
 				MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(memberId, goldrcd);
 				goldsMsgService.withdraw(golddbo);
 			}
-			if(integral != null) {
-				memberDbo.setScore(memberDbo.getScore()+integral);
-				AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(memberId, integral, "mail_reward", System.currentTimeMillis());
-				//添加积分流水
+			if (integral != null) {
+				memberDbo.setScore(memberDbo.getScore() + integral);
+				AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(memberId, integral, "mail_reward",
+						System.currentTimeMillis());
+				// 添加积分流水
 				MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(memberId, scorercd);
 				scoresMsgService.withdraw(scoredbo);
 			}
-			if(vipcard != null) {
+			if (vipcard != null) {
 				long time = TimeUtil.getTimeOnDay(vipcard);
-				memberDbo.setVipEndTime(memberDbo.getVipEndTime()+time);
+				memberDbo.setVipEndTime(memberDbo.getVipEndTime() + time);
 			}
 			membersMsgService.updateMember(memberDbo);
 		}
-		return new CommonVO(); 
-	}
-	
-	@RequestMapping("/task_reward")
-	@ResponseBody
-	public CommonVO task_reward(Integer rewardGold,Integer rewardScore,Integer rewardVip,String memberId) throws MemberNotFoundException {
-		if(memberId != null) {
-		MemberDbo memberDbo = memberService.findMemberById(memberId);
-			if(rewardGold != null) {
-				int gold = rewardGold * 10000;
-				memberDbo.setGold(memberDbo.getGold()+gold);
-				AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(memberId, gold, "task_reward", System.currentTimeMillis());
-				//添加流水
-				MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(memberId, goldrcd);
-				goldsMsgService.withdraw(golddbo);
-			}
-			if(rewardScore != null) {
-				memberDbo.setScore(memberDbo.getScore()+rewardScore);
-				AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(memberId, rewardScore, "task_reward", System.currentTimeMillis());
-				//添加流水
-				MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(memberId, scorercd);
-				scoresMsgService.withdraw(scoredbo);
-			}
-			if(rewardVip != null) {
-				long time = TimeUtil.getTimeOnDay(rewardVip);
-				memberDbo.setVipEndTime(memberDbo.getVipEndTime()+time);
-			}
-			membersMsgService.updateMember(memberDbo);
-		}	
 		return new CommonVO();
 	}
-	
+
+	@RequestMapping("/task_reward")
+	@ResponseBody
+	public CommonVO task_reward(Integer rewardGold, Integer rewardScore, Integer rewardVip, String memberId)
+			throws MemberNotFoundException {
+		CommonVO vo = new CommonVO();
+		MemberDbo memberDbo = memberService.findMemberById(memberId);
+		if (rewardGold != null) {
+			int gold = rewardGold * 10000;
+			memberDbo.setGold(memberDbo.getGold() + gold);
+			AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(memberId, gold, "task_reward",
+					System.currentTimeMillis());
+			// 添加流水
+			MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(memberId, goldrcd);
+			goldsMsgService.withdraw(golddbo);
+		}
+		if (rewardScore != null) {
+			memberDbo.setScore(memberDbo.getScore() + rewardScore);
+			AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(memberId, rewardScore, "task_reward",
+					System.currentTimeMillis());
+			// 添加流水
+			MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(memberId, scorercd);
+			scoresMsgService.withdraw(scoredbo);
+		}
+		if (rewardVip != null) {
+			long time = TimeUtil.getTimeOnDay(rewardVip);
+			memberDbo.setVipEndTime(memberDbo.getVipEndTime() + time);
+		}
+		membersMsgService.updateMember(memberDbo);
+		vo.setSuccess(true);
+		vo.setMsg("task reward success");
+		return vo;
+	}
+
 }
