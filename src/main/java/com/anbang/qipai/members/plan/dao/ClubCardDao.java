@@ -6,13 +6,13 @@ import com.anbang.qipai.members.plan.domain.ClubCard;
 
 public interface ClubCardDao {
 
-	List<ClubCard> getAllClubCard();
+	List<ClubCard> findAllClubCard();
 
 	ClubCard getClubCardById(String clubCardId);
 
 	void addClubCard(ClubCard clubCard);
 
-	Boolean deleteClubCardByIds(String[] clubCardIds);
+	boolean deleteClubCardByIds(String[] clubCardIds);
 
-	Boolean updateClubCard(ClubCard clubCard);
+	boolean updateClubCard(ClubCard clubCard);
 }

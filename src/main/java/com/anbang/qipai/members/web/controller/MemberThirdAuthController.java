@@ -85,12 +85,10 @@ public class MemberThirdAuthController {
 				}
 				// openid登录
 				String token = memberAuthService.thirdAuth("open.weixin.app.qipai", openid);
-				// 更新登录时间
-				String memberId = memberAuthService.getMemberIdBySessionId(token);
-				memberAuthQueryService.updateLoginTime(memberId, System.currentTimeMillis());
-				// 发送消息
-				MemberDbo memberDbo = memberAuthQueryService.findMember(memberId);
-				membersMsgService.updateMember(memberDbo);
+				// TODO更新登录时间
+
+				// TODO发送kafka消息
+
 				vo.setSuccess(true);
 				Map data = new HashMap();
 				data.put("token", token);

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.plan.dao.MemberDao;
+import com.mongodb.WriteResult;
 
 @Component
 public class MongodbMemberDao implements MemberDao {
@@ -39,15 +40,16 @@ public class MongodbMemberDao implements MemberDao {
 	}
 
 	@Override
-	public void updateMemberPhone(String memberId, String phone) {
+	public boolean updateMemberPhone(String memberId, String phone) {
 		Query query = new Query(Criteria.where("id").is(memberId));
 		Update update = new Update();
 		update.set("phone", phone);
-		mongoTemplate.updateFirst(query, update, MemberDbo.class);
+		WriteResult result = mongoTemplate.updateFirst(query, update, MemberDbo.class);
+		return result.getN() > 0;
 	}
 
 	@Override
-	public void updateMemberVIP(MemberDbo member) {
+	public boolean updateMemberVIP(MemberDbo member) {
 		Query query = new Query(Criteria.where("id").is(member.getId()));
 		Update update = new Update();
 		update.set("vipEndTime", member.getVipEndTime());
@@ -55,21 +57,23 @@ public class MongodbMemberDao implements MemberDao {
 		update.set("vipLevel", member.getVipLevel());
 		update.set("vipScore", member.getVipScore());
 		update.set("cost", member.getCost());
-		mongoTemplate.updateFirst(query, update, MemberDbo.class);
+		WriteResult result = mongoTemplate.updateFirst(query, update, MemberDbo.class);
+		return result.getN() > 0;
 	}
 
 	@Override
-	public void resetVip(MemberDbo member) {
+	public boolean resetVip(MemberDbo member) {
 		Query query = new Query(Criteria.where("id").is(member.getId()));
 		Update update = new Update();
 		update.set("vip", member.getVip());
-		mongoTemplate.updateFirst(query, update, MemberDbo.class);
+		WriteResult result = mongoTemplate.updateFirst(query, update, MemberDbo.class);
+		return result.getN() > 0;
 	}
 
 	@Override
-	public void update_score_gold(String memberid,MemberDbo memberDbo) {
-		mongoTemplate.updateMulti(new Query(Criteria.where("id").is(memberid)),new Update().set("score",memberDbo.getScore())
-				.set("gold",memberDbo.getGold()), MemberDbo.class);
+	public void update_score_gold(String memberid, MemberDbo memberDbo) {
+		mongoTemplate.updateMulti(new Query(Criteria.where("id").is(memberid)),
+				new Update().set("score", memberDbo.getScore()).set("gold", memberDbo.getGold()), MemberDbo.class);
 	}
 
 }

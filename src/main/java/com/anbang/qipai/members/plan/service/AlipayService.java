@@ -84,25 +84,6 @@ public class AlipayService {
 		return orderInfo;
 	}
 
-	public Boolean checkAlipay(HttpServletRequest request) {
-		// 从支付宝回调的request域中取值
-		// 获取支付宝返回的参数集合
-		Map<String, String[]> aliParams = request.getParameterMap();
-		Map<String, String> params = new HashMap<String, String>();
-		for (Iterator<String> iter = aliParams.keySet().iterator(); iter.hasNext();) {
-			String key = iter.next();
-			String[] values = aliParams.get(key);
-			String valueStr = "";
-			for (int i = 0; i < values.length; i++) {
-				valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
-			}
-			params.put(key, valueStr);
-		}
-		Map<String, String> result = paraFilter(params);
-		String orderInfo = createLinkString(result);
-		return SignUtils.verify(orderInfo, params.get("sign"), AlipayConfig.ALI_PUBLIC_KEY);
-	}
-
 	public Order alipayNotify(HttpServletRequest request) {
 		// 从支付宝回调的request域中取值
 		// 获取支付宝返回的参数集合

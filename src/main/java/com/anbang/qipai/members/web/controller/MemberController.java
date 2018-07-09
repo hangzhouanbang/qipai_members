@@ -33,6 +33,12 @@ import com.anbang.qipai.members.web.vo.MemberVO;
 import com.dml.accounting.AccountingRecord;
 import com.highto.framework.web.page.ListPage;
 
+/**
+ * 会员controller
+ * 
+ * @author 林少聪 2018.7.9
+ *
+ */
 @CrossOrigin
 @RestController
 @RequestMapping("/member")
@@ -117,7 +123,7 @@ public class MemberController {
 		memberService.registerPhone(memberId, phone);
 		MemberDbo memberdbo = memberService.findMemberById(memberId);
 		// kafka发消息更新
-		membersMsgService.updateMember(memberdbo);
+		membersMsgService.updateMemberPhone(memberdbo);
 		vo.setSuccess(true);
 		vo.setMsg("register success");
 		vo.setData(phone);
@@ -181,9 +187,6 @@ public class MemberController {
 					AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(id, Integer.parseInt(score),
 							"admin_give_score", System.currentTimeMillis());
 					MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(id, scorercd);
-					MemberDbo memberDbo = memberService.findMemberById(id);
-					// kafka更新
-					membersMsgService.updateMember(memberDbo);
 					// TODO: rcd发kafka
 					scoresMsgService.withdraw(scoredbo);
 				}
@@ -192,9 +195,6 @@ public class MemberController {
 					AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(id, Integer.parseInt(gold),
 							"admin_give_gold", System.currentTimeMillis());
 					MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(id, goldrcd);
-					MemberDbo memberDbo = memberService.findMemberById(id);
-					// kafka更新
-					membersMsgService.updateMember(memberDbo);
 					// TODO: rcd发kafka
 					goldsMsgService.withdraw(golddbo);
 				}
@@ -223,7 +223,7 @@ public class MemberController {
 					member.setVip(false);
 					memberService.resetVIP(member);
 					// kafka更新
-					membersMsgService.updateMember(member);
+					membersMsgService.resetMemberVip(member);
 				}
 			}
 		}

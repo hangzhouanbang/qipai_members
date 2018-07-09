@@ -40,7 +40,7 @@ public class MemberService {
 		memberDao.updateMemberPhone(memberId, phone);
 	}
 
-	public void updateVIP(Order order) {
+	public boolean updateVIP(Order order) {
 		MemberDbo member = memberDao.findMemberById(order.getMemberId());
 		member.setVip(true);
 		member.setVipEndTime(order.getVipTime() * order.getNumber() + System.currentTimeMillis());
@@ -54,10 +54,10 @@ public class MemberService {
 		if (vipScore >= score) {
 			member.setVipLevel(level + 1);
 		}
-		memberDao.updateMemberVIP(member);
+		return memberDao.updateMemberVIP(member);
 	}
 
-	public void resetVIP(MemberDbo member) {
-		memberDao.resetVip(member);
+	public boolean resetVIP(MemberDbo member) {
+		return memberDao.resetVip(member);
 	}
 }

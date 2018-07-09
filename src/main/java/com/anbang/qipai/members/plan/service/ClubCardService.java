@@ -15,18 +15,18 @@ public class ClubCardService {
 	private ClubCardDao clubCardDao;
 
 	public List<ClubCard> showClubCard() {
-		return clubCardDao.getAllClubCard();
+		return clubCardDao.findAllClubCard();
 	}
 
 	public void addClubCard(ClubCard clubCard) {
 		clubCardDao.addClubCard(clubCard);
 	}
 
-	public Boolean deleteClubCards(String[] clubCardIds) {
+	public boolean deleteClubCards(String[] clubCardIds) {
 		return clubCardDao.deleteClubCardByIds(clubCardIds);
 	}
 
-	public Boolean updateClubCard(ClubCard clubCard) {
+	public boolean updateClubCard(ClubCard clubCard) {
 		return clubCardDao.updateClubCard(clubCard);
 	}
 

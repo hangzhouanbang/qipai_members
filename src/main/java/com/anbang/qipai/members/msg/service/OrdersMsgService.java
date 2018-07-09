@@ -19,10 +19,10 @@ public class OrdersMsgService {
 		mo.setData(order);
 		ordersSource.orders().send(MessageBuilder.withPayload(mo).build());
 	}
-	
-	public void updateOrder(Order order) {
+
+	public void updateOrderDeliveTime(Order order) {
 		CommonMO mo = new CommonMO();
-		mo.setMsg("updateOrder");
+		mo.setMsg("trade over");
 		mo.setData(order);
 		ordersSource.orders().send(MessageBuilder.withPayload(mo).build());
 	}

@@ -21,9 +21,23 @@ public class MembersMsgService {
 		membersSource.members().send(MessageBuilder.withPayload(mo).build());
 	}
 
-	public void updateMember(MemberDbo member) {
+	public void updateMemberPhone(MemberDbo member) {
 		CommonMO mo = new CommonMO();
-		mo.setMsg("updateMember");
+		mo.setMsg("update member phone");
+		mo.setData(member);
+		membersSource.members().send(MessageBuilder.withPayload(mo).build());
+	}
+
+	public void updateMemberVip(MemberDbo member) {
+		CommonMO mo = new CommonMO();
+		mo.setMsg("update member vip");
+		mo.setData(member);
+		membersSource.members().send(MessageBuilder.withPayload(mo).build());
+	}
+	
+	public void resetMemberVip(MemberDbo member) {
+		CommonMO mo = new CommonMO();
+		mo.setMsg("reset member vip");
 		mo.setData(member);
 		membersSource.members().send(MessageBuilder.withPayload(mo).build());
 	}

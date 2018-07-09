@@ -9,12 +9,6 @@ public interface MemberDboDao {
 
 	void update(String memberId, String nickname, String headimgurl);
 
-	void updateLoginTime(String memberId, long loginTime);
-
-	void updateGold(String memberId, int gold);
-
-	void updateScore(String memberId, int score);
-
 	MemberDbo findById(String id);
 
 	void updatePlanMembersRights(MemberRights memberRights);

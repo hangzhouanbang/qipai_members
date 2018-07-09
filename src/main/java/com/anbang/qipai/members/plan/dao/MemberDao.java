@@ -13,9 +13,9 @@ public interface MemberDao {
 
 	MemberDbo findMemberById(String memberId);
 
-	void updateMemberPhone(String memberId, String phone);
+	boolean updateMemberPhone(String memberId, String phone);
 
-	void updateMemberVIP(MemberDbo member);
+	boolean updateMemberVIP(MemberDbo member);
 	
-	void resetVip(MemberDbo member);
+	boolean resetVip(MemberDbo member);
 }

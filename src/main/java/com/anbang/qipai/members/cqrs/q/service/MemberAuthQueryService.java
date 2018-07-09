@@ -27,10 +27,6 @@ public class MemberAuthQueryService {
 		memberDboDao.update(memberId, nickname, headimgurl);
 	}
 
-	public void updateLoginTime(String memberId, long loginTime) {
-		memberDboDao.updateLoginTime(memberId, loginTime);
-	}
-
 	public void createMemberAndAddThirdAuth(String memberId, String publisher, String uuid,
 			MemberRightsConfiguration memberRightsConfiguration) {
 		MemberDbo memberDbo = new MemberDbo();
@@ -41,7 +37,7 @@ public class MemberAuthQueryService {
 		memberDbo.setVipScore(0);
 		memberDbo.setLastLoginTime(System.currentTimeMillis());
 		memberDbo.setCreateTime(System.currentTimeMillis());
-//		memberDbo.setRights(memberRightsConfiguration.generateRightsForPlanMembers());
+		// memberDbo.setRights(memberRightsConfiguration.generateRightsForPlanMembers());
 		memberDboDao.save(memberDbo);
 
 		AuthorizationDbo authDbo = new AuthorizationDbo();

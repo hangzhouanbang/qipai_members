@@ -80,8 +80,8 @@ public class MemberRewardController {
 			if (vipcard != null) {
 				long time = TimeUtil.getTimeOnDay(vipcard);
 				memberDbo.setVipEndTime(memberDbo.getVipEndTime() + time);
+				membersMsgService.updateMemberVip(memberDbo);
 			}
-			membersMsgService.updateMember(memberDbo);
 		}
 		return new CommonVO();
 	}
@@ -92,28 +92,31 @@ public class MemberRewardController {
 			throws MemberNotFoundException {
 		CommonVO vo = new CommonVO();
 		MemberDbo memberDbo = memberService.findMemberById(memberId);
-		if (rewardGold != null) {
-			int gold = rewardGold * 10000;
-			memberDbo.setGold(memberDbo.getGold() + gold);
-			AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(memberId, gold, "task_reward",
-					System.currentTimeMillis());
-			// 添加流水
-			MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(memberId, goldrcd);
-			goldsMsgService.withdraw(golddbo);
+		if (memberDbo != null) {
+			if (rewardGold != null) {
+				int gold = rewardGold * 10000;
+				AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(memberId, gold, "task_reward",
+						System.currentTimeMillis());
+				// 添加流水
+				MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(memberId, goldrcd);
+				goldsMsgService.withdraw(golddbo);
+			}
+			if (rewardScore != null) {
+				AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(memberId, rewardScore,
+						"task_reward", System.currentTimeMillis());
+				// 添加流水
+				MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(memberId, scorercd);
+				scoresMsgService.withdraw(scoredbo);
+			}
+			if (rewardVip != null) {
+				long time = 1000 * 60 * 60 * 24 * rewardVip;
+				if (memberDbo.getVipEndTime() != null) {
+					memberDbo.setVipEndTime(memberDbo.getVipEndTime() + time);
+				}
+				memberDbo.setVipEndTime(time);
+				membersMsgService.updateMemberVip(memberDbo);
+			}
 		}
-		if (rewardScore != null) {
-			memberDbo.setScore(memberDbo.getScore() + rewardScore);
-			AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(memberId, rewardScore, "task_reward",
-					System.currentTimeMillis());
-			// 添加流水
-			MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(memberId, scorercd);
-			scoresMsgService.withdraw(scoredbo);
-		}
-		if (rewardVip != null) {
-			long time = TimeUtil.getTimeOnDay(rewardVip);
-			memberDbo.setVipEndTime(memberDbo.getVipEndTime() + time);
-		}
-		membersMsgService.updateMember(memberDbo);
 		vo.setSuccess(true);
 		vo.setMsg("task reward success");
 		return vo;

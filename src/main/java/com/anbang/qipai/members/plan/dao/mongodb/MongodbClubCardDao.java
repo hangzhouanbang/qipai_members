@@ -20,7 +20,7 @@ public class MongodbClubCardDao implements ClubCardDao {
 	private MongoTemplate mongoTemplate;
 
 	@Override
-	public List<ClubCard> getAllClubCard() {
+	public List<ClubCard> findAllClubCard() {
 		return mongoTemplate.findAll(ClubCard.class);
 	}
 
@@ -36,7 +36,7 @@ public class MongodbClubCardDao implements ClubCardDao {
 	}
 
 	@Override
-	public Boolean deleteClubCardByIds(String[] clubCardIds) {
+	public boolean deleteClubCardByIds(String[] clubCardIds) {
 		Object[] ids = clubCardIds;
 		Query query = new Query(Criteria.where("id").in(ids));
 		WriteResult writeResult = mongoTemplate.remove(query, ClubCard.class);
@@ -44,24 +44,14 @@ public class MongodbClubCardDao implements ClubCardDao {
 	}
 
 	@Override
-	public Boolean updateClubCard(ClubCard clubCard) {
+	public boolean updateClubCard(ClubCard clubCard) {
 		Query query = new Query(Criteria.where("id").is(clubCard.getId()));
 		Update update = new Update();
-		if (clubCard.getName() != null) {
-			update.set("name", clubCard.getName());
-		}
-		if (clubCard.getPrice() != null) {
-			update.set("price", clubCard.getPrice());
-		}
-		if (clubCard.getGold() != null) {
-			update.set("gold", clubCard.getGold());
-		}
-		if (clubCard.getScore() != null) {
-			update.set("score", clubCard.getScore());
-		}
-		if (clubCard.getTime() != null) {
-			update.set("time", clubCard.getTime());
-		}
+		update.set("name", clubCard.getName());
+		update.set("price", clubCard.getPrice());
+		update.set("gold", clubCard.getGold());
+		update.set("score", clubCard.getScore());
+		update.set("time", clubCard.getTime());
 		WriteResult writeResult = mongoTemplate.updateFirst(query, update, ClubCard.class);
 		return writeResult.getN() > 0;
 	}
