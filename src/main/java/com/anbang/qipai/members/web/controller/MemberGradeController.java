@@ -27,10 +27,10 @@ public class MemberGradeController {
 	@RequestMapping("/insert_grade")
 	@ResponseBody
 	public CommonVO insert_grade(@RequestBody MemberGrade memberGrade) {
-		CommonVO co = new CommonVO();
+		CommonVO vo = new CommonVO();
 		memberGradeQueryService.insert_grade(memberGrade);
 		MemberGrade memberGrades = memberGradeQueryService.find_grade();
 		memberGradeMsgService.insert_grade(memberGrades);
-		return co;
+		return vo;
 	}
 }

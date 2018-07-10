@@ -10,8 +10,6 @@ public class MemberDbo {
 	private Integer cost;// 消费总额RMB
 	private String headimgurl;// 头像url
 	private String phone;// 会员手机
-	private Integer score;// 会员积分
-	private Integer gold;// 会员金币
 	private Integer onlineTime;// 在线时长
 	private String loginIp;// 登录ip
 	private Long lastLoginTime;// 最后登录时间
@@ -81,22 +79,6 @@ public class MemberDbo {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
-	}
-
-	public Integer getScore() {
-		return score;
-	}
-
-	public void setScore(Integer score) {
-		this.score = score;
-	}
-
-	public Integer getGold() {
-		return gold;
-	}
-
-	public void setGold(Integer gold) {
-		this.gold = gold;
 	}
 
 	public Long getCreateTime() {

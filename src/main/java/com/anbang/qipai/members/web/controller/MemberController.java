@@ -177,25 +177,23 @@ public class MemberController {
 	 **/
 	@RequestMapping("/update_score_gold")
 	@ResponseBody
-	public CommonVO update_score_gold(@RequestBody String[] ids, String score, String gold) {
+	public CommonVO update_score_gold(@RequestBody String[] ids, Integer score, Integer gold) {
 		CommonVO vo = new CommonVO();
 		vo.setSuccess(true);
 		for (String id : ids) {
 			try {
-				if (score != null && !score.equals("") && score.matches("^[0-9]*$")) {
+				if (score != null) {
 					// 添加积分
-					AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(id, Integer.parseInt(score),
-							"admin_give_score", System.currentTimeMillis());
+					AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(id, score, "admin_give_score",
+							System.currentTimeMillis());
 					MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(id, scorercd);
-					// TODO: rcd发kafka
 					scoresMsgService.withdraw(scoredbo);
 				}
-				if (gold != null && !gold.equals("") && gold.matches("^[0-9]*$")) {
+				if (gold != null) {
 					// 添加金币
-					AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(id, Integer.parseInt(gold),
-							"admin_give_gold", System.currentTimeMillis());
+					AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(id, gold, "admin_give_gold",
+							System.currentTimeMillis());
 					MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(id, goldrcd);
-					// TODO: rcd发kafka
 					goldsMsgService.withdraw(golddbo);
 				}
 			} catch (MemberNotFoundException e) {

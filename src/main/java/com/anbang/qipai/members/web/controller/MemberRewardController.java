@@ -17,10 +17,8 @@ import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
 import com.anbang.qipai.members.plan.service.MemberService;
-import com.anbang.qipai.members.util.TimeUtil;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.dml.accounting.AccountingRecord;
-import com.dml.accounting.InsufficientBalanceException;
 
 /**
  * 邮件奖励controller
@@ -57,12 +55,11 @@ public class MemberRewardController {
 
 	@RequestMapping("/mail_reward")
 	@ResponseBody
-	public CommonVO mail_Reward(String memberId, Integer number, Integer integral, Integer vipcard)
-			throws InsufficientBalanceException, MemberNotFoundException {
-		if (memberId != null) {
-			MemberDbo memberDbo = memberService.findMemberById(memberId);
+	public CommonVO mail_Reward(String memberId, Integer number, Integer integral, Integer vipcard) {
+		CommonVO vo = new CommonVO();
+		vo.setSuccess(true);
+		try {
 			if (number != null) {
-				memberDbo.setGold(memberDbo.getGold() + number);
 				AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(memberId, number, "mail_reward",
 						System.currentTimeMillis());
 				// 添加金币流水
@@ -70,20 +67,24 @@ public class MemberRewardController {
 				goldsMsgService.withdraw(golddbo);
 			}
 			if (integral != null) {
-				memberDbo.setScore(memberDbo.getScore() + integral);
 				AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(memberId, integral, "mail_reward",
 						System.currentTimeMillis());
 				// 添加积分流水
 				MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(memberId, scorercd);
 				scoresMsgService.withdraw(scoredbo);
 			}
-			if (vipcard != null) {
-				long time = TimeUtil.getTimeOnDay(vipcard);
-				memberDbo.setVipEndTime(memberDbo.getVipEndTime() + time);
-				membersMsgService.updateMemberVip(memberDbo);
-			}
+		} catch (MemberNotFoundException e) {
+			vo.setSuccess(false);
+			vo.setMsg("member not found");
+			e.printStackTrace();
 		}
-		return new CommonVO();
+		if (vipcard != null) {
+			long time = 1000 * 60 * 60 * 24 * vipcard;
+			memberService.updateVipEndTime(memberId, System.currentTimeMillis() + time);
+			MemberDbo member = memberService.findMemberById(memberId);
+			membersMsgService.updateMemberVip(member);
+		}
+		return vo;
 	}
 
 	@RequestMapping("/task_reward")
@@ -91,8 +92,8 @@ public class MemberRewardController {
 	public CommonVO task_reward(Integer rewardGold, Integer rewardScore, Integer rewardVip, String memberId)
 			throws MemberNotFoundException {
 		CommonVO vo = new CommonVO();
-		MemberDbo memberDbo = memberService.findMemberById(memberId);
-		if (memberDbo != null) {
+		vo.setSuccess(true);
+		try {
 			if (rewardGold != null) {
 				int gold = rewardGold * 10000;
 				AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(memberId, gold, "task_reward",
@@ -110,15 +111,15 @@ public class MemberRewardController {
 			}
 			if (rewardVip != null) {
 				long time = 1000 * 60 * 60 * 24 * rewardVip;
-				if (memberDbo.getVipEndTime() != null) {
-					memberDbo.setVipEndTime(memberDbo.getVipEndTime() + time);
-				}
-				memberDbo.setVipEndTime(time);
-				membersMsgService.updateMemberVip(memberDbo);
+				memberService.updateVipEndTime(memberId, System.currentTimeMillis() + time);
+				MemberDbo member = memberService.findMemberById(memberId);
+				membersMsgService.updateMemberVip(member);
 			}
+		} catch (MemberNotFoundException e) {
+			vo.setSuccess(false);
+			vo.setMsg("member not found");
+			e.printStackTrace();
 		}
-		vo.setSuccess(true);
-		vo.setMsg("task reward success");
 		return vo;
 	}
 

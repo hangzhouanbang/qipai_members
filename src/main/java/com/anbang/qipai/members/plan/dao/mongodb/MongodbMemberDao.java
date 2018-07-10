@@ -71,9 +71,13 @@ public class MongodbMemberDao implements MemberDao {
 	}
 
 	@Override
-	public void update_score_gold(String memberid, MemberDbo memberDbo) {
-		mongoTemplate.updateMulti(new Query(Criteria.where("id").is(memberid)),
-				new Update().set("score", memberDbo.getScore()).set("gold", memberDbo.getGold()), MemberDbo.class);
+	public boolean updateMemberVipEndTime(String memberId, long vipEndTime) {
+		Query query = new Query(Criteria.where("id").is(memberId));
+		Update update = new Update();
+		update.set("vipEndTime", vipEndTime);
+		update.set("vip", true);
+		WriteResult result = mongoTemplate.updateFirst(query, update, MemberDbo.class);
+		return result.getN() > 0;
 	}
 
 }
