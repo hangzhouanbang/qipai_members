@@ -1,4 +1,4 @@
-package com.anbang.qipai.members.plan.domain.config;
+package com.anbang.qipai.members.config;
 
 public class AlipayConfig {
 	public static final String SERVICE = "mobile.securitypay.pay";

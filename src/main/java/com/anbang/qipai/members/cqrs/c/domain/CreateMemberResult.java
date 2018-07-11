@@ -11,11 +11,12 @@ public class CreateMemberResult {
 	private String scoreAccountId;
 
 	public CreateMemberResult(String memberId, String goldAccountId, AccountingRecord accountingRecordForGiveGold,
-			String scoreAccountId) {
+			String scoreAccountId, AccountingRecord accountingRecordForGiveScore) {
 		this.memberId = memberId;
 		this.goldAccountId = goldAccountId;
 		this.accountingRecordForGiveGold = accountingRecordForGiveGold;
 		this.scoreAccountId = scoreAccountId;
+		this.accountingRecordForGiveScore = accountingRecordForGiveScore;
 	}
 
 	public String getMemberId() {

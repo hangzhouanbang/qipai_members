@@ -87,6 +87,10 @@ public class MemberController {
 		if (memberGoldAccountDbo != null) {
 			vo.setGold(memberGoldAccountDbo.getBalance());
 		}
+		MemberScoreAccountDbo memberScoreAccountDbo = memberScoreQueryService.findMemberScoreAccount(memberId);
+		if (memberScoreAccountDbo != null) {
+			vo.setGold(memberGoldAccountDbo.getBalance());
+		}
 		return vo;
 	}
 

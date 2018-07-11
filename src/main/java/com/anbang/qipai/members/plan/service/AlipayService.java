@@ -14,9 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.anbang.qipai.members.config.AlipayConfig;
 import com.anbang.qipai.members.plan.dao.OrderDao;
 import com.anbang.qipai.members.plan.domain.Order;
-import com.anbang.qipai.members.plan.domain.config.AlipayConfig;
 import com.anbang.qipai.members.util.SignUtils;
 
 @Service

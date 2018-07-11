@@ -44,12 +44,12 @@ public class DisruptorMemberAuthCmdService extends DisruptorCmdServiceBase imple
 
 	@Override
 	public CreateMemberResult createMemberAndAddThirdAuth(String publisher, String uuid, Integer goldForNewMember,
-			Long currentTime) throws AuthorizationAlreadyExistsException {
+			Integer scoreForNewMember, Long currentTime) throws AuthorizationAlreadyExistsException {
 		CommonCommand cmd = new CommonCommand(MemberAuthCmdServiceImpl.class.getName(), "createMemberAndAddThirdAuth",
-				publisher, uuid, goldForNewMember, currentTime);
+				publisher, uuid, goldForNewMember, scoreForNewMember, currentTime);
 		DeferredResult<CreateMemberResult> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
 			CreateMemberResult cmResult = memberAuthCmdServiceImpl.createMemberAndAddThirdAuth(cmd.getParameter(),
-					cmd.getParameter(), cmd.getParameter(), cmd.getParameter());
+					cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter());
 			return cmResult;
 		});
 		try {

@@ -1,4 +1,4 @@
-package com.anbang.qipai.members.plan.domain.config;
+package com.anbang.qipai.members.config;
 
 public class WXConfig {
 	public static final String APPID = "wxb841e562b0100c95";

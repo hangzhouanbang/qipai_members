@@ -37,7 +37,7 @@ public class MemberGoldQueryService {
 		memberGoldRecordDboDao.save(dbo);
 	}
 
-	public void createMember(CreateMemberResult createMemberResult) {
+	public MemberGoldRecordDbo createMember(CreateMemberResult createMemberResult) {
 		MemberGoldAccountDbo account = new MemberGoldAccountDbo();
 		account.setId(createMemberResult.getGoldAccountId());
 		account.setMemberId(createMemberResult.getMemberId());
@@ -45,6 +45,7 @@ public class MemberGoldQueryService {
 
 		AccountingRecord accountingRecord = createMemberResult.getAccountingRecordForGiveGold();
 		MemberGoldRecordDbo dbo = new MemberGoldRecordDbo();
+		dbo.setMemberId(createMemberResult.getMemberId());
 		dbo.setAccountId(accountingRecord.getAccountId());
 		dbo.setAccountingAmount((int) accountingRecord.getAccountingAmount());
 		dbo.setAccountingNo(accountingRecord.getAccountingNo());
@@ -54,6 +55,7 @@ public class MemberGoldQueryService {
 		memberGoldRecordDboDao.save(dbo);
 
 		memberGoldAccountDboDao.update(account.getId(), (int) accountingRecord.getBalanceAfter());
+		return dbo;
 	}
 
 	public MemberGoldAccountDbo findMemberGoldAccount(String memberId) {
@@ -81,8 +83,6 @@ public class MemberGoldQueryService {
 		dbo.setAccountingTime(accountingRecord.getAccountingTime());
 		memberGoldRecordDboDao.save(dbo);
 		MemberDbo member = memberDboDao.findById(memberId);
-		// memberDboDao.updateGold(memberId, (int) (member.getGold() +
-		// accountingRecord.getAccountingAmount()));
 
 		memberGoldAccountDboDao.update(accountingRecord.getAccountId(), (int) accountingRecord.getBalanceAfter());
 		return dbo;

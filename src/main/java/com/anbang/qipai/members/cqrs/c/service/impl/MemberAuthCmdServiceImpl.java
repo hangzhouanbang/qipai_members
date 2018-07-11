@@ -32,7 +32,7 @@ public class MemberAuthCmdServiceImpl extends CmdServiceBase implements MemberAu
 
 	@Override
 	public CreateMemberResult createMemberAndAddThirdAuth(String publisher, String uuid, Integer goldForNewMember,
-			Long currentTime) throws AuthorizationAlreadyExistsException {
+			Integer scoreForNewMember, Long currentTime) throws AuthorizationAlreadyExistsException {
 		MemberIdManager memberIdManager = singletonEntityRepository.getEntity(MemberIdManager.class);
 		UsersManager usersManager = singletonEntityRepository.getEntity(UsersManager.class);
 		String memberId = memberIdManager.createMemberId(currentTime);
@@ -50,17 +50,18 @@ public class MemberAuthCmdServiceImpl extends CmdServiceBase implements MemberAu
 			MemberScoreAccountManager memberScoreAccountManager = singletonEntityRepository
 					.getEntity(MemberScoreAccountManager.class);
 			String scoreAccountId = memberScoreAccountManager.createScoreAccountForNewMember(memberId);
-
-			return new CreateMemberResult(memberId, goldAccountId, goldAr, scoreAccountId);
+			AccountingRecord scoreAr = memberScoreAccountManager.giveScoreToMember(memberId, scoreForNewMember,
+					new TextAccountingSummary("new member"), currentTime);
+			return new CreateMemberResult(memberId, goldAccountId, goldAr, scoreAccountId, scoreAr);
 		} catch (AuthorizationAlreadyExistsException e) {
 			memberIdManager.removeMemberId(memberId);
 			throw e;
 		} catch (MemberHasGoldAccountAlreadyException e) {
-			return new CreateMemberResult(null, null, null, null);
+			return new CreateMemberResult(null, null, null, null, null);
 		} catch (MemberNotFoundException e) {
-			return new CreateMemberResult(null, null, null, null);
+			return new CreateMemberResult(null, null, null, null, null);
 		} catch (MemberHasScoreAccountAlreadyException e) {
-			return new CreateMemberResult(null, null, null, null);
+			return new CreateMemberResult(null, null, null, null, null);
 		}
 	}
 

@@ -18,6 +18,8 @@ public class MemberVO {
 
 	private int gold;
 
+	private int score;
+
 	public boolean isSuccess() {
 		return success;
 	}
@@ -62,6 +64,14 @@ public class MemberVO {
 	public String toString() {
 		return "MemberVO [success=" + success + ", memberId=" + memberId + ", nickname=" + nickname + ", headimgurl="
 				+ headimgurl + ", gold=" + gold + "]";
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
 	}
 
 }

@@ -10,6 +10,6 @@ public interface MemberAuthCmdService {
 			throws UserNotFoundException, AuthorizationAlreadyExistsException;
 
 	CreateMemberResult createMemberAndAddThirdAuth(String publisher, String uuid, Integer goldForNewMember,
-			Long currentTime) throws AuthorizationAlreadyExistsException;
+			Integer scoreForNewMember, Long currentTime) throws AuthorizationAlreadyExistsException;
 
 }

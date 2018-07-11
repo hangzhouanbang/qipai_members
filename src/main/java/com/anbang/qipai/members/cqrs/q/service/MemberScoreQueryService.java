@@ -31,7 +31,7 @@ public class MemberScoreQueryService {
 		memberScoreRecordDboDao.save(dbo);
 	}
 
-	public void createMember(CreateMemberResult createMemberResult) {
+	public MemberScoreRecordDbo createMember(CreateMemberResult createMemberResult) {
 		MemberScoreAccountDbo account = new MemberScoreAccountDbo();
 		account.setId(createMemberResult.getScoreAccountId());
 		account.setMemberId(createMemberResult.getMemberId());
@@ -39,6 +39,7 @@ public class MemberScoreQueryService {
 
 		AccountingRecord accountingRecord = createMemberResult.getAccountingRecordForGiveScore();
 		MemberScoreRecordDbo dbo = new MemberScoreRecordDbo();
+		dbo.setMemberId(createMemberResult.getMemberId());
 		dbo.setAccountId(accountingRecord.getAccountId());
 		dbo.setAccountingAmount((int) accountingRecord.getAccountingAmount());
 		dbo.setAccountingNo(accountingRecord.getAccountingNo());
@@ -48,6 +49,7 @@ public class MemberScoreQueryService {
 		memberScoreRecordDboDao.save(dbo);
 
 		memberScoreAccountDboDao.update(account.getId(), (int) accountingRecord.getBalanceAfter());
+		return dbo;
 	}
 
 	public MemberScoreAccountDbo findMemberScoreAccount(String memberId) {

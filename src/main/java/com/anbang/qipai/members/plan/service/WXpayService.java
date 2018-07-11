@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 
+import com.anbang.qipai.members.config.WXConfig;
 import com.anbang.qipai.members.plan.domain.Order;
-import com.anbang.qipai.members.plan.domain.config.WXConfig;
 import com.anbang.qipai.members.util.MD5Util;
 import com.anbang.qipai.members.util.XMLObjectConvertUtil;
 

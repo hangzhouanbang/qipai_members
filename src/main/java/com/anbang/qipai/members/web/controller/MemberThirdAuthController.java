@@ -19,9 +19,14 @@ import com.anbang.qipai.members.cqrs.c.service.MemberAuthCmdService;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthService;
 import com.anbang.qipai.members.cqrs.q.dbo.AuthorizationDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreRecordDbo;
 import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
+import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
+import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
+import com.anbang.qipai.members.msg.service.ScoresMsgService;
 import com.anbang.qipai.members.plan.domain.MemberRightsConfiguration;
 import com.anbang.qipai.members.plan.service.MemberRightsConfigurationService;
 import com.anbang.qipai.members.web.vo.CommonVO;
@@ -53,7 +58,16 @@ public class MemberThirdAuthController {
 	private MemberGoldQueryService memberGoldQueryService;
 
 	@Autowired
+	private MemberScoreQueryService memberScoreQueryService;
+
+	@Autowired
 	private MembersMsgService membersMsgService;
+
+	@Autowired
+	private GoldsMsgService goldsMsgService;
+
+	@Autowired
+	private ScoresMsgService scoresMsgService;
 
 	@Autowired
 	private MemberRightsConfigurationService memberRightsConfigurationService;
@@ -96,14 +110,16 @@ public class MemberThirdAuthController {
 				return vo;
 			} else {
 				int goldForNewMember = 0;
+				int scoreForNewMember = 0;
 				MemberRightsConfiguration memberRightsConfiguration = memberRightsConfigurationService
 						.findMemberRightsConfiguration();
 				if (memberRightsConfiguration != null) {
 					goldForNewMember = memberRightsConfiguration.getGoldForNewNember();
+					scoreForNewMember = memberRightsConfiguration.getScoreForNewNember();
 				}
 				// 创建会员和unionid授权
 				CreateMemberResult createMemberResult = memberAuthCmdService.createMemberAndAddThirdAuth("union.weixin",
-						unionid, goldForNewMember, System.currentTimeMillis());
+						unionid, goldForNewMember, scoreForNewMember, System.currentTimeMillis());
 
 				memberAuthQueryService.createMemberAndAddThirdAuth(createMemberResult.getMemberId(), "union.weixin",
 						unionid, memberRightsConfiguration);
@@ -112,14 +128,16 @@ public class MemberThirdAuthController {
 				memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl);
 
 				// 创建金币帐户，赠送金币记账
-				memberGoldQueryService.createMember(createMemberResult);
-
+				MemberGoldRecordDbo goldDbo = memberGoldQueryService.createMember(createMemberResult);
+				// 创建积分账户，赠送金币记账
+				MemberScoreRecordDbo scoreDbo = memberScoreQueryService.createMember(createMemberResult);
 				// 发送消息
 				MemberDbo memberDbo = memberAuthQueryService.findMember(createMemberResult.getMemberId());
 				membersMsgService.createMember(memberDbo);
 
 				// TODO: 发送金币记账消息
-
+				goldsMsgService.withdraw(goldDbo);
+				scoresMsgService.withdraw(scoreDbo);
 				// unionid登录
 				String token = memberAuthService.thirdAuth("union.weixin", unionid);
 				vo.setSuccess(true);
