@@ -43,25 +43,11 @@ public class MemberHistoricalRecordController {
 	public CommonVO addRecord() {
 		CommonVO vo = new CommonVO();
 		vo.setSuccess(true);
-		String json = "{\"id\": \"101\",\"memberId\": \"362812\",\"game\": \"ruianMajiang\",\"endTime\": 1528539077777,\"ruian\": [{\"id\": \"5b1ba77a1fe520265c84b786\",\"memberId\": \"362812\",\"headImgUrl\": \"http://p2.so.qhmsg.com/bdr/_240_/t01a4341599641be697.png\",\"roomId\": \"123456\",\"huCount\": 5,\"gameCount\": 8,\"reward\": 30,\"paoCount\": 15,\"maxHuCount\": 120,\"totalScore\": 85,\"endTime\": 1528698790919}, {\"id\": \"5b1ba77a1fe520265c84b786\",\"memberId\": \"599329\",\"roomId\": \"123456\",\"huCount\": 4,\"paoCount\": 14,\"maxHuCount\": 119,\"gameCount\": 8,\"reward\": 40,\"totalScore\": 95,\"endTime\": 1528698790919}, {\"id\": \"5b1ba77a1fe520265c84b786\",\"memberId\": \"172762\",\"roomId\": \"123456\",\"huCount\": 3,\"paoCount\": 13,\"maxhuCount\": 100,\"gameCount\": 8,\"reward\": 50,\"totalScore\": 125,\"endTime\": 1528698790919}, {\"id\": \"5b1ba77a1fe520265c84b786\",\"memberId\": \"zlspz\",\"roomId\": \"123456\",\"huCount\": 2,\"paoCount\": 2,\"maxHuCount\": 12,\"gameCount\": 8,\"reward\": 20,\"totalScore\": 8,\"endTime\": 1528698790919}],\"wenzhou\": [],\"dianpao\": []}";
-		// String json = "{\"id\": \"101\",\"memberId\": \"362812\",\"game\":
-		// \"wenzhouMajiang\",\"endTime\": 1528539077777,\"wenzhou\": [{\"id\":
-		// \"5b1ba77a1fe520265c84b786\",\"memberId\": \"362812\",\"mammonCount\":
-		// 3,\"sfCount\": 3,\"zimoCount\": 3,\"headImgUrl\":
-		// \"http://p2.so.qhmsg.com/bdr/_240_/t01a4341599641be697.png\",\"roomId\":
-		// \"123456\",\"huCount\": 5,\"gameCount\": 8,\"reward\": 30,\"totalScore\":
-		// 85,\"endTime\": 1528698790919}, {\"id\":
-		// \"5b1ba77a1fe520265c84b786\",\"memberId\": \"599329\",\"roomId\":
-		// \"123456\",\"huCount\": 4,\"mammonCount\": 3,\"sfCount\": 3,\"zimoCount\":
-		// 3,\"gameCount\": 8,\"reward\": 40,\"totalScore\": 95,\"endTime\":
-		// 1528698790919}, {\"id\": \"5b1ba77a1fe520265c84b786\",\"memberId\":
-		// \"172762\",\"roomId\": \"123456\",\"huCount\": 3,\"mammonCount\":
-		// 3,\"sfCount\": 3,\"zimoCount\": 3,\"gameCount\": 8,\"reward\":
-		// 50,\"totalScore\": 125,\"endTime\": 1528698790919}, {\"id\":
-		// \"5b1ba77a1fe520265c84b786\",\"memberId\": \"zlspz\",\"roomId\":
-		// \"123456\",\"huCount\": 2,\"mammonCount\": 3,\"sfCount\": 3,\"zimoCount\":
-		// 3,\"gameCount\": 8,\"reward\": 20,\"totalScore\": 8,\"endTime\":
-		// 1528698790919}],\"ruian\": [],\"dianpao\": []}";
+		String json = "{\"id\": \"101\",\"memberId\": \"362812\",\"game\": \"ruianMajiang\",\"endTime\": 1528539077777,\"ruian\": ["
+				+ "{\"id\": \"5b1ba77a1fe520265c84b786\",\"memberId\": \"362812\",\"headImgUrl\": \"http://p2.so.qhmsg.com/bdr/_240_/t01a4341599641be697.png\",\"nickName\": \"woyaowan\",\"vipLevel\": \"2\",\"roomId\": \"123456\",\"huCount\": 5,\"gameCount\": 4,\"totalCount\": 8,\"reward\": 30,\"paoCount\": 15,\"mammonCount\": 1,\"maxHuCount\": 120,\"totalScore\": 85,\"endTime\": 1528698790919},"
+				+ "{\"id\": \"5b1ba77a1fe520265c84b786\",\"memberId\": \"599329\",\"headImgUrl\": \"http://p2.so.qhmsg.com/bdr/_240_/t01a4341599641be697.png\",\"nickName\": \"woyaowan2\",\"vipLevel\": \"1\",\"roomId\": \"123456\",\"huCount\": 4,\"gameCount\": 4,\"totalCount\": 8,\"reward\": 40,\"paoCount\": 14,\"mammonCount\": 2,\"maxHuCount\": 110,\"totalScore\": 95,\"endTime\": 1528698790919},"
+				+ "{\"id\": \"5b1ba77a1fe520265c84b786\",\"memberId\": \"172762\",\"headImgUrl\": \"http://p2.so.qhmsg.com/bdr/_240_/t01a4341599641be697.png\",\"nickName\": \"woyaowan3\",\"vipLevel\": \"2\",\"roomId\": \"123456\",\"huCount\": 3,\"gameCount\": 4,\"totalCount\": 8,\"reward\": 50,\"paoCount\": 12,\"mammonCount\": 1,\"maxHuCount\": 130,\"totalScore\": 75,\"endTime\": 1528698790919},"
+				+ "{\"id\": \"5b1ba77a1fe520265c84b786\",\"memberId\": \"zlspz\",\"headImgUrl\": \"http://p2.so.qhmsg.com/bdr/_240_/t01a4341599641be697.png\",\"nickName\": \"woyaowan4\",\"vipLevel\": \"3\",\"roomId\": \"123456\",\"huCount\": 2,\"gameCount\": 4,\"totalCount\": 8,\"reward\": 60,\"paoCount\": 13,\"mammonCount\": 0,\"maxHuCount\": 150,\"totalScore\": 65,\"endTime\": 1528698790919}],\"wenzhou\": [],\"dianpao\": []}";
 		MemberHistoricalRecord memberHistoricalRecord = (MemberHistoricalRecord) gson.fromJson(json,
 				MemberHistoricalRecord.class);
 		try {
@@ -87,7 +73,8 @@ public class MemberHistoricalRecordController {
 			vo.setMsg("invalid token");
 			return vo;
 		}
-		String memberId = memberAuthService.getMemberIdBySessionId(token);
+		// String memberId = memberAuthService.getMemberIdBySessionId(token);
+		String memberId = "362812";
 		List<MemberHistoricalRecord> lists = historicalRecordService.findAllRecord(memberId);
 		vo.setData(lists);
 		return vo;
@@ -100,12 +87,12 @@ public class MemberHistoricalRecordController {
 	@ResponseBody
 	public CommonVO findOneRecord(String token, String id) {
 		CommonVO vo = new CommonVO();
-		// if(token == null) {
-		// co.setSuccess(false);
-		// co.setMsg("invalid token");
-		// return co;
-		// }
-		// String memberId = memberAuthService.getMemberIdBySessionId(token);
+		if (token == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
+		String memberId = memberAuthService.getMemberIdBySessionId(token);
 		if (id != null && !id.equals("")) {
 			MemberHistoricalRecord memberHistoricalRecord = historicalRecordService.findOneRecord(id);
 			if (memberHistoricalRecord.getRuian() != null) {

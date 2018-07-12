@@ -1,35 +1,41 @@
 package com.anbang.qipai.members.plan.domain.historicalrecord;
 
 import java.util.Comparator;
-/**瑞安麻将战绩
- * **/
-public class RuianHistoricalRecord implements Comparator<RuianHistoricalRecord>{
-	
+
+/**
+ * 瑞安麻将战绩
+ **/
+public class RuianHistoricalRecord implements Comparator<RuianHistoricalRecord> {
+
 	private String id;
-	
-	private String memberId;//用户编号
-	
+
+	private String memberId;// 用户编号
+
 	private String headImgUrl;// 头像url
-	
-	private String nickName;//会员名称
-	
-	private Integer vipLevel;//vip等级
-	
-	private String roomId;//房间编号
-	
-	private int huCount;//胡几次
-	
-	private int paoCount;//多少炮
-	
-	private int maxHuCount;//最大胡几次
-	
-	private int totalScore;//总分
-	
-	private int reward;//奖励
-	
-	private int gameCount;//局数
-	
-	private long endTime;//结束时间
+
+	private String nickName;// 会员名称
+
+	private Integer vipLevel;// vip等级
+
+	private String roomId;// 房间编号
+
+	private int huCount;// 胡几次
+
+	private int paoCount;// 多少炮
+
+	private int mammonCount;// 财神
+
+	private int maxHuCount;// 最大胡几次
+
+	private int totalScore;// 总分
+
+	private int reward;// 奖励
+
+	private int gameCount;// 局数
+
+	private int totalCount;// 总局数
+
+	private long endTime;// 结束时间
 
 	public String getId() {
 		return id;
@@ -38,7 +44,7 @@ public class RuianHistoricalRecord implements Comparator<RuianHistoricalRecord>{
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	public int getReward() {
 		return reward;
 	}
@@ -46,7 +52,6 @@ public class RuianHistoricalRecord implements Comparator<RuianHistoricalRecord>{
 	public void setReward(int reward) {
 		this.reward = reward;
 	}
-
 
 	public String getMemberId() {
 		return memberId;
@@ -138,15 +143,29 @@ public class RuianHistoricalRecord implements Comparator<RuianHistoricalRecord>{
 
 	@Override
 	public int compare(RuianHistoricalRecord o1, RuianHistoricalRecord o2) {
-		if(o1.getTotalScore() > o2.getTotalScore()) {
+		if (o1.getTotalScore() > o2.getTotalScore()) {
 			return 1;
-		}else if(o1.getTotalScore() == o2.getTotalScore()){
+		} else if (o1.getTotalScore() == o2.getTotalScore()) {
 			return 0;
-		}else {
+		} else {
 			return -1;
 		}
 	}
-	
-	
+
+	public int getTotalCount() {
+		return totalCount;
+	}
+
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
+	}
+
+	public int getMammonCount() {
+		return mammonCount;
+	}
+
+	public void setMammonCount(int mammonCount) {
+		this.mammonCount = mammonCount;
+	}
 
 }

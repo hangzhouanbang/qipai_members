@@ -32,6 +32,8 @@ public class WenZhouHistoricalRecord implements Comparator<WenZhouHistoricalReco
 	
 	private int gameCount;//局数
 	
+	private int totalCount;//总局数
+	
 	private long endTime;//结束时间
 	
 	
@@ -156,6 +158,14 @@ public class WenZhouHistoricalRecord implements Comparator<WenZhouHistoricalReco
 		}else {
 			return -1;
 		}
+	}
+
+	public int getTotalCount() {
+		return totalCount;
+	}
+
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
 	}
 	
 }

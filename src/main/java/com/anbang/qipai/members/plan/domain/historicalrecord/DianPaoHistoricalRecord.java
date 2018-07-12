@@ -32,6 +32,8 @@ public class DianPaoHistoricalRecord implements Comparator<DianPaoHistoricalReco
 	
 	private int gameCount;//局数
 	
+	private int totalCount;//总局数
+	
 	private long endTime;//结束时间
 
 	public String getId() {
@@ -155,6 +157,14 @@ public class DianPaoHistoricalRecord implements Comparator<DianPaoHistoricalReco
 		}else {
 			return -1;
 		}
+	}
+
+	public int getTotalCount() {
+		return totalCount;
+	}
+
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
 	}
 	
 	
