@@ -23,7 +23,14 @@ public class MemberAuthQueryService {
 		return authorizationDboDao.find(true, publisher, uuid);
 	}
 
-	public void updateMember(String memberId, String nickname, String headimgurl, String gender) {
+	public void updateMember(String memberId, String nickname, String headimgurl, Integer sex) {
+		String gender = "unknow";
+		if (sex.intValue() == 1) {
+			gender = "male";
+		}
+		if (sex.intValue() == 2) {
+			gender = "female";
+		}
 		memberDboDao.update(memberId, nickname, headimgurl, gender);
 	}
 

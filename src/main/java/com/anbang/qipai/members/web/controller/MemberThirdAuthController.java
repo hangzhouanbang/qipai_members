@@ -79,13 +79,13 @@ public class MemberThirdAuthController {
 	 * @param openid
 	 * @param nickname
 	 * @param headimgurl
-	 * @param gender
-	 *            会员性别:男:male,女:female
+	 * @param sex
+	 *            值为1时是男性，值为2时是女性，值为0时是未知
 	 * @return
 	 */
 	@RequestMapping(value = "/wechatidlogin")
 	@ResponseBody
-	public CommonVO wechatidlogin(String unionid, String openid, String nickname, String headimgurl, String gender) {
+	public CommonVO wechatidlogin(String unionid, String openid, String nickname, String headimgurl, Integer sex) {
 		CommonVO vo = new CommonVO();
 		try {
 			AuthorizationDbo unionidAuthDbo = memberAuthQueryService.findThirdAuthorizationDbo("union.weixin", unionid);
@@ -125,7 +125,7 @@ public class MemberThirdAuthController {
 						unionid, memberRightsConfiguration);
 
 				// 填充用户信息
-				memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl, gender);
+				memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl, sex);
 
 				// 创建金币帐户，赠送金币记账
 				MemberGoldRecordDbo goldDbo = memberGoldQueryService.createMember(createMemberResult);
