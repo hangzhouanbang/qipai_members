@@ -10,7 +10,6 @@ import com.anbang.qipai.members.cqrs.c.domain.CreateMemberResult;
 import com.anbang.qipai.members.cqrs.q.dao.MemberDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberGoldAccountDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberGoldRecordDboDao;
-import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
 import com.dml.accounting.AccountingRecord;
@@ -82,7 +81,6 @@ public class MemberGoldQueryService {
 		dbo.setSummary(accountingRecord.getSummary());
 		dbo.setAccountingTime(accountingRecord.getAccountingTime());
 		memberGoldRecordDboDao.save(dbo);
-		MemberDbo member = memberDboDao.findById(memberId);
 
 		memberGoldAccountDboDao.update(accountingRecord.getAccountId(), (int) accountingRecord.getBalanceAfter());
 		return dbo;
