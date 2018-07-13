@@ -7,7 +7,7 @@ public interface MemberDboDao {
 
 	void save(MemberDbo memberDbo);
 
-	void update(String memberId, String nickname, String headimgurl);
+	void update(String memberId, String nickname, String headimgurl, String gender);
 
 	MemberDbo findById(String id);
 

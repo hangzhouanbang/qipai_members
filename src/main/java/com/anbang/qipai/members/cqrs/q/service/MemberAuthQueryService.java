@@ -23,8 +23,8 @@ public class MemberAuthQueryService {
 		return authorizationDboDao.find(true, publisher, uuid);
 	}
 
-	public void updateMember(String memberId, String nickname, String headimgurl) {
-		memberDboDao.update(memberId, nickname, headimgurl);
+	public void updateMember(String memberId, String nickname, String headimgurl, String gender) {
+		memberDboDao.update(memberId, nickname, headimgurl, gender);
 	}
 
 	public void createMemberAndAddThirdAuth(String memberId, String publisher, String uuid,
