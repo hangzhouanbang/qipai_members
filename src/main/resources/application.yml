@@ -23,7 +23,7 @@ spring:
                 batch:
                   size: 16384
                   
-          golds:
+          memberGolds:
             producer:
               configuration:
                 request:
@@ -34,7 +34,7 @@ spring:
                 batch:
                   size: 16384
                   
-          scores:
+          memberScores:
             producer:
               configuration:
                 request:
@@ -108,14 +108,14 @@ spring:
           producer:
             partitionCount: 1
             
-        golds:
-          destination: golds
+        memberGolds:
+          destination: memberGolds
           contentType: application/json
           producer:
             partitionCount: 1
             
-        scores:
-          destination: scores
+        memberScores:
+          destination: memberScores
           contentType: application/json
           producer:
             partitionCount: 1

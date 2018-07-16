@@ -24,10 +24,10 @@ public class MemberScoreAccountManager {
 		mao.setMemberId(memberId);
 
 		AccountingSubject subject = new AccountingSubject();
-		subject.setName("score");
+		subject.setName("wallet");
 
 		Account account = new Account();
-		account.setId(memberId + "_score_score");
+		account.setId(memberId + "_score_wallet");
 		account.setCurrency("score");
 		account.setOwner(mao);
 		account.setSubject(subject);

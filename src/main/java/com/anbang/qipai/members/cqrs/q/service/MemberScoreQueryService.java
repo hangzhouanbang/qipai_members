@@ -60,8 +60,7 @@ public class MemberScoreQueryService {
 		PageRequest pageRequest = new PageRequest(page - 1, size);
 		List<MemberScoreRecordDbo> recordList = memberScoreRecordDboDao.findMemberScoreRecords(accountId, pageRequest);
 		long amount = memberScoreRecordDboDao.getCount();
-		long pageNum = (amount == 0) ? 1 : ((amount % size == 0) ? (amount / size) : (amount / size + 1));
-		ListPage listPage = new ListPage(recordList, (int) pageNum, size, (int) amount);
+		ListPage listPage = new ListPage(recordList, page, size, (int) amount);
 		return listPage;
 	}
 

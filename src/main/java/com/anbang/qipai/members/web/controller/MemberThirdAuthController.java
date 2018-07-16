@@ -126,17 +126,18 @@ public class MemberThirdAuthController {
 
 				// 填充用户信息
 				memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl, sex);
+				// 发送消息
+				MemberDbo memberDbo = memberAuthQueryService.findMember(createMemberResult.getMemberId());
+				membersMsgService.createMember(memberDbo);
 
 				// 创建金币帐户，赠送金币记账
 				MemberGoldRecordDbo goldDbo = memberGoldQueryService.createMember(createMemberResult);
 				// 创建积分账户，赠送金币记账
 				MemberScoreRecordDbo scoreDbo = memberScoreQueryService.createMember(createMemberResult);
-				// 发送消息
-				MemberDbo memberDbo = memberAuthQueryService.findMember(createMemberResult.getMemberId());
-				membersMsgService.createMember(memberDbo);
 
-				// TODO: 发送金币记账消息
+				//发送金币记账消息
 				goldsMsgService.withdraw(goldDbo);
+				// 发送积分记账消息
 				scoresMsgService.withdraw(scoreDbo);
 				// unionid登录
 				String token = memberAuthService.thirdAuth("union.weixin", unionid);

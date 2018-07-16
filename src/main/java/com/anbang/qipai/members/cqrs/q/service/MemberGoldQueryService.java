@@ -7,7 +7,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.members.cqrs.c.domain.CreateMemberResult;
-import com.anbang.qipai.members.cqrs.q.dao.MemberDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberGoldAccountDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberGoldRecordDboDao;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
@@ -23,9 +22,6 @@ public class MemberGoldQueryService {
 
 	@Autowired
 	private MemberGoldAccountDboDao memberGoldAccountDboDao;
-
-	@Autowired
-	private MemberDboDao memberDboDao;
 
 	public void recordMemberGoldRecord(AccountingRecord accountingRecord) {
 		MemberGoldRecordDbo dbo = new MemberGoldRecordDbo();
@@ -65,8 +61,7 @@ public class MemberGoldQueryService {
 		PageRequest pageRequest = new PageRequest(page - 1, size);
 		List<MemberGoldRecordDbo> recordList = memberGoldRecordDboDao.findMemberGoldRecords(accountId, pageRequest);
 		long amount = memberGoldRecordDboDao.getCount();
-		long pageNum = (amount == 0) ? 1 : ((amount % size == 0) ? (amount / size) : (amount / size + 1));
-		ListPage listPage = new ListPage(recordList, (int) pageNum, size, (int) amount);
+		ListPage listPage = new ListPage(recordList, page, size, (int) amount);
 		return listPage;
 	}
 
