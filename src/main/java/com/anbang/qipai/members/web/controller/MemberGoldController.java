@@ -37,7 +37,7 @@ public class MemberGoldController {
 			AccountingRecord rcd = memberGoldCmdService.withdraw(memberId, amount, textSummary,
 					System.currentTimeMillis());
 			MemberGoldRecordDbo dbo = memberGoldQueryService.withdraw(memberId, rcd);
-			// TODO: rcd发kafka
+			// rcd发kafka
 			goldsMsgService.withdraw(dbo);
 			return vo;
 		} catch (InsufficientBalanceException e) {

@@ -9,5 +9,5 @@ import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
 
 public interface MemberGoldRecordDboRepository extends MongoRepository<MemberGoldRecordDbo, String> {
 
-	public List<MemberGoldRecordDbo> findByAccountId(String accountId, Pageable pageRequest);
+	public List<MemberGoldRecordDbo> findByMemberId(String memberId, Pageable pageRequest);
 }

@@ -11,5 +11,5 @@ public interface MemberScoreRecordDboDao {
 
 	long getCount();
 
-	List<MemberScoreRecordDbo> findMemberScoreRecords(String accountId, PageRequest pageRequest);
+	List<MemberScoreRecordDbo> findMemberScoreRecords(String memberId, PageRequest pageRequest);
 }

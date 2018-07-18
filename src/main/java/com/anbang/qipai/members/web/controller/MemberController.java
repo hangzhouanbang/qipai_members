@@ -140,10 +140,7 @@ public class MemberController {
 		CommonVO vo = new CommonVO();
 		String memberId = memberAuthService.getMemberIdBySessionId(token);
 		if (memberId != null) {
-			MemberGoldAccountDbo accountId = memberGoldQueryService.findMemberGoldAccount(memberId);
-			ListPage listPage = memberGoldQueryService.findMemberGoldRecords(page, size, accountId.getId());
-			// ListPage listPage = memberGoldQueryService.findMemberGoldRecords(page, size,
-			// "627532_gold_wallet");// 测试用
+			ListPage listPage = memberGoldQueryService.findMemberGoldRecords(page, size, memberId);
 			vo.setSuccess(true);
 			vo.setMsg("goldaccout");
 			vo.setData(listPage);
@@ -160,10 +157,7 @@ public class MemberController {
 		CommonVO vo = new CommonVO();
 		String memberId = memberAuthService.getMemberIdBySessionId(token);
 		if (memberId != null) {
-			MemberScoreAccountDbo accountId = memberScoreQueryService.findMemberScoreAccount(memberId);
-			ListPage listPage = memberScoreQueryService.findMemberScoreRecords(page, size, accountId.getId());
-			// ListPage listPage = memberScoreQueryService.findMemberScoreRecords(page,
-			// size, "627532_gold_wallet");// 测试用
+			ListPage listPage = memberScoreQueryService.findMemberScoreRecords(page, size, memberId);
 			vo.setSuccess(true);
 			vo.setMsg("scoreaccout");
 			vo.setData(listPage);
@@ -206,6 +200,17 @@ public class MemberController {
 				e.printStackTrace();
 			}
 		}
+		return vo;
+	}
+
+	@RequestMapping("/rechargevip")
+	public CommonVO rechargeVip(String memberId, Long vipEndTime) {
+		CommonVO vo = new CommonVO();
+		memberService.updateVipEndTime(memberId, vipEndTime);
+		MemberDbo member = memberService.findMemberById(memberId);
+		membersMsgService.updateMemberVip(member);
+		vo.setSuccess(true);
+		vo.setMsg("success");
 		return vo;
 	}
 

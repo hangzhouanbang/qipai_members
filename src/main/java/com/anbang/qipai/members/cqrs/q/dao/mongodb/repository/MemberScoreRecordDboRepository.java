@@ -8,5 +8,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreRecordDbo;
 
 public interface MemberScoreRecordDboRepository extends MongoRepository<MemberScoreRecordDbo, String> {
-	public List<MemberScoreRecordDbo> findByAccountId(String accountId, Pageable pageRequest);
+	public List<MemberScoreRecordDbo> findByMemberId(String accountId, Pageable pageRequest);
 }

@@ -12,5 +12,5 @@ public interface MemberGoldRecordDboDao {
 	
 	long getCount();
 
-	List<MemberGoldRecordDbo> findMemberGoldRecords(String accountId,PageRequest pageRequest);
+	List<MemberGoldRecordDbo> findMemberGoldRecords(String memberId,PageRequest pageRequest);
 }

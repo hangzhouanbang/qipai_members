@@ -56,9 +56,9 @@ public class MemberScoreQueryService {
 		return memberScoreAccountDboDao.findByMemberId(memberId);
 	}
 
-	public ListPage findMemberScoreRecords(int page, int size, String accountId) {
+	public ListPage findMemberScoreRecords(int page, int size, String memberId) {
 		PageRequest pageRequest = new PageRequest(page - 1, size);
-		List<MemberScoreRecordDbo> recordList = memberScoreRecordDboDao.findMemberScoreRecords(accountId, pageRequest);
+		List<MemberScoreRecordDbo> recordList = memberScoreRecordDboDao.findMemberScoreRecords(memberId, pageRequest);
 		long amount = memberScoreRecordDboDao.getCount();
 		ListPage listPage = new ListPage(recordList, page, size, (int) amount);
 		return listPage;

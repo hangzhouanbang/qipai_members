@@ -26,8 +26,8 @@ public class MongodbMemberScoreRecordDboDao implements MemberScoreRecordDboDao {
 	}
 
 	@Override
-	public List<MemberScoreRecordDbo> findMemberScoreRecords(String accountId, PageRequest pageRequest) {
-		return repository.findByAccountId(accountId, pageRequest);
+	public List<MemberScoreRecordDbo> findMemberScoreRecords(String memberId, PageRequest pageRequest) {
+		return repository.findByMemberId(memberId, pageRequest);
 	}
 
 }

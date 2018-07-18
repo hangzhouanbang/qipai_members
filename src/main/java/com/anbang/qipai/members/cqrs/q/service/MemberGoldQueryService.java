@@ -57,9 +57,9 @@ public class MemberGoldQueryService {
 		return memberGoldAccountDboDao.findByMemberId(memberId);
 	}
 
-	public ListPage findMemberGoldRecords(int page, int size, String accountId) {
+	public ListPage findMemberGoldRecords(int page, int size, String memberId) {
 		PageRequest pageRequest = new PageRequest(page - 1, size);
-		List<MemberGoldRecordDbo> recordList = memberGoldRecordDboDao.findMemberGoldRecords(accountId, pageRequest);
+		List<MemberGoldRecordDbo> recordList = memberGoldRecordDboDao.findMemberGoldRecords(memberId, pageRequest);
 		long amount = memberGoldRecordDboDao.getCount();
 		ListPage listPage = new ListPage(recordList, page, size, (int) amount);
 		return listPage;

@@ -27,8 +27,8 @@ public class MongodbMemberGoldRecordDboDao implements MemberGoldRecordDboDao {
 	}
 
 	@Override
-	public List<MemberGoldRecordDbo> findMemberGoldRecords(String accountId, PageRequest pageRequest) {
-		return repository.findByAccountId(accountId, pageRequest);
+	public List<MemberGoldRecordDbo> findMemberGoldRecords(String memberId, PageRequest pageRequest) {
+		return repository.findByMemberId(memberId, pageRequest);
 	}
 
 }
