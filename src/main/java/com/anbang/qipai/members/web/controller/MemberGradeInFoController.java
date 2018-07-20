@@ -29,9 +29,10 @@ public class MemberGradeInFoController {
 	public GradeVo find_recharge_record(String token) {
 		GradeVo go = new GradeVo();
 		String memberId = memberAuthService.getMemberIdBySessionId(token);
-		if (token == null) {
+		if (memberId == null) {
 			go.setSuccess(false);
 			go.setMsg("invalid token");
+			return go;
 		}
 		// String memberId = "881071";//测试用
 		go = memberGradeInFoService.find_grade_info(memberId);

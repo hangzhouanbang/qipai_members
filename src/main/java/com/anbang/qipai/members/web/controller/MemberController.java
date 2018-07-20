@@ -27,6 +27,8 @@ import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
 import com.anbang.qipai.members.plan.service.MemberService;
+import com.anbang.qipai.members.remote.service.QiPaiAgentsRemoteService;
+import com.anbang.qipai.members.remote.vo.CommonRemoteVO;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.anbang.qipai.members.web.vo.DetailsVo;
 import com.anbang.qipai.members.web.vo.MemberVO;
@@ -65,10 +67,15 @@ public class MemberController {
 
 	@Autowired
 	private MembersMsgService membersMsgService;
+
 	@Autowired
 	private GoldsMsgService goldsMsgService;
+
 	@Autowired
 	private ScoresMsgService scoresMsgService;
+
+	@Autowired
+	private QiPaiAgentsRemoteService qiPaiAgentsRemoteService;
 
 	@RequestMapping(value = "/info")
 	@ResponseBody
@@ -131,6 +138,23 @@ public class MemberController {
 		vo.setSuccess(true);
 		vo.setMsg("register success");
 		vo.setData(phone);
+		return vo;
+	}
+
+	@RequestMapping("/agentinvite")
+	public CommonVO agentInvite(String token, String invitationCode) {
+		CommonVO vo = new CommonVO();
+		String memberId = memberAuthService.getMemberIdBySessionId(token);
+		if (memberId == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
+		MemberDbo member = memberService.findMemberById(memberId);
+		CommonRemoteVO commonRemoteVo = qiPaiAgentsRemoteService.agent_invitemember(member.getId(),
+				member.getNickname(), invitationCode);
+		vo.setSuccess(commonRemoteVo.isSuccess());
+		vo.setMsg(commonRemoteVo.getMsg());
 		return vo;
 	}
 
