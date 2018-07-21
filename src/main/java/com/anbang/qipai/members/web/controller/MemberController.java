@@ -96,7 +96,7 @@ public class MemberController {
 		}
 		MemberScoreAccountDbo memberScoreAccountDbo = memberScoreQueryService.findMemberScoreAccount(memberId);
 		if (memberScoreAccountDbo != null) {
-			vo.setGold(memberGoldAccountDbo.getBalance());
+			vo.setScore(memberGoldAccountDbo.getBalance());
 		}
 		return vo;
 	}
