@@ -44,7 +44,7 @@ public class WXpayService {
 				return resultMap;
 			}
 		}
-		return null;
+		return responseMap;
 	}
 
 	public SortedMap<String, String> receiveNotify(HttpServletRequest request) {
