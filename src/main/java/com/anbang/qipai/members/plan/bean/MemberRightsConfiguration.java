@@ -1,4 +1,4 @@
-package com.anbang.qipai.members.plan.domain;
+package com.anbang.qipai.members.plan.bean;
 
 import com.anbang.qipai.members.cqrs.q.dbo.MemberRights;
 

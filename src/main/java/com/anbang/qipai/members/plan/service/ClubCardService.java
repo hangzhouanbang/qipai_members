@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.anbang.qipai.members.plan.bean.MemberClubCard;
 import com.anbang.qipai.members.plan.dao.ClubCardDao;
-import com.anbang.qipai.members.plan.domain.ClubCard;
 
 @Service
 public class ClubCardService {
@@ -14,11 +14,11 @@ public class ClubCardService {
 	@Autowired
 	private ClubCardDao clubCardDao;
 
-	public List<ClubCard> showClubCard() {
+	public List<MemberClubCard> showClubCard() {
 		return clubCardDao.findAllClubCard();
 	}
 
-	public void addClubCard(ClubCard clubCard) {
+	public void addClubCard(MemberClubCard clubCard) {
 		clubCardDao.addClubCard(clubCard);
 	}
 
@@ -26,7 +26,7 @@ public class ClubCardService {
 		return clubCardDao.deleteClubCardByIds(clubCardIds);
 	}
 
-	public boolean updateClubCard(ClubCard clubCard) {
+	public boolean updateClubCard(MemberClubCard clubCard) {
 		return clubCardDao.updateClubCard(clubCard);
 	}
 

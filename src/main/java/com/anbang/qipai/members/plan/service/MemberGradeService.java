@@ -3,8 +3,8 @@ package com.anbang.qipai.members.plan.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.anbang.qipai.members.plan.bean.MemberGrade;
 import com.anbang.qipai.members.plan.dao.MemberGradeDao;
-import com.anbang.qipai.members.plan.domain.MemberGrade;
 
 @Service
 public class MemberGradeService {

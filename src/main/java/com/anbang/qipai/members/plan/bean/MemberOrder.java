@@ -1,6 +1,6 @@
-package com.anbang.qipai.members.plan.domain;
+package com.anbang.qipai.members.plan.bean;
 
-public class Order {
+public class MemberOrder {
 	private String id;
 	private String out_trade_no;// 商户订单流水号
 	private String pay_type;// 支付方式，支付宝或微信

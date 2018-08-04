@@ -23,8 +23,8 @@ import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.msg.service.OrdersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
-import com.anbang.qipai.members.plan.domain.ClubCard;
-import com.anbang.qipai.members.plan.domain.Order;
+import com.anbang.qipai.members.plan.bean.MemberClubCard;
+import com.anbang.qipai.members.plan.bean.MemberOrder;
 import com.anbang.qipai.members.plan.service.AlipayService;
 import com.anbang.qipai.members.plan.service.ClubCardService;
 import com.anbang.qipai.members.plan.service.MemberService;
@@ -86,7 +86,7 @@ public class ClubCardController {
 	private AlipayService alipayService;
 
 	@RequestMapping("/addclubcard")
-	public CommonVO addClubCard(@RequestBody ClubCard clubCard) {
+	public CommonVO addClubCard(@RequestBody MemberClubCard clubCard) {
 		CommonVO vo = new CommonVO();
 		if (clubCard.getName() == null || clubCard.getGold() == null || clubCard.getScore() == null
 				|| clubCard.getPrice() == null || clubCard.getTime() == null) {
@@ -117,7 +117,7 @@ public class ClubCardController {
 	}
 
 	@RequestMapping("/updateclubcard")
-	public CommonVO updateClubCards(@RequestBody ClubCard clubCard) {
+	public CommonVO updateClubCards(@RequestBody MemberClubCard clubCard) {
 		CommonVO vo = new CommonVO();
 		if (clubCardService.updateClubCard(clubCard)) {
 			vo.setSuccess(true);
@@ -145,11 +145,13 @@ public class ClubCardController {
 	public CommonVO createAliPayOrder(String token, String clubCardId, @RequestParam(defaultValue = "1") Integer number,
 			HttpServletRequest request) {
 		CommonVO vo = new CommonVO();
+		System.out.println(request.getHeader("x-forwarded-for"));
+		System.out.println(request.getHeader("X-Real-IP"));
 		vo.setSuccess(false);
 		vo.setMsg("invalid token");
 		String memberId = memberAuthService.getMemberIdBySessionId(token);
 		if (memberId != null) {
-			Order order = orderService.addOrder(memberId, clubCardId, number, "alipay", request.getRemoteAddr());
+			MemberOrder order = orderService.addOrder(memberId, clubCardId, number, "alipay", request.getRemoteAddr());
 			// kafka发消息
 			ordersMsgService.createOrder(order);
 			String orderString = alipayService.getOrderInfo(order);
@@ -162,7 +164,7 @@ public class ClubCardController {
 
 	@RequestMapping("/alipaynotify")
 	public String alipayNotify(HttpServletRequest request) {
-		Order order = alipayService.alipayNotify(request);
+		MemberOrder order = alipayService.alipayNotify(request);
 		if (order == null) {
 			return "fail";
 		}
@@ -200,7 +202,7 @@ public class ClubCardController {
 		vo.setMsg("invalid token");
 		String memberId = memberAuthService.getMemberIdBySessionId(token);
 		if (memberId != null) {
-			Order order = orderService.addOrder(memberId, clubCardId, number, "wxpay", request.getRemoteAddr());
+			MemberOrder order = orderService.addOrder(memberId, clubCardId, number, "wxpay", request.getRemoteAddr());
 			// kafka发消息
 			ordersMsgService.createOrder(order);
 			try {
@@ -235,7 +237,7 @@ public class ClubCardController {
 				if (responseMap != null && "SUCCESS".equals(responseMap.get("result_code"))) {
 					String trade_state = responseMap.get("trade_state");
 					orderService.updateOrderStatus(responseMap.get("out_trade_no"), trade_state);
-					Order order = orderService.findOrderByOut_trade_no(responseMap.get("out_trade_no"));
+					MemberOrder order = orderService.findOrderByOut_trade_no(responseMap.get("out_trade_no"));
 					if ("SUCCESS".equals(order.getStatus()) && order.getDeliveTime() == null) {
 						memberService.updateVIP(order);
 						// 发送会员信息

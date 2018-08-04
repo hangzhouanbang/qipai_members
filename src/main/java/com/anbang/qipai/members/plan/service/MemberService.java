@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
+import com.anbang.qipai.members.plan.bean.MemberGrade;
+import com.anbang.qipai.members.plan.bean.MemberOrder;
 import com.anbang.qipai.members.plan.dao.MemberDao;
 import com.anbang.qipai.members.plan.dao.MemberGradeDao;
-import com.anbang.qipai.members.plan.domain.MemberGrade;
-import com.anbang.qipai.members.plan.domain.Order;
 
 @Service
 public class MemberService {
@@ -40,7 +40,7 @@ public class MemberService {
 		return memberDao.updateMemberVipEndTime(memberId, vipEndTime);
 	}
 
-	public boolean updateVIP(Order order) {
+	public boolean updateVIP(MemberOrder order) {
 		MemberDbo member = memberDao.findMemberById(order.getMemberId());
 		member.setVip(true);
 		member.setVipEndTime(order.getVipTime() * order.getNumber() + System.currentTimeMillis());

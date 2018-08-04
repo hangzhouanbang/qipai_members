@@ -1,4 +1,4 @@
-package com.anbang.qipai.members.plan.domain;
+package com.anbang.qipai.members.plan.bean;
 
 /**
  * 管理员设置的vip等级需要的金额

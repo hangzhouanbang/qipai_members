@@ -5,7 +5,7 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.messaging.support.MessageBuilder;
 
 import com.anbang.qipai.members.msg.channel.GradeSoure;
-import com.anbang.qipai.members.plan.domain.MemberGrade;
+import com.anbang.qipai.members.plan.bean.MemberGrade;
 import com.anbang.qipai.members.web.vo.CommonVO;
 
 @EnableBinding(GradeSoure.class)

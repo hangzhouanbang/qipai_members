@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberRights;
 import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
 import com.anbang.qipai.members.msg.service.MemberRightsConfigurationMsgService;
-import com.anbang.qipai.members.plan.domain.MemberRightsConfiguration;
+import com.anbang.qipai.members.plan.bean.MemberRightsConfiguration;
 import com.anbang.qipai.members.plan.service.MemberRightsConfigurationService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 

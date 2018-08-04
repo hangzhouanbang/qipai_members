@@ -6,7 +6,7 @@ import org.springframework.messaging.support.MessageBuilder;
 
 import com.anbang.qipai.members.msg.channel.MemberRightsConfigurationSource;
 import com.anbang.qipai.members.msg.msjobj.CommonMO;
-import com.anbang.qipai.members.plan.domain.MemberRightsConfiguration;
+import com.anbang.qipai.members.plan.bean.MemberRightsConfiguration;
 
 @EnableBinding(MemberRightsConfigurationSource.class)
 public class MemberRightsConfigurationMsgService {

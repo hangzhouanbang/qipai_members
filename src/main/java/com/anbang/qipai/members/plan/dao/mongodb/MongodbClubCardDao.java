@@ -9,8 +9,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
+import com.anbang.qipai.members.plan.bean.MemberClubCard;
 import com.anbang.qipai.members.plan.dao.ClubCardDao;
-import com.anbang.qipai.members.plan.domain.ClubCard;
 import com.mongodb.WriteResult;
 
 @Component
@@ -20,18 +20,18 @@ public class MongodbClubCardDao implements ClubCardDao {
 	private MongoTemplate mongoTemplate;
 
 	@Override
-	public List<ClubCard> findAllClubCard() {
-		return mongoTemplate.findAll(ClubCard.class);
+	public List<MemberClubCard> findAllClubCard() {
+		return mongoTemplate.findAll(MemberClubCard.class);
 	}
 
 	@Override
-	public ClubCard getClubCardById(String clubCardId) {
+	public MemberClubCard getClubCardById(String clubCardId) {
 		Query query = new Query(Criteria.where("id").is(clubCardId));
-		return mongoTemplate.findOne(query, ClubCard.class);
+		return mongoTemplate.findOne(query, MemberClubCard.class);
 	}
 
 	@Override
-	public void addClubCard(ClubCard clubCard) {
+	public void addClubCard(MemberClubCard clubCard) {
 		mongoTemplate.insert(clubCard);
 	}
 
@@ -39,12 +39,12 @@ public class MongodbClubCardDao implements ClubCardDao {
 	public boolean deleteClubCardByIds(String[] clubCardIds) {
 		Object[] ids = clubCardIds;
 		Query query = new Query(Criteria.where("id").in(ids));
-		WriteResult writeResult = mongoTemplate.remove(query, ClubCard.class);
+		WriteResult writeResult = mongoTemplate.remove(query, MemberClubCard.class);
 		return writeResult.getN() <= clubCardIds.length;
 	}
 
 	@Override
-	public boolean updateClubCard(ClubCard clubCard) {
+	public boolean updateClubCard(MemberClubCard clubCard) {
 		Query query = new Query(Criteria.where("id").is(clubCard.getId()));
 		Update update = new Update();
 		update.set("name", clubCard.getName());
@@ -52,7 +52,7 @@ public class MongodbClubCardDao implements ClubCardDao {
 		update.set("gold", clubCard.getGold());
 		update.set("score", clubCard.getScore());
 		update.set("time", clubCard.getTime());
-		WriteResult writeResult = mongoTemplate.updateFirst(query, update, ClubCard.class);
+		WriteResult writeResult = mongoTemplate.updateFirst(query, update, MemberClubCard.class);
 		return writeResult.getN() > 0;
 	}
 

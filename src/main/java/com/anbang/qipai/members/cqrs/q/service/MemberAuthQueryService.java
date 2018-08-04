@@ -8,7 +8,7 @@ import com.anbang.qipai.members.cqrs.q.dao.MemberDboDao;
 import com.anbang.qipai.members.cqrs.q.dbo.AuthorizationDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberRights;
-import com.anbang.qipai.members.plan.domain.MemberRightsConfiguration;
+import com.anbang.qipai.members.plan.bean.MemberRightsConfiguration;
 
 @Component
 public class MemberAuthQueryService {

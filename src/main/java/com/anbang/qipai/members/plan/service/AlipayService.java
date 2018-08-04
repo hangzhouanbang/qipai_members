@@ -15,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.anbang.qipai.members.config.AlipayConfig;
+import com.anbang.qipai.members.plan.bean.MemberOrder;
 import com.anbang.qipai.members.plan.dao.OrderDao;
-import com.anbang.qipai.members.plan.domain.Order;
 import com.anbang.qipai.members.util.SignUtils;
 
 @Service
@@ -31,7 +31,7 @@ public class AlipayService {
 	 * @param order
 	 * @return
 	 */
-	public String getOrderInfo(Order order) {
+	public String getOrderInfo(MemberOrder order) {
 		Map<String, String> params = new HashMap<String, String>();
 		// 签约合作者身份ID
 		params.put("partner", AlipayConfig.PID);
@@ -84,7 +84,7 @@ public class AlipayService {
 		return orderInfo;
 	}
 
-	public Order alipayNotify(HttpServletRequest request) {
+	public MemberOrder alipayNotify(HttpServletRequest request) {
 		// 从支付宝回调的request域中取值
 		// 获取支付宝返回的参数集合
 		Map<String, String[]> aliParams = request.getParameterMap();
@@ -106,7 +106,7 @@ public class AlipayService {
 			orderDao.updateTransaction_id(params.get("out_trade_no"), params.get("trade_no"));
 			String trade_status = params.get("trade_status");
 			orderDao.updateOrderStatus(params.get("out_trade_no"), trade_status);
-			Order order = orderDao.findOrderByOut_trade_no(params.get("out_trade_no"));
+			MemberOrder order = orderDao.findOrderByOut_trade_no(params.get("out_trade_no"));
 			return order;
 		}
 		return null;

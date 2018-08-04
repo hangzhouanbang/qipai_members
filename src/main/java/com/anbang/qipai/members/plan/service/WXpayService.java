@@ -19,14 +19,14 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
 import com.anbang.qipai.members.config.WXConfig;
-import com.anbang.qipai.members.plan.domain.Order;
+import com.anbang.qipai.members.plan.bean.MemberOrder;
 import com.anbang.qipai.members.util.MD5Util;
 import com.anbang.qipai.members.util.XMLObjectConvertUtil;
 
 @Service
 public class WXpayService {
 
-	public Map<String, String> createOrder(Order order, String reqIp) throws MalformedURLException, IOException {
+	public Map<String, String> createOrder(MemberOrder order, String reqIp) throws MalformedURLException, IOException {
 		String orderInfo = createOrderInfo(order, reqIp);
 		SortedMap<String, String> responseMap = order(orderInfo);
 		if ("SUCCESS".equals(responseMap.get("return_code"))) {
@@ -140,7 +140,7 @@ public class WXpayService {
 	 * @param clubCardId
 	 * @return
 	 */
-	private String createOrderInfo(Order order, String reqIp) {
+	private String createOrderInfo(MemberOrder order, String reqIp) {
 		// 创建可排序的Map集合
 		SortedMap<String, String> parameters = new TreeMap<String, String>();
 		// 应用id

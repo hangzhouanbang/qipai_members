@@ -1,9 +1,9 @@
-package com.anbang.qipai.members.plan.domain;
+package com.anbang.qipai.members.plan.bean;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "clubcard")
-public class ClubCard {
+public class MemberClubCard {
 	private String id;// 会员卡id
 	private String name;// 会员卡名称
 	private Double price;// 会员卡价格

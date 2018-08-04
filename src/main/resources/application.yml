@@ -76,18 +76,7 @@ spring:
                 linger:
                   ms: 5
                 batch:
-                  size: 16384     
-          
-          historicarecord:
-            producer:
-              configuration:
-                request:
-                  timeout:
-                    ms: 30000
-                linger:
-                  ms: 5
-                batch:
-                  size: 16384     
+                  size: 16384    
 
       bindings:
         members:
@@ -126,12 +115,13 @@ spring:
           producer:
             partitionCount: 1
             
-        historicarecord:
-          destination: historicarecord
+        ruianMajiangJuResult:
+          destination: ruianMajiangJuResult
+          group: qipai_ruianmajiang
+          consumer:
+            concurrency: 1
+            partitioned: false
           contentType: application/json
-          producer:
-            partitionCount: 1
-      
       
   application:
     name: qipai-members

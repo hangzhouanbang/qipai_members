@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.anbang.qipai.members.msg.service.MemberGradeMsgService;
-import com.anbang.qipai.members.plan.domain.MemberGrade;
+import com.anbang.qipai.members.plan.bean.MemberGrade;
 import com.anbang.qipai.members.plan.service.MemberGradeService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 

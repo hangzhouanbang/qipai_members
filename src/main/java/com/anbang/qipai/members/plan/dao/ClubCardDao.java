@@ -2,17 +2,17 @@ package com.anbang.qipai.members.plan.dao;
 
 import java.util.List;
 
-import com.anbang.qipai.members.plan.domain.ClubCard;
+import com.anbang.qipai.members.plan.bean.MemberClubCard;
 
 public interface ClubCardDao {
 
-	List<ClubCard> findAllClubCard();
+	List<MemberClubCard> findAllClubCard();
 
-	ClubCard getClubCardById(String clubCardId);
+	MemberClubCard getClubCardById(String clubCardId);
 
-	void addClubCard(ClubCard clubCard);
+	void addClubCard(MemberClubCard clubCard);
 
 	boolean deleteClubCardByIds(String[] clubCardIds);
 
-	boolean updateClubCard(ClubCard clubCard);
+	boolean updateClubCard(MemberClubCard clubCard);
 }

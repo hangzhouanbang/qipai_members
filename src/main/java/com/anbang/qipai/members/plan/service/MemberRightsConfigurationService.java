@@ -3,8 +3,8 @@ package com.anbang.qipai.members.plan.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.anbang.qipai.members.plan.bean.MemberRightsConfiguration;
 import com.anbang.qipai.members.plan.dao.MemberRightsConfigurationDao;
-import com.anbang.qipai.members.plan.domain.MemberRightsConfiguration;
 
 @Component
 public class MemberRightsConfigurationService {

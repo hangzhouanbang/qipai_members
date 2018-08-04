@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
-import com.anbang.qipai.members.plan.domain.ClubCard;
-import com.anbang.qipai.members.plan.domain.MemberGrade;
+import com.anbang.qipai.members.plan.bean.MemberClubCard;
+import com.anbang.qipai.members.plan.bean.MemberGrade;
 import com.anbang.qipai.members.web.vo.GradeVo;
 
 @Service
@@ -26,7 +26,7 @@ public class MemberGradeInFoService {
 	
 	public GradeVo find_grade_info(String memberId) {
 		GradeVo go = new GradeVo();
-		List<ClubCard> cardList = clubCardService.showClubCard();
+		List<MemberClubCard> cardList = clubCardService.showClubCard();
 		MemberGrade memberGrade = memberGradeService.find_grade();
 		MemberDbo memberDbo = memberAuthQueryService.findMember(memberId);
 		long shortage = 0;
