@@ -11,7 +11,7 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import com.anbang.qipai.members.msg.channel.RuianMajiangJuResultSink;
 import com.anbang.qipai.members.msg.msjobj.CommonMO;
 import com.anbang.qipai.members.plan.bean.historicalresult.MajiangHistoricalResult;
-import com.anbang.qipai.members.plan.bean.historicalresult.MajiangJuPlayerResult;
+import com.anbang.qipai.members.plan.bean.historicalresult.MajiangJuPlayerResultVO;
 import com.anbang.qipai.members.plan.service.MajiangHistoricalResultService;
 import com.google.gson.Gson;
 
@@ -28,16 +28,19 @@ public class RuianMajiangJuResultMsgReceiver {
 		String json = gson.toJson(mo.getData());
 		Map map = gson.fromJson(json, Map.class);
 		if ("ruianmajiang juresult".equals(msg)) {
-			MajiangHistoricalResult result = new MajiangHistoricalResult();
-			result.setId((String) map.get("id"));
-			result.setGameId((String) map.get("gameId"));
-			Map resultMap=(Map) map.get("juResult");
-			result.setDayingjiaId((String) resultMap.get("dayingjiaId"));
-			result.setDatuhaoId((String) resultMap.get("datuhaoId"));
-			List<MajiangJuPlayerResult> playerResultList=new ArrayList<>();
-			List<Map> mapList=(List<Map>) resultMap.get("playerResultList");
-//			mapList.forEach(()->playerResultList.add(new MajiangJuPlayerResult()));
-			majiangHistoricalResultService.addMajiangHistoricalResult(result);
+			MajiangHistoricalResult majiangHistoricalResult = new MajiangHistoricalResult();
+			majiangHistoricalResult.setDayingjiaId((String) map.get("dayingjiaId"));
+			majiangHistoricalResult.setDatuhaoId((String) map.get("datuhaoId"));
+
+			List<MajiangJuPlayerResultVO> juPlayerResultList = new ArrayList<>();
+			((List) map.get("playerResultList")).forEach(
+					(juPlayerResult) -> juPlayerResultList.add(new MajiangJuPlayerResultVO((Map) juPlayerResult)));
+			majiangHistoricalResult.setPlayerResultList(juPlayerResultList);
+
+			Map lastPanResultMap = (Map) map.get("lastPanResult");
+			majiangHistoricalResult.setFinishTime(((Double) lastPanResultMap.get("finishTime")).longValue());
+
+			majiangHistoricalResultService.addMajiangHistoricalResult(majiangHistoricalResult);
 		}
 	}
 }

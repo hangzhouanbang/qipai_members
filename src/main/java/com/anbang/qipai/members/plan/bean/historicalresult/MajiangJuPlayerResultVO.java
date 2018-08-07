@@ -1,12 +1,27 @@
 package com.anbang.qipai.members.plan.bean.historicalresult;
 
-public class MajiangJuPlayerResult {
+import java.util.Map;
+
+public class MajiangJuPlayerResultVO {
 	private String playerId;
+	private String nickname;
+	private String headimgurl;
 	private int huCount;
 	private int caishenCount;
 	private int dapaoCount;
 	private int maxHushu;
 	private int totalScore;
+
+	public MajiangJuPlayerResultVO(Map juPlayerResult) {
+		this.playerId = (String) juPlayerResult.get("playerId");
+		this.nickname = (String) juPlayerResult.get("nickname");
+		this.headimgurl = (String) juPlayerResult.get("headimgurl");
+		this.huCount = ((Double) juPlayerResult.get("huCount")).intValue();
+		this.caishenCount = ((Double) juPlayerResult.get("caishenCount")).intValue();
+		this.dapaoCount = ((Double) juPlayerResult.get("dapaoCount")).intValue();
+		this.maxHushu = ((Double) juPlayerResult.get("maxHushu")).intValue();
+		this.totalScore = ((Double) juPlayerResult.get("totalScore")).intValue();
+	}
 
 	public String getPlayerId() {
 		return playerId;
@@ -14,6 +29,22 @@ public class MajiangJuPlayerResult {
 
 	public void setPlayerId(String playerId) {
 		this.playerId = playerId;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public String getHeadimgurl() {
+		return headimgurl;
+	}
+
+	public void setHeadimgurl(String headimgurl) {
+		this.headimgurl = headimgurl;
 	}
 
 	public int getHuCount() {
