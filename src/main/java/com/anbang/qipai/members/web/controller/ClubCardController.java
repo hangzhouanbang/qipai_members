@@ -20,6 +20,7 @@ import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreRecordDbo;
 import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
 import com.anbang.qipai.members.msg.service.GoldsMsgService;
+import com.anbang.qipai.members.msg.service.MemberClubCardsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.msg.service.OrdersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
@@ -80,6 +81,9 @@ public class ClubCardController {
 	private OrdersMsgService ordersMsgService;
 
 	@Autowired
+	private MemberClubCardsMsgService memberClubCardsMsgService;
+
+	@Autowired
 	private WXpayService wxpayService;
 
 	@Autowired
@@ -88,45 +92,24 @@ public class ClubCardController {
 	@RequestMapping("/addclubcard")
 	public CommonVO addClubCard(@RequestBody MemberClubCard clubCard) {
 		CommonVO vo = new CommonVO();
-		if (clubCard.getName() == null || clubCard.getGold() == null || clubCard.getScore() == null
-				|| clubCard.getPrice() == null || clubCard.getTime() == null) {
-			vo.setSuccess(false);
-			vo.setMsg("at least one param is null");
-			return vo;
-
-		}
 		clubCardService.addClubCard(clubCard);
-		vo.setSuccess(true);
-		vo.setMsg("add success");
-		vo.setData(clubCard);
+		memberClubCardsMsgService.addClubCard(clubCard);
 		return vo;
 	}
 
 	@RequestMapping("/deleteclubcards")
 	public CommonVO deleteClubCards(@RequestBody String[] clubCardIds) {
 		CommonVO vo = new CommonVO();
-		if (clubCardService.deleteClubCards(clubCardIds)) {
-			vo.setSuccess(true);
-			vo.setMsg("delete success");
-			vo.setData(clubCardIds);
-		} else {
-			vo.setSuccess(false);
-			vo.setMsg("delete fail");
-		}
+		clubCardService.deleteClubCards(clubCardIds);
+		memberClubCardsMsgService.deleteClubCards(clubCardIds);
 		return vo;
 	}
 
 	@RequestMapping("/updateclubcard")
 	public CommonVO updateClubCards(@RequestBody MemberClubCard clubCard) {
 		CommonVO vo = new CommonVO();
-		if (clubCardService.updateClubCard(clubCard)) {
-			vo.setSuccess(true);
-			vo.setMsg("update success");
-			vo.setData(clubCard);
-		} else {
-			vo.setSuccess(false);
-			vo.setMsg("update fail");
-		}
+		clubCardService.updateClubCard(clubCard);
+		memberClubCardsMsgService.updateClubCards(clubCard);
 		return vo;
 	}
 

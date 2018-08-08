@@ -45,6 +45,17 @@ spring:
                 batch:
                   size: 16384
                   
+          memberClubCards:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+                  
           orders:
             producer:
               configuration:
@@ -105,6 +116,12 @@ spring:
             
         memberScores:
           destination: memberScores
+          contentType: application/json
+          producer:
+            partitionCount: 1
+            
+        memberClubCards:
+          destination: memberClubCards
           contentType: application/json
           producer:
             partitionCount: 1
