@@ -23,7 +23,7 @@ public class RuianMajiangJuResultMsgReceiver {
 	private Gson gson = new Gson();
 
 	@StreamListener(RuianMajiangJuResultSink.RUIANMAJIANGJURESULT)
-	public void recordMember(CommonMO mo) {
+	public void recordMajiangHistoricalResult(CommonMO mo) {
 		String msg = mo.getMsg();
 		String json = gson.toJson(mo.getData());
 		Map map = gson.fromJson(json, Map.class);
