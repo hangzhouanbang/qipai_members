@@ -135,7 +135,7 @@ public class MemberThirdAuthController {
 				// 创建积分账户，赠送金币记账
 				MemberScoreRecordDbo scoreDbo = memberScoreQueryService.createMember(createMemberResult);
 
-				//发送金币记账消息
+				// 发送金币记账消息
 				goldsMsgService.withdraw(goldDbo);
 				// 发送积分记账消息
 				scoresMsgService.withdraw(scoreDbo);
