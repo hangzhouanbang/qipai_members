@@ -23,6 +23,10 @@ public class MajiangJuPlayerResultVO {
 		this.totalScore = ((Double) juPlayerResult.get("totalScore")).intValue();
 	}
 
+	public MajiangJuPlayerResultVO() {
+
+	}
+
 	public String getPlayerId() {
 		return playerId;
 	}

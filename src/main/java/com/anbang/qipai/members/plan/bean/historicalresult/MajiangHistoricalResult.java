@@ -3,10 +3,12 @@ package com.anbang.qipai.members.plan.bean.historicalresult;
 import java.util.List;
 
 public class MajiangHistoricalResult {
+	private String id;
+	private Game game;
 	private String dayingjiaId;
 	private String datuhaoId;
 	private List<MajiangJuPlayerResultVO> playerResultList;
-
+	private int lastPanNo;
 	private long finishTime;
 
 	public String getDayingjiaId() {
@@ -39,6 +41,30 @@ public class MajiangHistoricalResult {
 
 	public void setFinishTime(long finishTime) {
 		this.finishTime = finishTime;
+	}
+
+	public int getLastPanNo() {
+		return lastPanNo;
+	}
+
+	public void setLastPanNo(int lastPanNo) {
+		this.lastPanNo = lastPanNo;
+	}
+
+	public Game getGame() {
+		return game;
+	}
+
+	public void setGame(Game game) {
+		this.game = game;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }

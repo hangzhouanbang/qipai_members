@@ -132,8 +132,8 @@ spring:
           producer:
             partitionCount: 1
             
-        ruianMajiangJuResult:
-          destination: ruianMajiangJuResult
+        ruianMajiangResult:
+          destination: ruianMajiangResult
           group: qipai_ruianmajiang
           consumer:
             concurrency: 1
