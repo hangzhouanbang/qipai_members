@@ -39,8 +39,10 @@ public class RuianMajiangResultMsgReceiver {
 					(juPlayerResult) -> juPlayerResultList.add(new MajiangJuPlayerResultVO((Map) juPlayerResult)));
 			majiangHistoricalResult.setPlayerResultList(juPlayerResultList);
 
+			majiangHistoricalResult.setPanshu(((Double) map.get("panshu")).intValue());
+
 			Map lastPanResultMap = (Map) map.get("lastPanResult");
-			majiangHistoricalResult.setLastPanNo((int) lastPanResultMap.get("panNo"));
+			majiangHistoricalResult.setLastPanNo(((Double) lastPanResultMap.get("panNo")).intValue());
 			majiangHistoricalResult.setFinishTime(((Double) lastPanResultMap.get("finishTime")).longValue());
 
 			majiangHistoricalResultService.addMajiangHistoricalResult(majiangHistoricalResult);

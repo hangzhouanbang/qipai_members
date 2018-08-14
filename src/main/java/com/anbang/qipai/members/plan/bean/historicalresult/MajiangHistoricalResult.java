@@ -9,6 +9,7 @@ public class MajiangHistoricalResult {
 	private String datuhaoId;
 	private List<MajiangJuPlayerResultVO> playerResultList;
 	private int lastPanNo;
+	private int panshu;
 	private long finishTime;
 
 	public String getDayingjiaId() {
@@ -65,6 +66,14 @@ public class MajiangHistoricalResult {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public int getPanshu() {
+		return panshu;
+	}
+
+	public void setPanshu(int panshu) {
+		this.panshu = panshu;
 	}
 
 }
