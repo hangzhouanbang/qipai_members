@@ -31,6 +31,7 @@ import com.anbang.qipai.members.plan.service.ClubCardService;
 import com.anbang.qipai.members.plan.service.MemberService;
 import com.anbang.qipai.members.plan.service.OrderService;
 import com.anbang.qipai.members.plan.service.WXpayService;
+import com.anbang.qipai.members.util.IPUtil;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.dml.accounting.AccountingRecord;
 
@@ -128,13 +129,12 @@ public class ClubCardController {
 	public CommonVO createAliPayOrder(String token, String clubCardId, @RequestParam(defaultValue = "1") Integer number,
 			HttpServletRequest request) {
 		CommonVO vo = new CommonVO();
-		System.out.println(request.getHeader("x-forwarded-for"));
-		System.out.println(request.getHeader("X-Real-IP"));
 		vo.setSuccess(false);
 		vo.setMsg("invalid token");
 		String memberId = memberAuthService.getMemberIdBySessionId(token);
 		if (memberId != null) {
-			MemberOrder order = orderService.addOrder(memberId, clubCardId, number, "alipay", request.getRemoteAddr());
+			String reqIP = IPUtil.getRealIp(request);
+			MemberOrder order = orderService.addOrder(memberId, clubCardId, number, "alipay", reqIP);
 			// kafka发消息
 			ordersMsgService.createOrder(order);
 			String orderString = alipayService.getOrderInfo(order);
@@ -185,7 +185,8 @@ public class ClubCardController {
 		vo.setMsg("invalid token");
 		String memberId = memberAuthService.getMemberIdBySessionId(token);
 		if (memberId != null) {
-			MemberOrder order = orderService.addOrder(memberId, clubCardId, number, "wxpay", request.getRemoteAddr());
+			String reqIP = IPUtil.getRealIp(request);
+			MemberOrder order = orderService.addOrder(memberId, clubCardId, number, "wxpay", reqIP);
 			// kafka发消息
 			ordersMsgService.createOrder(order);
 			try {
