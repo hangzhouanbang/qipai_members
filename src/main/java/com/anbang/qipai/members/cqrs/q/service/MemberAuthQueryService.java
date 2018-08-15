@@ -39,7 +39,7 @@ public class MemberAuthQueryService {
 		MemberDbo memberDbo = new MemberDbo();
 		memberDbo.setId(memberId);
 		memberDbo.setVip(false);
-		memberDbo.setCost(0);
+		memberDbo.setCost(0.0);
 		memberDbo.setVipLevel(0);
 		memberDbo.setVipScore(0);
 		memberDbo.setLastLoginTime(System.currentTimeMillis());

@@ -8,8 +8,9 @@ public class IPUtil {
 		String ip;
 		ip = request.getHeader("X-Real-IP");
 		if (ip == null) {
-			String[] ips = request.getHeader("x-forwarded-for").split(",");
-			if (ips.length > 0) {
+			String xip = request.getHeader("x-forwarded-for");
+			if (xip != null) {
+				String[] ips = xip.split(",");
 				ip = ips[0];
 			} else {
 				ip = request.getRemoteAddr();

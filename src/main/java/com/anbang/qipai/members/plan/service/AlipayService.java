@@ -11,27 +11,23 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.anbang.qipai.members.config.AlipayConfig;
 import com.anbang.qipai.members.plan.bean.MemberOrder;
-import com.anbang.qipai.members.plan.dao.OrderDao;
 import com.anbang.qipai.members.util.SignUtils;
 
 @Service
 public class AlipayService {
-
-	@Autowired
-	private OrderDao orderDao;
 
 	/**
 	 * 生成订单信息
 	 * 
 	 * @param order
 	 * @return
+	 * @throws UnsupportedEncodingException
 	 */
-	public String getOrderInfo(MemberOrder order) {
+	public String getOrderInfo(MemberOrder order) throws UnsupportedEncodingException {
 		Map<String, String> params = new HashMap<String, String>();
 		// 签约合作者身份ID
 		params.put("partner", AlipayConfig.PID);
@@ -52,16 +48,16 @@ public class AlipayService {
 		params.put("payment_type", AlipayConfig.PAYMENT_TYPE);
 
 		// 商户网站唯一订单号
-		params.put("out_trade_no", String.valueOf(order.getOut_trade_no()));
+		params.put("out_trade_no", order.getId());
 
 		// 商品名称
-		params.put("subject", order.getClubCardName());
+		params.put("subject", order.getProductName());
 
 		// 商品详情
-		params.put("body", "购买" + order.getClubCardName() + order.getNumber() + "张");
+		params.put("body", "购买" + order.getProductName() + "1张");
 
 		// 商品金额
-		params.put("total_fee", order.getTotalamount().toString());
+		params.put("total_fee", String.valueOf(order.getTotalamount()));
 
 		// 设置未付款交易的超时时间
 		// 默认30分钟，一旦超时，该笔交易就会自动被关闭。
@@ -72,19 +68,14 @@ public class AlipayService {
 
 		// 支付宝处理完请求后，当前页面跳转到商户指定页面的路径，可空
 		// orderInfo += "&return_url=\"m.alipay.com\"";
-		Map<String, String> result = paraFilter(params);
-		String orderInfo = createLinkString(result);
+		Map<String, String> resultMap = paraFilter(params);
+		String orderInfo = createLinkString(resultMap);
 		String sign = SignUtils.sign(orderInfo, AlipayConfig.PRIVATE_KEY);
-		try {
-			orderInfo += "&sign=" + URLEncoder.encode(sign, "utf-8") + "&sign_type=" + AlipayConfig.SIGN_TYPE;
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		orderInfo += "&sign=" + URLEncoder.encode(sign, "utf-8") + "&sign_type=" + AlipayConfig.SIGN_TYPE;
 		return orderInfo;
 	}
 
-	public MemberOrder alipayNotify(HttpServletRequest request) {
+	public Map<String, String> alipayNotify(HttpServletRequest request) {
 		// 从支付宝回调的request域中取值
 		// 获取支付宝返回的参数集合
 		Map<String, String[]> aliParams = request.getParameterMap();
@@ -103,11 +94,19 @@ public class AlipayService {
 		// 验证签名
 		String sign = params.get("sign");
 		if (SignUtils.verify(orderInfo, sign, AlipayConfig.ALI_PUBLIC_KEY)) {
-			orderDao.updateTransaction_id(params.get("out_trade_no"), params.get("trade_no"));
-			String trade_status = params.get("trade_status");
-			orderDao.updateOrderStatus(params.get("out_trade_no"), trade_status);
-			MemberOrder order = orderDao.findOrderByOut_trade_no(params.get("out_trade_no"));
-			return order;
+			return params;
+		}
+		return null;
+	}
+
+	public Map<String, String> alipayQuery(String result) {
+		Map<String, String> params = createParamMap(result);
+		Map<String, String> filterParams = paraFilter(params);
+		String orderInfo = createLinkString(filterParams);
+		// 验证签名
+		String sign = params.get("sign");
+		if (SignUtils.verify(orderInfo, sign, AlipayConfig.ALI_PUBLIC_KEY)) {
+			return params;
 		}
 		return null;
 	}
@@ -119,7 +118,7 @@ public class AlipayService {
 	 *            签名参数组
 	 * @return 去掉空值与签名参数后的新签名参数组
 	 */
-	public Map<String, String> paraFilter(Map<String, String> sArray) {
+	private Map<String, String> paraFilter(Map<String, String> sArray) {
 
 		Map<String, String> result = new HashMap<String, String>();
 
@@ -146,7 +145,7 @@ public class AlipayService {
 	 *            需要排序并参与字符拼接的参数组
 	 * @return 拼接后字符串
 	 */
-	public String createLinkString(Map<String, String> params) {
+	private String createLinkString(Map<String, String> params) {
 
 		List<String> keys = new ArrayList<String>(params.keySet());
 		Collections.sort(keys);
@@ -164,6 +163,18 @@ public class AlipayService {
 			}
 		}
 		return prestr;
+	}
+
+	private Map<String, String> createParamMap(String result) {
+		Map<String, String> params = new HashMap<>();
+		String[] paramString = result.split("&");
+		for (String param : paramString) {
+			int index = param.indexOf("=");
+			String key = param.substring(0, index);
+			String value = param.substring(index + 1);
+			params.put(key, value);
+		}
+		return params;
 	}
 
 }

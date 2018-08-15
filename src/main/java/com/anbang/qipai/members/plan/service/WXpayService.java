@@ -26,51 +26,51 @@ import com.anbang.qipai.members.util.XMLObjectConvertUtil;
 @Service
 public class WXpayService {
 
-	public Map<String, String> createOrder(MemberOrder order, String reqIp) throws MalformedURLException, IOException {
-		String orderInfo = createOrderInfo(order, reqIp);
+	public Map<String, String> createOrder(MemberOrder order) throws MalformedURLException, IOException {
+		String orderInfo = createOrderInfo(order);
 		SortedMap<String, String> responseMap = order(orderInfo);
-		if ("SUCCESS".equals(responseMap.get("return_code"))) {
-			String newSign = createSign(responseMap);
-			if (newSign.equals(responseMap.get("sign"))) {
-				SortedMap<String, String> resultMap = new TreeMap<String, String>();
-				resultMap.put("appid", WXConfig.APPID);
-				resultMap.put("partnerid", WXConfig.MCH_ID);
-				resultMap.put("prepayid", responseMap.get("prepay_id"));
-				resultMap.put("package", "Sign=WXPay");
-				resultMap.put("timestamp", String.valueOf(System.currentTimeMillis()));
-				resultMap.put("noncestr", UUID.randomUUID().toString().substring(0, 30));
-				String sign = createSign(resultMap);
-				resultMap.put("sign", sign);
-				return resultMap;
-			}
+		if (responseMap != null && "SUCCESS".equals(responseMap.get("result_code"))) {
+			SortedMap<String, String> resultMap = new TreeMap<String, String>();
+			resultMap.put("appid", WXConfig.APPID);
+			resultMap.put("partnerid", WXConfig.MCH_ID);
+			resultMap.put("prepayid", responseMap.get("prepay_id"));
+			resultMap.put("package", "Sign=WXPay");
+			resultMap.put("timestamp", String.valueOf(System.currentTimeMillis()));
+			resultMap.put("noncestr", UUID.randomUUID().toString().substring(0, 30));
+			String sign = createSign(resultMap);
+			resultMap.put("sign", sign);
+			resultMap.put("out_trade_no", order.getId());
+			return resultMap;
 		}
-		return responseMap;
+		return null;
 	}
 
-	public SortedMap<String, String> receiveNotify(HttpServletRequest request) {
+	public SortedMap<String, String> receiveNotify(HttpServletRequest request) throws IOException {
 		// 获取输入流
 		BufferedReader reader;
 		StringBuffer sb = new StringBuffer();
-		try {
-			reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-			// 接受数据
-			String line = null;
-			// 将输入流中的信息放在sb中
-			while ((line = reader.readLine()) != null) {
-				sb.append(line);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
+		reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
+		// 接受数据
+		String line = null;
+		// 将输入流中的信息放在sb中
+		while ((line = reader.readLine()) != null) {
+			sb.append(line);
 		}
 		SortedMap<String, String> responseMap = XMLObjectConvertUtil.praseXMLToMap(sb.toString());
-		return responseMap;
+		if ("SUCCESS".equals(responseMap.get("return_code"))) {
+			String newSign = createSign(responseMap);
+			if (newSign.equals(responseMap.get("sign"))) {
+				return responseMap;
+			}
+		}
+		return null;
 	}
 
-	public SortedMap<String, String> queryOrderResult(String transaction_id) throws MalformedURLException, IOException {
+	public SortedMap<String, String> queryOrderResult(String transaction_id, String out_trade_no)
+			throws MalformedURLException, IOException {
 		// 微信查询订单接口
 		final String url = "https://api.mch.weixin.qq.com/pay/orderquery";
-		String queryOrderInfo = createQueryOrderInfo(transaction_id);
+		String queryOrderInfo = createQueryOrderInfo(transaction_id, out_trade_no);
 		// 连接 微信查询订单接口
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 		conn.setRequestMethod("POST");
@@ -131,7 +131,13 @@ public class WXpayService {
 			sb.append(line);
 		}
 		SortedMap<String, String> responseMap = XMLObjectConvertUtil.praseXMLToMap(sb.toString());
-		return responseMap;
+		if ("SUCCESS".equals(responseMap.get("return_code"))) {
+			String newSign = createSign(responseMap);
+			if (newSign.equals(responseMap.get("sign"))) {
+				return responseMap;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -140,7 +146,7 @@ public class WXpayService {
 	 * @param clubCardId
 	 * @return
 	 */
-	private String createOrderInfo(MemberOrder order, String reqIp) {
+	private String createOrderInfo(MemberOrder order) {
 		// 创建可排序的Map集合
 		SortedMap<String, String> parameters = new TreeMap<String, String>();
 		// 应用id
@@ -150,13 +156,13 @@ public class WXpayService {
 		// 随机字符串
 		parameters.put("nonce_str", UUID.randomUUID().toString().substring(0, 30));
 		// 商品描述
-		parameters.put("body", order.getClubCardName());
+		parameters.put("body", order.getProductName());
 		// 商户流水号
-		parameters.put("out_trade_no", order.getOut_trade_no());
+		parameters.put("out_trade_no", order.getId());
 		// 支付总额
 		parameters.put("total_fee", String.valueOf((int) (order.getTotalamount() * 100)));
 		// 用户端实际ip
-		parameters.put("spbill_create_ip", reqIp);
+		parameters.put("spbill_create_ip", order.getReqIP());
 		// 通知地址
 		parameters.put("notify_url", WXConfig.NOTIFY_URL);
 		// 交易类型
@@ -172,14 +178,18 @@ public class WXpayService {
 	 * @param transaction_id
 	 * @return
 	 */
-	private String createQueryOrderInfo(String transaction_id) {
+	private String createQueryOrderInfo(String transaction_id, String out_trade_no) {
 		// 创建可排序的Map集合
 		SortedMap<String, String> parameters = new TreeMap<String, String>();
 		parameters.put("appid", WXConfig.APPID);
 		parameters.put("mch_id", WXConfig.MCH_ID);
 		parameters.put("nonce_str", UUID.randomUUID().toString().substring(0, 30));
-		parameters.put("transaction_id", transaction_id);
-		// parameters.put("out_trade_no", "");//商户系统内部的订单号，当没提供transaction_id时需要传这个。
+		if (transaction_id != null) {
+			parameters.put("transaction_id", transaction_id);
+		}
+		if (out_trade_no != null) {
+			parameters.put("out_trade_no", out_trade_no);// 商户系统内部的订单号，当没提供transaction_id时需要传这个。
+		}
 		parameters.put("sign", createSign(parameters));
 		String xml = XMLObjectConvertUtil.praseMapToXML(parameters);
 		return xml;
@@ -191,7 +201,7 @@ public class WXpayService {
 	 * @param order
 	 * @return
 	 */
-	public String createSign(SortedMap<String, String> parameters) {
+	private String createSign(SortedMap<String, String> parameters) {
 		StringBuffer sb = new StringBuffer();
 		Set es = parameters.entrySet();
 		Iterator it = es.iterator();

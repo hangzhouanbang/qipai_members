@@ -1,20 +1,21 @@
 package com.anbang.qipai.members.plan.bean;
 
 public class MemberOrder {
-	private String id;
-	private String out_trade_no;// 商户订单流水号
+	private String id;// 商户订单流水号
 	private String pay_type;// 支付方式，支付宝或微信
 	private String transaction_id;// 订单号
 	private String status;// 微信或支付宝状态码
-	private String memberId;
-	private String nickname;
-	private String clubCardId;
-	private String clubCardName;
-	private Double clubCardPrice;// 会员卡单价
-	private Integer number;// 购买数量
-	private Integer gold;// 单张会员卡赠送的金币
-	private Integer score;// 单张会员卡赠送的积分
-	private Long vipTime;// 单张会员卡赠送的VIP时间
+	private String payerId;// 付款人id
+	private String payerName;// 付款人昵称
+	private String receiverId;// 收货人id
+	private String receiverName;// 收货人名字
+	private String productId;// 商品id
+	private String productName;// 商品名称
+	private Double productPrice;// 商品单价
+	private Integer number;// 数量
+	private Integer gold;// 单个商品赠送的金币
+	private Integer score;// 单个商品赠送的积分
+	private Long vipTime;// 单个商品赠送的VIP时间
 	private Double totalamount;// 总价
 	private String reqIP;// 终端ip
 	private Long createTime;// 订单创建时间
@@ -26,14 +27,6 @@ public class MemberOrder {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getOut_trade_no() {
-		return out_trade_no;
-	}
-
-	public void setOut_trade_no(String out_trade_no) {
-		this.out_trade_no = out_trade_no;
 	}
 
 	public String getPay_type() {
@@ -60,44 +53,60 @@ public class MemberOrder {
 		this.status = status;
 	}
 
-	public String getMemberId() {
-		return memberId;
+	public String getPayerId() {
+		return payerId;
 	}
 
-	public void setMemberId(String memberId) {
-		this.memberId = memberId;
+	public void setPayerId(String payerId) {
+		this.payerId = payerId;
 	}
 
-	public String getNickname() {
-		return nickname;
+	public String getPayerName() {
+		return payerName;
 	}
 
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
+	public void setPayerName(String payerName) {
+		this.payerName = payerName;
 	}
 
-	public String getClubCardId() {
-		return clubCardId;
+	public String getReceiverId() {
+		return receiverId;
 	}
 
-	public void setClubCardId(String clubCardId) {
-		this.clubCardId = clubCardId;
+	public void setReceiverId(String receiverId) {
+		this.receiverId = receiverId;
 	}
 
-	public String getClubCardName() {
-		return clubCardName;
+	public String getReceiverName() {
+		return receiverName;
 	}
 
-	public void setClubCardName(String clubCardName) {
-		this.clubCardName = clubCardName;
+	public void setReceiverName(String receiverName) {
+		this.receiverName = receiverName;
 	}
 
-	public Double getClubCardPrice() {
-		return clubCardPrice;
+	public String getProductId() {
+		return productId;
 	}
 
-	public void setClubCardPrice(Double clubCardPrice) {
-		this.clubCardPrice = clubCardPrice;
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public Double getProductPrice() {
+		return productPrice;
+	}
+
+	public void setProductPrice(Double productPrice) {
+		this.productPrice = productPrice;
 	}
 
 	public Integer getNumber() {
@@ -140,20 +149,20 @@ public class MemberOrder {
 		this.totalamount = totalamount;
 	}
 
-	public Long getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Long createTime) {
-		this.createTime = createTime;
-	}
-
 	public String getReqIP() {
 		return reqIP;
 	}
 
 	public void setReqIP(String reqIP) {
 		this.reqIP = reqIP;
+	}
+
+	public Long getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Long createTime) {
+		this.createTime = createTime;
 	}
 
 	public Long getDeliveTime() {
@@ -163,5 +172,4 @@ public class MemberOrder {
 	public void setDeliveTime(Long deliveTime) {
 		this.deliveTime = deliveTime;
 	}
-
 }

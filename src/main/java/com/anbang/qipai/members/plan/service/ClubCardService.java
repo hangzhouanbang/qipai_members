@@ -30,4 +30,8 @@ public class ClubCardService {
 		return clubCardDao.updateClubCard(clubCard);
 	}
 
+	public MemberClubCard findClubCardById(String clubCardId) {
+		return clubCardDao.getClubCardById(clubCardId);
+	}
+
 }

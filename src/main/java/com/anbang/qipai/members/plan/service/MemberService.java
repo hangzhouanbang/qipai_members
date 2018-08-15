@@ -36,17 +36,17 @@ public class MemberService {
 		memberDao.updateMemberPhone(memberId, phone);
 	}
 
-	public boolean updateVipEndTime(String memberId,long vipEndTime) {
+	public boolean updateVipEndTime(String memberId, long vipEndTime) {
 		return memberDao.updateMemberVipEndTime(memberId, vipEndTime);
 	}
 
 	public boolean updateVIP(MemberOrder order) {
-		MemberDbo member = memberDao.findMemberById(order.getMemberId());
+		MemberDbo member = memberDao.findMemberById(order.getPayerId());
 		member.setVip(true);
-		member.setVipEndTime(order.getVipTime() * order.getNumber() + System.currentTimeMillis());
-		int vipScore = (int) (order.getClubCardPrice() * order.getNumber() * 100) + member.getVipScore();
+		member.setVipEndTime(order.getVipTime() + System.currentTimeMillis());
+		int vipScore = (int) (order.getProductPrice() * 100) + member.getVipScore();
 		member.setVipScore(vipScore);
-		int cost = (int) (order.getClubCardPrice() * order.getNumber() * 100) + member.getCost();
+		double cost = order.getProductPrice() + member.getCost();
 		member.setCost(cost);
 		MemberGrade grade = memberGradeDao.find_grade("1");
 		int level = member.getVipLevel();
