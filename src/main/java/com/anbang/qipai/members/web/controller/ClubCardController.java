@@ -143,18 +143,18 @@ public class ClubCardController {
 		MemberOrder order = memberOrderService.addMemberOrder(member.getId(), member.getNickname(), member.getId(),
 				member.getNickname(), card.getId(), card.getName(), card.getPrice(), card.getGold(), card.getScore(),
 				card.getTime(), 1, "支付宝支付", reqIP);
+		ordersMsgService.createOrder(order);
 		String orderString = null;
 		// 下订单
 		try {
 			orderString = alipayService.getOrderInfo(order);
+			vo.setSuccess(true);
+			vo.setMsg("sign orderInfo");
+			vo.setData(orderString);
 		} catch (UnsupportedEncodingException e) {
 			vo.setSuccess(false);
 			vo.setMsg("UnsupportedEncodingException");
-			return vo;
 		}
-		vo.setSuccess(true);
-		vo.setMsg("sign orderInfo");
-		vo.setData(orderString);
 		return vo;
 	}
 
@@ -271,6 +271,7 @@ public class ClubCardController {
 		MemberOrder order = memberOrderService.addMemberOrder(member.getId(), member.getNickname(), member.getId(),
 				member.getNickname(), card.getId(), card.getName(), card.getPrice(), card.getGold(), card.getScore(),
 				card.getTime(), 1, "微信支付", reqIP);
+		ordersMsgService.createOrder(order);
 		try {
 			Map<String, String> resultMap = wxpayService.createOrder(order);
 			if (resultMap == null) {
