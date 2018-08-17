@@ -113,13 +113,24 @@ public class MemberController {
 			vo.setMsg("invalid token");
 			return vo;
 		}
+		MemberGoldAccountDbo memberGoldAccountDbo = memberGoldQueryService.findMemberGoldAccount(memberId);
+		if (memberGoldAccountDbo != null) {
+			vo.setGold(memberGoldAccountDbo.getBalance());
+		}
+		MemberScoreAccountDbo memberScoreAccountDbo = memberScoreQueryService.findMemberScoreAccount(memberId);
+		if (memberScoreAccountDbo != null) {
+			vo.setScore(memberScoreAccountDbo.getBalance());
+		}
 		MemberDbo member = memberService.findMemberById(memberId);
 		vo.setVipLevel(member.getVipLevel());
 		vo.setPhone(member.getPhone());
-		long time = member.getVipEndTime();
-		long nowTime = System.currentTimeMillis();
-		long day = (time - nowTime) / (1000 * 60 * 60 * 24);
-		vo.setVipEndTime("剩余" + day + "天");
+		long day = 0;
+		if (member.getVipEndTime() != null) {
+			long time = member.getVipEndTime();
+			long nowTime = System.currentTimeMillis();
+			day = (time - nowTime) / (1000 * 60 * 60 * 24);
+		}
+		vo.setVipEndTime(day);
 		vo.setSuccess(true);
 		vo.setMsg("information");
 		return vo;

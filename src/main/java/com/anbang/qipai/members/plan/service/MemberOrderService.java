@@ -30,7 +30,7 @@ public class MemberOrderService {
 		order.setProductName(productName);
 		order.setProductPrice(productPrice);
 		order.setNumber(number);
-		order.setGold(gold);
+		order.setGold(gold*10000);
 		order.setScore(score);
 		order.setVipTime(time);
 		order.setTotalamount(productPrice * number);

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.members.cqrs.q.dao.MemberScoreAccountDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.mongodb.repository.MemberScoreAccountDboRepository;
-import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreAccountDbo;
 
 @Component
@@ -28,7 +27,7 @@ public class MongodbMemberScoreAccountDboDao implements MemberScoreAccountDboDao
 	@Override
 	public void update(String id, int balance) {
 		mongoTemplate.updateFirst(new Query(Criteria.where("id").is(id)), new Update().set("balance", balance),
-				MemberGoldAccountDbo.class);
+				MemberScoreAccountDbo.class);
 	}
 
 	@Override
