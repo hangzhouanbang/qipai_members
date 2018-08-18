@@ -35,7 +35,7 @@ public class WXpayService {
 			resultMap.put("partnerid", WXConfig.MCH_ID);
 			resultMap.put("prepayid", responseMap.get("prepay_id"));
 			resultMap.put("package", "Sign=WXPay");
-			resultMap.put("timestamp", String.valueOf(System.currentTimeMillis()));
+			resultMap.put("timestamp", String.valueOf(System.currentTimeMillis()).substring(0, 10));
 			resultMap.put("noncestr", UUID.randomUUID().toString().substring(0, 30));
 			String sign = createSign(resultMap);
 			resultMap.put("sign", sign);

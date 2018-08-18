@@ -259,7 +259,6 @@ public class ClubCardController {
 	public CommonVO createWXOrder(String token, String clubCardId, HttpServletRequest request) {
 		CommonVO vo = new CommonVO();
 		String memberId = memberAuthService.getMemberIdBySessionId(token);
-		// String memberId = "225881";
 		if (memberId == null) {
 			vo.setSuccess(false);
 			vo.setMsg("invalid token");

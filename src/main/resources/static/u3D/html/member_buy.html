@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>会员购买</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <style>
+        body{
+            margin:0;
+            padding:0;
+        }
+        .title{
+            width:100%;
+            height:1rem;
+            text-align: center;
+            background: #FFA500;
+            line-height: 1rem;
+            font-size: 0.4rem;
+            color: #FFFFFF;
+        }
+        .info{
+            width:100%;
+            height:2.4rem;
+            font-size: 0.28rem;
+            color: #333333;
+            overflow: hidden;
+            margin:0 0.6rem;
+        }
+        .info .left,
+        .info .right{
+            float:left;
+        }
+        .info .left{
+            width:1.2rem;
+            height:100%;
+        }
+        .info .left img{
+            width:100%;
+            height:1.2rem;
+            margin:0.6rem 0;
+        }
+        .info .right{
+            margin:0 0 0 0.3rem;
+            height:100%;
+        }
+        .info .right p:first-child{
+            margin-top:0.7rem;
+        }
+        .package .headline{
+            width:100%;
+            height:0.8rem;
+            background-color:#E8E8E8;
+            font-size: 0.32rem;
+            color: #333333;
+            line-height: 0.8rem;
+            padding-left:0.6rem;
+        }
+        .content{
+            margin:32px 0.6rem 0 0.6rem;
+        }
+        .content .card{
+            overflow: hidden;
+            width:100%;
+            height:2.7rem;
+        }
+        .weeks_card,
+        .month_card,
+        .season_card{
+            float:left;
+            width:1.8rem;
+            border: 1px solid #979797;
+            border-radius: 10px;
+            margin-right:0.45rem;
+            box-sizing: border-box;
+        }
+        .season_card{
+            margin-right:0;
+        }
+        .weeks_card img,
+        .month_card img,
+        .season_card img{
+            width:1.56rem;
+            height:1.56rem;
+            margin:5px 0.12rem 0 0.12rem;
+        }
+        .weeks_card .card_name,
+        .month_card .card_name,
+        .season_card .card_name,
+        .weeks_card .card_money,
+        .month_card .card_money,
+        .season_card .card_money{
+            width:100%;
+            text-align: center;
+        }
+        .weeks_card .card_name,
+        .month_card .card_name,
+        .season_card .card_name{
+            font-size: 0.32rem;
+            color: #333333;
+            margin-top:-13px;
+        }
+        .weeks_card .card_money,
+        .month_card .card_money,
+        .season_card .card_money{
+            font-size: 0.28rem;
+            color: #FFA500;
+            margin-bottom:5px;
+        }
+        .tip{
+            margin-top:60px;
+        }
+        .tip p{
+           margin:5px 0;
+       }
+        .tip p:first-child{
+            font-size: 0.32rem;
+            color: #333333;
+        }
+        .tip p:last-child{
+            font-size: 0.24rem;
+            color: #666666;
+            line-height: 0.4rem;
+        }
+        .mask{
+            width:100%;
+            height:100%;
+            position: fixed;
+            top:0;
+            left:0;
+            background-color: rgba(0,0,0,0.50);
+            display:none;
+        }
+        .popup{
+            width:6rem;
+            height:5.2rem;
+            background: #FFFFFF;
+            box-shadow: 0 2px 4px 0 rgba(102,102,102,0.50);
+            border-radius: 10px;
+            position: absolute;
+            top:50%;
+            left:50%;
+            transform: translateX(-50%) translateY(-50%);
+        }
+        .popup .header{
+            width:100%;
+            height:1rem;
+            background: #FFA500;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            font-size: 0.4rem;
+            color: #FFFFFF;
+            text-align: center;
+            line-height: 1rem;
+        }
+        .popup .X{
+            position: absolute;
+            right:0.1rem;
+            top:0.1rem;
+            width:0.8rem;
+            height:0.8rem;
+            cursor:pointer;
+        }
+        .popup .center{
+            position: relative;
+            height:2.6rem;
+            border-bottom: 1px solid #D8D8D8;;
+        }
+        .popup .center .week,
+        .popup .center .month,
+        .popup .center .season{
+            position: absolute;
+            top:0;
+            left:50%;
+            transform:translateX(-50%);
+            height:1.3rem;
+        }
+        .popup .center .month,
+        .popup .center .season{
+            display:none;
+        }
+        .popup .center .top{
+            position: relative;
+            height:100%;
+            width:100%;
+        }
+        .popup .center .top img{
+            width:0.54rem;
+            height:0.64rem;
+        }
+        .popup .center .top span{
+            font-size: 0.4rem;
+            color: #333333;
+            position: absolute;
+            top:0.46rem;
+            left:0.64rem;
+            display:inline-block;
+            width:1rem;
+        }
+        .popup .center .bottom{
+            width:100%;
+            text-align: center;
+            font-size: 0.6rem;
+            color: #333333;
+        }
+        .popup .footer{
+            width:100%;
+        }
+        .popup .footer img{
+            width:0.6rem;
+            height:0.6rem;
+            margin:0 2.7rem 0.2rem 2.7rem;
+        }
+        .popup .footer p{
+            text-align: center;
+            font-size: 0.28rem;
+            color: #666666;
+            margin:-0.3rem 0 0 0;
+            padding:0;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">会员购买</div>
+    <div class="info">
+        <div class="left">
+            <img src="../img/girl.jpg" alt="">
+        </div>
+        <div class="right">
+            <p>昵称:一川闲絮点点点</p>
+            <p>ID: 654321</p>
+        </div>
+    </div>
+    <div class="package">
+        <div class="headline">请选择会员套餐</div>
+        <div class="content">
+            <div class="card">
+                <div class="weeks_card fiche">
+                    <img src="../img/img_zhouka.png" alt="">
+                    <div class="card_name">周卡</div>
+                    <div class="card_money">60元</div>
+                </div>
+                <div class="month_card fiche">
+                    <img src="../img/img_yueka.png" alt="">
+                    <div class="card_name">月卡</div>
+                    <div class="card_money">200元</div>
+                </div>
+                <div class="season_card fiche">
+                    <img src="../img/img_jika.png" alt="">
+                    <div class="card_name">季卡</div>
+                    <div class="card_money">500元</div>
+                </div>
+            </div>
+            <div class="tip">
+                <p>温馨提示：</p>
+                <p>若出现已成功充值的提示，但未到帐，可能是网络或系统繁忙导致，请耐心等待或联系官方客服。</p>
+            </div>
+        </div>
+    </div>
+    <div class="mask">
+        <div class="popup">
+            <div class="header">
+                3财神棋牌
+            </div>
+            <div class="center">
+                <div class="week">
+                    <div class="top">
+                        <img src="../img/icon_zhouka.png" alt="">
+                        <span>周卡</span>
+                    </div>
+                   <div class="bottom">￥60</div>
+                </div>
+                <div class="month">
+                    <div class="top">
+                        <img src="../img/icon_yueka.png" alt="">
+                        <span>月卡</span>
+                    </div>
+                    <div class="bottom">￥200</div>
+                </div>
+                <div class="season">
+                    <div class="top">
+                        <img src="../img/icon_jika.png" alt="">
+                        <span>季卡</span>
+                    </div>
+                    <div class="bottom">￥500</div>
+                </div>
+            </div>
+            <div class="footer">
+                <img src="../img/icon_weixinPay.png" alt="">
+                <p>微信支付</p>
+            </div>
+            <img src="../img/icon_close.png" alt="" class="X">
+        </div>
+    </div>
+</body>
+<script src="../js/jquery-1.11.0.js"></script>
+<script>
+    document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+    $('.X').click(function(){
+        $('.mask').hide();
+    })
+    $('.fiche').each(function(i){
+        $(this).click(function(){
+            $('.mask').show();
+            if(i == 0){
+                $('.month').hide();
+                $('.week').show();
+                $('.season').hide();
+            }
+            if(i == 1){
+                $('.month').show();
+                $('.week').hide();
+                $('.season').hide();
+            }
+            if(i == 2){
+                $('.month').hide();
+                $('.week').hide();
+                $('.season').show();
+            }
+        })
+    })
+</script>
+</html>

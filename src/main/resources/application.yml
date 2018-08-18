@@ -134,7 +134,7 @@ spring:
             
         ruianMajiangResult:
           destination: ruianMajiangResult
-          group: qipai_ruianmajiang
+          group: qipai-members
           consumer:
             concurrency: 1
             partitioned: false

@@ -49,10 +49,12 @@ public class MemberService {
 		double cost = order.getProductPrice() + member.getCost();
 		member.setCost(cost);
 		MemberGrade grade = memberGradeDao.find_grade("1");
-		int level = member.getVipLevel();
-		long score = grade.getLevel(level);
-		if (vipScore >= score) {
-			member.setVipLevel(level + 1);
+		if(grade!=null) {
+			int level = member.getVipLevel();
+			long score = grade.getLevel(level);
+			if (vipScore >= score) {
+				member.setVipLevel(level + 1);
+			}
 		}
 		return memberDao.updateMemberVIP(member);
 	}
