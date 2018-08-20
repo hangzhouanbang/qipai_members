@@ -26,8 +26,8 @@ import com.anbang.qipai.members.util.XMLObjectConvertUtil;
 @Service
 public class WXpayService {
 
-	public Map<String, String> createOrder(MemberOrder order) throws MalformedURLException, IOException {
-		String orderInfo = createOrderInfo(order);
+	public Map<String, String> createOrder_APP(MemberOrder order) throws MalformedURLException, IOException {
+		String orderInfo = createOrderInfo_APP(order);
 		SortedMap<String, String> responseMap = order(orderInfo);
 		if (responseMap != null && "SUCCESS".equals(responseMap.get("result_code"))) {
 			SortedMap<String, String> resultMap = new TreeMap<String, String>();
@@ -41,6 +41,16 @@ public class WXpayService {
 			resultMap.put("sign", sign);
 			resultMap.put("out_trade_no", order.getId());
 			return resultMap;
+		}
+		return null;
+	}
+	
+	public String createOrder_H5(MemberOrder order) throws MalformedURLException, IOException {
+		String orderInfo = createOrderInfo_H5(order);
+		SortedMap<String, String> responseMap = order(orderInfo);
+		if (responseMap != null && "SUCCESS".equals(responseMap.get("result_code"))) {
+			String mweb_url=responseMap.get("mweb_url");
+			return mweb_url;
 		}
 		return null;
 	}
@@ -146,7 +156,7 @@ public class WXpayService {
 	 * @param clubCardId
 	 * @return
 	 */
-	private String createOrderInfo(MemberOrder order) {
+	private String createOrderInfo_APP(MemberOrder order) {
 		// 创建可排序的Map集合
 		SortedMap<String, String> parameters = new TreeMap<String, String>();
 		// 应用id
@@ -166,7 +176,38 @@ public class WXpayService {
 		// 通知地址
 		parameters.put("notify_url", WXConfig.NOTIFY_URL);
 		// 交易类型
-		parameters.put("trade_type", WXConfig.TRADE_TYPE);
+		parameters.put("trade_type", WXConfig.APP_TRADE_TYPE);
+		parameters.put("sign", createSign(parameters));
+		String xml = XMLObjectConvertUtil.praseMapToXML(parameters);
+		return xml;
+	}
+
+	private String createOrderInfo_H5(MemberOrder order) {
+		// 创建可排序的Map集合
+		SortedMap<String, String> parameters = new TreeMap<String, String>();
+		// 应用id
+		parameters.put("appid", WXConfig.APPID);
+		// 商户号
+		parameters.put("mch_id", WXConfig.MCH_ID);
+		// 随机字符串
+		parameters.put("nonce_str", UUID.randomUUID().toString().substring(0, 30));
+		// 商品描述
+		parameters.put("body", order.getProductName());
+		// 商户流水号
+		parameters.put("out_trade_no", order.getId());
+		// 支付总额
+		parameters.put("total_fee", String.valueOf((int) (order.getTotalamount() * 100)));
+		// 用户端实际ip
+		parameters.put("spbill_create_ip", order.getReqIP());
+		// 通知地址
+		parameters.put("notify_url", WXConfig.NOTIFY_URL);
+		// 交易类型
+		parameters.put("trade_type", WXConfig.H5_TRADE_TYPE);
+		// 场景信息
+		String wap_url = "";
+		String wap_name = "";
+		parameters.put("scene_info", "{\"h5_info\": {\"type\":\"Wap\",\"wap_url\": \"" + wap_url + "\",\"wap_name\": \""
+				+ wap_name + "\"}}");
 		parameters.put("sign", createSign(parameters));
 		String xml = XMLObjectConvertUtil.praseMapToXML(parameters);
 		return xml;

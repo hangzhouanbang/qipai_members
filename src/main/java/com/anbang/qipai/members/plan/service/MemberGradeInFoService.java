@@ -29,7 +29,7 @@ public class MemberGradeInFoService {
 		List<MemberClubCard> cardList = clubCardService.showClubCard();
 		MemberGrade memberGrade = memberGradeService.find_grade();
 		MemberDbo memberDbo = memberAuthQueryService.findMember(memberId);
-		long shortage = 0;
+		double shortage = 0;
 		double ProgressBar = 0;
 		if (memberGrade != null && memberDbo != null) {
 			if (memberDbo.getVipScore() >= 0 && memberDbo.getVipScore() < memberGrade.getVip1()) {

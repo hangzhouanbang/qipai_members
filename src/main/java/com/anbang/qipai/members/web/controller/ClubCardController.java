@@ -274,7 +274,7 @@ public class ClubCardController {
 				card.getTime(), 1, "微信支付", reqIP);
 		ordersMsgService.createOrder(order);
 		try {
-			Map<String, String> resultMap = wxpayService.createOrder(order);
+			Map<String, String> resultMap = wxpayService.createOrder_APP(order);
 			if (resultMap == null) {
 				vo.setSuccess(false);
 				vo.setMsg("order fail");
@@ -282,6 +282,41 @@ public class ClubCardController {
 				vo.setSuccess(true);
 				vo.setMsg("orderinfo");
 				vo.setData(resultMap);
+			}
+		} catch (Exception e) {
+			vo.setSuccess(false);
+			vo.setMsg(e.getClass().getName());
+		}
+		return vo;
+	}
+
+	@RequestMapping("/createwxorder_h5")
+	public CommonVO createWXOrder_H5(String token, String clubCardId, HttpServletRequest request) {
+		CommonVO vo = new CommonVO();
+		String memberId = memberAuthService.getMemberIdBySessionId(token);
+		if (memberId == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
+		MemberClubCard card = clubCardService.findClubCardById(clubCardId);
+		MemberDbo member = memberService.findMemberById(memberId);
+
+		String reqIP = IPUtil.getRealIp(request);
+
+		MemberOrder order = memberOrderService.addMemberOrder(member.getId(), member.getNickname(), member.getId(),
+				member.getNickname(), card.getId(), card.getName(), card.getPrice(), card.getGold(), card.getScore(),
+				card.getTime(), 1, "微信支付", reqIP);
+		ordersMsgService.createOrder(order);
+		try {
+			String mweb_url = wxpayService.createOrder_H5(order);
+			if (mweb_url == null) {
+				vo.setSuccess(false);
+				vo.setMsg("order fail");
+			} else {
+				vo.setSuccess(true);
+				vo.setMsg("mweb_url");
+				vo.setData(mweb_url);
 			}
 		} catch (Exception e) {
 			vo.setSuccess(false);

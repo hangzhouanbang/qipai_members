@@ -6,7 +6,7 @@ public class MemberDbo {
 	private String gender;// 会员性别:男:male,女:female
 	private Boolean vip;// 是否VIP
 	private Integer vipLevel;// VIP等级
-	private Integer vipScore;// VIP积分
+	private Double vipScore;// VIP积分
 	private Double cost;// 消费总额RMB
 	private String headimgurl;// 头像url
 	private String phone;// 会员手机
@@ -57,11 +57,11 @@ public class MemberDbo {
 		this.vipLevel = vipLevel;
 	}
 
-	public Integer getVipScore() {
+	public Double getVipScore() {
 		return vipScore;
 	}
 
-	public void setVipScore(Integer vipScore) {
+	public void setVipScore(Double vipScore) {
 		this.vipScore = vipScore;
 	}
 

@@ -12,7 +12,7 @@ public class GradeVo {
 	
 	private Object vipcard;
 	
-	private long shortage;
+	private double shortage;
 	
 	private BigDecimal ProgressBar;
 
@@ -40,11 +40,11 @@ public class GradeVo {
 		this.data = data;
 	}
 
-	public long getShortage() {
+	public double getShortage() {
 		return shortage;
 	}
 
-	public void setShortage(long shortage) {
+	public void setShortage(double shortage) {
 		this.shortage = shortage;
 	}
 

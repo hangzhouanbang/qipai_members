@@ -41,7 +41,8 @@ public class MemberAuthQueryService {
 		memberDbo.setVip(false);
 		memberDbo.setCost(0.0);
 		memberDbo.setVipLevel(0);
-		memberDbo.setVipScore(0);
+		memberDbo.setVipScore(0.0);
+		memberDbo.setVipEndTime(0L);
 		memberDbo.setLastLoginTime(System.currentTimeMillis());
 		memberDbo.setCreateTime(System.currentTimeMillis());
 		if (memberRightsConfiguration != null) {

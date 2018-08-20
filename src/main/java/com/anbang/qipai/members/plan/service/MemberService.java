@@ -1,5 +1,6 @@
 package com.anbang.qipai.members.plan.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,13 +44,23 @@ public class MemberService {
 	public boolean updateVIP(MemberOrder order) {
 		MemberDbo member = memberDao.findMemberById(order.getPayerId());
 		member.setVip(true);
-		member.setVipEndTime(order.getVipTime() + System.currentTimeMillis());
-		int vipScore = (int) (order.getProductPrice() * 100) + member.getVipScore();
+		long vipEndTime=0;
+		if(member.getVipEndTime()!=null) {
+			vipEndTime = member.getVipEndTime();
+		}
+		if (vipEndTime > System.currentTimeMillis()) {
+			member.setVipEndTime(order.getVipTime() + vipEndTime);
+		} else {
+			member.setVipEndTime(order.getVipTime() + System.currentTimeMillis());
+		}
+		BigDecimal b1 = new BigDecimal(Double.toString(order.getProductPrice()));
+		BigDecimal b2 = new BigDecimal(Double.toString(member.getVipScore()));
+		double vipScore = b1.add(b2).doubleValue();
 		member.setVipScore(vipScore);
 		double cost = order.getProductPrice() + member.getCost();
 		member.setCost(cost);
 		MemberGrade grade = memberGradeDao.find_grade("1");
-		if(grade!=null) {
+		if (grade != null) {
 			int level = member.getVipLevel();
 			long score = grade.getLevel(level);
 			if (vipScore >= score) {
