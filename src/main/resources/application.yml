@@ -131,14 +131,6 @@ spring:
           contentType: application/json
           producer:
             partitionCount: 1
-            
-        ruianMajiangResult:
-          destination: ruianMajiangResult
-          group: qipai-members
-          consumer:
-            concurrency: 1
-            partitioned: false
-          contentType: application/json
       
   application:
     name: qipai-members

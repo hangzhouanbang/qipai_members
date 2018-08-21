@@ -1,4 +1,4 @@
-package com.anbang.qipai.members.plan.bean.historicalresult;
+package com.anbang.qipai.members.plan.bean;
 
 /**
  * 我们平台提供的所有游戏名称的一个枚举
