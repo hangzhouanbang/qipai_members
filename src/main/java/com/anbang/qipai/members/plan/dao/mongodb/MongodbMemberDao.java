@@ -20,15 +20,15 @@ public class MongodbMemberDao implements MemberDao {
 	private MongoTemplate mongoTemplate;
 
 	@Override
-	public List<MemberDbo> findMember(int page, int size) {
-		Query query = new Query();
+	public List<MemberDbo> findMemberByVip(int page, int size,boolean vip) {
+		Query query = new Query(Criteria.where("").is(vip));
 		query.skip((page - 1) * size);
 		query.limit(size);
 		return mongoTemplate.find(query, MemberDbo.class);
 	}
 
 	@Override
-	public long getAmount() {
+	public long getAmountByVip(boolean vip) {
 		Query query = new Query();
 		return mongoTemplate.count(query, MemberDbo.class);
 	}
@@ -71,11 +71,11 @@ public class MongodbMemberDao implements MemberDao {
 	}
 
 	@Override
-	public boolean updateMemberVipEndTime(String memberId, long vipEndTime) {
-		Query query = new Query(Criteria.where("id").is(memberId));
+	public boolean agentUpdateMemberVip(MemberDbo member) {
+		Query query = new Query(Criteria.where("id").is(member.getId()));
 		Update update = new Update();
-		update.set("vipEndTime", vipEndTime);
-		update.set("vip", true);
+		update.set("vipEndTime", member.getVipEndTime());
+		update.set("vip", member.getVip());
 		WriteResult result = mongoTemplate.updateFirst(query, update, MemberDbo.class);
 		return result.getN() > 0;
 	}

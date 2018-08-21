@@ -41,4 +41,11 @@ public class MembersMsgService {
 		mo.setData(member);
 		membersSource.members().send(MessageBuilder.withPayload(mo).build());
 	}
+	
+	public void updateMemberLogin(MemberDbo member) {
+		CommonMO mo = new CommonMO();
+		mo.setMsg("member login");
+		mo.setData(member);
+		membersSource.members().send(MessageBuilder.withPayload(mo).build());
+	}
 }

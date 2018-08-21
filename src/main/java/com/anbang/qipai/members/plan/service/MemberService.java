@@ -26,26 +26,37 @@ public class MemberService {
 	}
 
 	public long getAmount() {
-		return memberDao.getAmount();
+		return memberDao.getAmountByVip(true);
 	}
 
-	public List<MemberDbo> findMember(int page, int size) {
-		return memberDao.findMember(page, size);
+	public List<MemberDbo> findMemberByVip(int page, int size, boolean vip) {
+		return memberDao.findMemberByVip(page, size, vip);
 	}
 
 	public void registerPhone(String memberId, String phone) {
 		memberDao.updateMemberPhone(memberId, phone);
 	}
 
-	public boolean updateVipEndTime(String memberId, long vipEndTime) {
-		return memberDao.updateMemberVipEndTime(memberId, vipEndTime);
+	public boolean updateMemberVip(String memberId, long vipEndTime) {
+		MemberDbo member = memberDao.findMemberById(memberId);
+		member.setVip(true);
+		long vipTime = 0;
+		if (member.getVipEndTime() != null) {
+			vipTime = member.getVipEndTime();
+		}
+		if (vipTime > System.currentTimeMillis()) {
+			member.setVipEndTime(vipEndTime + vipTime);
+		} else {
+			member.setVipEndTime(vipEndTime + System.currentTimeMillis());
+		}
+		return memberDao.agentUpdateMemberVip(member);
 	}
 
 	public boolean updateVIP(MemberOrder order) {
 		MemberDbo member = memberDao.findMemberById(order.getPayerId());
 		member.setVip(true);
-		long vipEndTime=0;
-		if(member.getVipEndTime()!=null) {
+		long vipEndTime = 0;
+		if (member.getVipEndTime() != null) {
 			vipEndTime = member.getVipEndTime();
 		}
 		if (vipEndTime > System.currentTimeMillis()) {
@@ -72,5 +83,14 @@ public class MemberService {
 
 	public boolean resetVIP(MemberDbo member) {
 		return memberDao.resetVip(member);
+	}
+
+	public MemberDbo checkMemberVip(String memberId) {
+		MemberDbo member = memberDao.findMemberById(memberId);
+		if (member.getVip() && member.getVipEndTime() < System.currentTimeMillis()) {
+			member.setVip(false);
+			memberDao.resetVip(member);
+		}
+		return member;
 	}
 }

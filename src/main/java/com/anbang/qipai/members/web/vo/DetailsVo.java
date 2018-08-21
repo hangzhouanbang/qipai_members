@@ -7,7 +7,7 @@ public class DetailsVo {
 	private int score;
 	private Integer vipLevel;// VIP等级
 	private String phone;// 手机号
-	private long vipEndTime;// VIP剩余天数
+	private String vipEndTime;// VIP到期时间
 
 	public boolean isSuccess() {
 		return success;
@@ -41,11 +41,11 @@ public class DetailsVo {
 		this.phone = phone;
 	}
 
-	public long getVipEndTime() {
+	public String getVipEndTime() {
 		return vipEndTime;
 	}
 
-	public void setVipEndTime(long vipEndTime) {
+	public void setVipEndTime(String vipEndTime) {
 		this.vipEndTime = vipEndTime;
 	}
 

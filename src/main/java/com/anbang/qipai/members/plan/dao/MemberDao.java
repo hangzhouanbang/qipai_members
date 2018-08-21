@@ -5,9 +5,9 @@ import java.util.List;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 
 public interface MemberDao {
-	List<MemberDbo> findMember(int page, int size);
+	List<MemberDbo> findMemberByVip(int page, int size,boolean vip);
 
-	long getAmount();
+	long getAmountByVip(boolean vip);
 
 	MemberDbo findMemberById(String memberId);
 
@@ -15,7 +15,7 @@ public interface MemberDao {
 
 	boolean updateMemberVIP(MemberDbo member);
 
-	boolean updateMemberVipEndTime(String memberId, long vipEndTime);
+	boolean agentUpdateMemberVip(MemberDbo member);
 
 	boolean resetVip(MemberDbo member);
 }

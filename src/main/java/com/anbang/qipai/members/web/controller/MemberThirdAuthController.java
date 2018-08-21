@@ -29,6 +29,7 @@ import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
 import com.anbang.qipai.members.plan.bean.MemberRightsConfiguration;
 import com.anbang.qipai.members.plan.service.MemberRightsConfigurationService;
+import com.anbang.qipai.members.plan.service.MemberService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.google.gson.Gson;
 
@@ -72,6 +73,9 @@ public class MemberThirdAuthController {
 	@Autowired
 	private MemberRightsConfigurationService memberRightsConfigurationService;
 
+	@Autowired
+	private MemberService memberService;
+
 	/**
 	 * 客户端已经获取好了openid/unionid和微信用户信息
 	 * 
@@ -99,9 +103,8 @@ public class MemberThirdAuthController {
 				}
 				// openid登录
 				String token = memberAuthService.thirdAuth("open.weixin.app.qipai", openid);
-				// TODO更新登录时间
-
-				// TODO发送kafka消息
+				// 更新会员
+				checkMember(token);
 
 				vo.setSuccess(true);
 				Map data = new HashMap();
@@ -190,4 +193,14 @@ public class MemberThirdAuthController {
 		return gson.fromJson(content, Map.class);
 	}
 
+	/**检查会员VIP是否到期并更新登录时间
+	 * @param token
+	 */
+	private void checkMember(String token) {
+		String memberId = memberAuthService.getMemberIdBySessionId(token);
+		MemberDbo member=memberService.checkMemberVip(memberId);
+		member.setLastLoginTime(System.currentTimeMillis());
+		// kafka更新
+		membersMsgService.updateMemberLogin(member);
+	}
 }

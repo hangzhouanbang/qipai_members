@@ -1,5 +1,7 @@
 package com.anbang.qipai.members.web.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,13 +121,13 @@ public class MemberController {
 		MemberDbo member = memberService.findMemberById(memberId);
 		vo.setVipLevel(member.getVipLevel());
 		vo.setPhone(member.getPhone());
-		long day = 0;
-		if (member.getVipEndTime() != null) {
-			long time = member.getVipEndTime();
-			long nowTime = System.currentTimeMillis();
-			day = (time - nowTime) / (1000 * 60 * 60 * 24);
+		String vipEndTime = "";
+		if (member.getVipEndTime() != null && member.getVipEndTime() > System.currentTimeMillis()) {
+			long endTime = member.getVipEndTime();
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			vipEndTime = format.format(new Date(endTime));
 		}
-		vo.setVipEndTime(day);
+		vo.setVipEndTime(vipEndTime);
 		vo.setSuccess(true);
 		vo.setMsg("information");
 		return vo;
@@ -238,7 +240,7 @@ public class MemberController {
 	@RequestMapping("/rechargevip")
 	public CommonVO rechargeVip(String memberId, Long vipEndTime) {
 		CommonVO vo = new CommonVO();
-		memberService.updateVipEndTime(memberId, vipEndTime);
+		memberService.updateMemberVip(memberId, vipEndTime);
 		MemberDbo member = memberService.findMemberById(memberId);
 		membersMsgService.updateMemberVip(member);
 		vo.setSuccess(true);
@@ -250,13 +252,13 @@ public class MemberController {
 	 * 会员到期判定
 	 * 
 	 */
-	@Scheduled(cron = "0 0 0 * * ?") // 每天凌晨
+	@Scheduled(cron = "0 0 0/8 * * ?") // 每8小时更新一次
 	public void resetVIP() {
-		int size = 200;
+		int size = 2000;
 		long amount = memberService.getAmount();
 		long pageCount = amount / size > 0 ? amount / size + 1 : amount / size;
 		for (int page = 1; page <= pageCount; page++) {
-			List<MemberDbo> memberList = memberService.findMember(page, size);
+			List<MemberDbo> memberList = memberService.findMemberByVip(page, size, true);
 			for (MemberDbo member : memberList) {
 				if (member.getVipEndTime() < System.currentTimeMillis()) {
 					member.setVip(false);

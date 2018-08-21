@@ -80,7 +80,7 @@ public class MemberRewardController {
 		}
 		if (vipcard != null) {
 			long time = 1000 * 60 * 60 * 24 * vipcard;
-			memberService.updateVipEndTime(memberId, System.currentTimeMillis() + time);
+			memberService.updateMemberVip(memberId, System.currentTimeMillis() + time);
 			MemberDbo member = memberService.findMemberById(memberId);
 			membersMsgService.updateMemberVip(member);
 		}
@@ -111,7 +111,7 @@ public class MemberRewardController {
 			}
 			if (rewardVip != null) {
 				long time = 1000 * 60 * 60 * 24 * rewardVip;
-				memberService.updateVipEndTime(memberId, System.currentTimeMillis() + time);
+				memberService.updateMemberVip(memberId, System.currentTimeMillis() + time);
 				MemberDbo member = memberService.findMemberById(memberId);
 				membersMsgService.updateMemberVip(member);
 			}
