@@ -2,8 +2,12 @@ package com.anbang.qipai.members.web.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.anbang.qipai.members.config.RealNameVerifyConfig;
 import com.anbang.qipai.members.cqrs.c.domain.MemberNotFoundException;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthService;
 import com.anbang.qipai.members.cqrs.c.service.MemberGoldCmdService;
@@ -30,10 +35,12 @@ import com.anbang.qipai.members.msg.service.ScoresMsgService;
 import com.anbang.qipai.members.plan.service.MemberService;
 import com.anbang.qipai.members.remote.service.QiPaiAgentsRemoteService;
 import com.anbang.qipai.members.remote.vo.CommonRemoteVO;
+import com.anbang.qipai.members.util.HttpUtil;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.anbang.qipai.members.web.vo.DetailsVo;
 import com.anbang.qipai.members.web.vo.MemberVO;
 import com.dml.accounting.AccountingRecord;
+import com.google.gson.Gson;
 import com.highto.framework.web.page.ListPage;
 
 /**
@@ -77,6 +84,8 @@ public class MemberController {
 
 	@Autowired
 	private QiPaiAgentsRemoteService qiPaiAgentsRemoteService;
+
+	private Gson gson = new Gson();
 
 	@RequestMapping(value = "/info")
 	public MemberVO info(String memberId) {
@@ -130,6 +139,49 @@ public class MemberController {
 		vo.setVipEndTime(vipEndTime);
 		vo.setSuccess(true);
 		vo.setMsg("information");
+		return vo;
+	}
+
+	@RequestMapping("/verify")
+	public CommonVO verifyMember(String realName, String IDcard, String token) {
+		CommonVO vo = new CommonVO();
+		String memberId = memberAuthService.getMemberIdBySessionId(token);
+		if (memberId == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
+		String host = "https://idcert.market.alicloudapi.com";
+		String path = "/idcard";
+		String method = "GET";
+		String appcode = RealNameVerifyConfig.APPCODE;
+		Map<String, String> headers = new HashMap<String, String>();
+		// 最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
+		headers.put("Authorization", "APPCODE " + appcode);
+		Map<String, String> querys = new HashMap<String, String>();
+		querys.put("idCard", IDcard);
+		querys.put("name", realName);
+
+		HttpResponse response;
+		try {
+			response = HttpUtil.doGet(host, path, method, headers, querys);
+			Map map = gson.fromJson(EntityUtils.toString(response.getEntity()), Map.class);
+			String status = (String) map.get("status");
+			// 认证成功
+			if ("01".equals(status)) {
+				String name = (String) map.get("name");
+				String idCard = (String) map.get("idCard");
+				MemberDbo member = new MemberDbo();
+				member.setId(memberId);
+				member.setRealName(name);
+				member.setIDcard(idCard);
+				member.setVerifyUser(true);
+				membersMsgService.verifyMember(member);
+			}
+		} catch (Exception e) {
+			vo.setSuccess(false);
+			return vo;
+		}
 		return vo;
 	}
 

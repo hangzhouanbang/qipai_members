@@ -16,6 +16,9 @@ public class MemberDbo {
 	private Long createTime;// 注册时间
 	private Long vipEndTime;// VIP时间
 	private MemberRights rights;
+	private String realName;// 真实姓名
+	private String IDcard;// 身份证
+	private boolean verifyUser;// 实名认证，true:通过认证,false:未通过认证
 
 	public String getId() {
 		return id;
@@ -135,5 +138,29 @@ public class MemberDbo {
 
 	public void setLastLoginTime(Long lastLoginTime) {
 		this.lastLoginTime = lastLoginTime;
+	}
+
+	public String getRealName() {
+		return realName;
+	}
+
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+
+	public String getIDcard() {
+		return IDcard;
+	}
+
+	public void setIDcard(String iDcard) {
+		IDcard = iDcard;
+	}
+
+	public boolean isVerifyUser() {
+		return verifyUser;
+	}
+
+	public void setVerifyUser(boolean verifyUser) {
+		this.verifyUser = verifyUser;
 	}
 }
