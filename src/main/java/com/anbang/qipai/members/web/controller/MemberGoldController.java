@@ -51,4 +51,20 @@ public class MemberGoldController {
 		}
 	}
 
+	@RequestMapping(value = "/givegoldtomember")
+	public CommonVO giveGoldToMember(String memberId, int amount, String textSummary) {
+		CommonVO vo = new CommonVO();
+		try {
+			AccountingRecord rcd = memberGoldCmdService.giveGoldToMember(memberId, amount, textSummary,
+					System.currentTimeMillis());
+			MemberGoldRecordDbo dbo = memberGoldQueryService.withdraw(memberId, rcd);
+			// rcd发kafka
+			goldsMsgService.withdraw(dbo);
+			return vo;
+		} catch (MemberNotFoundException e) {
+			vo.setSuccess(false);
+			vo.setMsg("MemberNotFoundException");
+			return vo;
+		}
+	}
 }

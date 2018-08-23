@@ -36,7 +36,7 @@ public class MemberScoreController {
 			AccountingRecord rcd = memberScoreCmdService.withdraw(memberId, amount, textSummary,
 					System.currentTimeMillis());
 			MemberScoreRecordDbo dbo = memberScoreQueryService.withdraw(memberId, rcd);
-			// TODO: rcd发kafka
+
 			scoresMsgService.withdraw(dbo);
 			return vo;
 		} catch (InsufficientBalanceException e) {
@@ -50,4 +50,21 @@ public class MemberScoreController {
 		}
 	}
 
+	@RequestMapping(value = "/givescoretomember")
+	@ResponseBody
+	public CommonVO giveScoreToMember(String memberId, int amount, String textSummary) {
+		CommonVO vo = new CommonVO();
+		try {
+			AccountingRecord rcd = memberScoreCmdService.giveScoreToMember(memberId, amount, textSummary,
+					System.currentTimeMillis());
+			MemberScoreRecordDbo dbo = memberScoreQueryService.withdraw(memberId, rcd);
+
+			scoresMsgService.withdraw(dbo);
+			return vo;
+		} catch (MemberNotFoundException e) {
+			vo.setSuccess(false);
+			vo.setMsg("MemberNotFoundException");
+			return vo;
+		}
+	}
 }
