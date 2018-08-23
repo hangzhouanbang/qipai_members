@@ -142,6 +142,9 @@ public class MemberController {
 		return vo;
 	}
 
+	/**
+	 * 实名认证
+	 */
 	@RequestMapping("/verify")
 	public CommonVO verifyMember(String realName, String IDcard, String token) {
 		CommonVO vo = new CommonVO();
@@ -151,20 +154,30 @@ public class MemberController {
 			vo.setMsg("invalid token");
 			return vo;
 		}
-		String host = "https://idcert.market.alicloudapi.com";
-		String path = "/idcard";
-		String method = "GET";
-		String appcode = RealNameVerifyConfig.APPCODE;
-		Map<String, String> headers = new HashMap<String, String>();
-		// 最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
-		headers.put("Authorization", "APPCODE " + appcode);
-		Map<String, String> querys = new HashMap<String, String>();
-		querys.put("idCard", IDcard);
-		querys.put("name", realName);
-
-		HttpResponse response;
+		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+		String birthString = IDcard.substring(6, 14);
+		String year = birthString.substring(0, 4);
+		int targetAge = Integer.parseInt(year) + 18;
+		String targetBirth = targetAge + IDcard.substring(10, 14);
 		try {
-			response = HttpUtil.doGet(host, path, method, headers, querys);
+			Date targetDate = format.parse(targetBirth);
+			if (System.currentTimeMillis() - targetDate.getTime() < 0) {
+				vo.setSuccess(false);
+				vo.setMsg("too young");
+				return vo;
+			}
+			String host = "https://idcert.market.alicloudapi.com";
+			String path = "/idcard";
+			String method = "GET";
+			String appcode = RealNameVerifyConfig.APPCODE;
+			Map<String, String> headers = new HashMap<String, String>();
+			// 最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
+			headers.put("Authorization", "APPCODE " + appcode);
+			Map<String, String> querys = new HashMap<String, String>();
+			querys.put("idCard", IDcard);
+			querys.put("name", realName);
+
+			HttpResponse response = HttpUtil.doGet(host, path, method, headers, querys);
 			Map map = gson.fromJson(EntityUtils.toString(response.getEntity()), Map.class);
 			String status = (String) map.get("status");
 			// 认证成功
@@ -180,6 +193,7 @@ public class MemberController {
 			}
 		} catch (Exception e) {
 			vo.setSuccess(false);
+			vo.setMsg(e.getClass().getName());
 			return vo;
 		}
 		return vo;

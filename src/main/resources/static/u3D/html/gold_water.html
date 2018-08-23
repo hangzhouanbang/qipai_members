@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>个人中心-流水</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <style>
+        body{
+            font-size:16px;
+            padding:0;
+            margin:0;
+        }
+        .title{
+            width:100%;
+            height:44px;
+            background-color: #D8D8D8;
+        }
+        .left{
+            float:left;
+            margin-left:6px;
+            width:44px;
+            height:100%;
+        }
+        .left img{
+            width:44px;
+            height:44px;
+        }
+        .center{
+            margin:0 0.5rem;
+            width:auto;
+            height:100%;
+            line-height:44px;
+            text-align: center;
+            font-family: NotoSansHans-Regular;
+            font-size:18px;
+            color: #333333;
+        }
+        .right{
+            float:right;
+            margin-right:0.06rem;
+            width:80px;
+            height:100%;
+        }
+        .integral,.gold{
+            float:right;
+            width:40px;
+            height:40px;
+            line-height:40px;
+            margin-top:0.04rem;
+            font-family: NotoSansHans-Regular;
+            font-size: 12px;
+            color: #666666;
+            text-align:center;
+        }
+        .content table{
+            width:100%;
+            border-collapse:collapse;
+        }
+        .content table tr th,
+        .content table tr td{
+            height:36px;
+            background: #FFFFFF;
+            font-family: NotoSansHans-Regular;
+            color: #333333;
+            border-bottom:1px solid rgba(0,0,0,0.50);
+        }
+        .content table tr th{
+            font-size: 14px;
+        }
+        .content table tr td{
+            font-size: 12px;
+            text-align: center;
+        }
+        .change{
+            color:#333333;
+            font-family:NotoSansHans-Bold;
+            font-weight:bold;
+        }
+        .loadmore{
+            text-align: center;
+            margin:10px 0;
+            font-size:12px;
+        }
+    </style>
+</head>
+<body ng-app="app">
+    <div ng-controller="myCtrl" ng-cloak class="ng-cloak">
+        <div class="title">
+            <div class="left"></div>
+            <div class="right">
+                <div class="integral">积分</div>
+                <div class="gold change">金币</div>
+            </div>
+            <div class="center">
+                流水
+            </div>
+        </div>
+        <div class="content">
+            <table>
+                <tr>
+                    <th>操作时间</th>
+                    <th>物品</th>
+                    <th>变化数量</th>
+                    <th>剩余量</th>
+                    <th>操作原因</th>
+                </tr>
+                <tr ng-repeat="data in water">
+                    <td>{{data.accountingTime}}</td>
+                    <td>{{data.name}}</td>
+                    <td>{{data.accountingAmount}}</td>
+                    <td>{{data.balanceAfter}}</td>
+                    <td>{{data.summary.text}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+<script src="../js/jquery-1.11.0.js"></script>
+<script src="../js/angular.min.js"></script>
+<script>
+    document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+    //时间格式
+    function gettime(t){
+        var _time=new Date(t);
+        var   year=_time.getFullYear();//2017
+        var   month=_time.getMonth()+1;//7
+        var   date=_time.getDate();//10
+        var   hour=_time.getHours();//10
+        var   minute=_time.getMinutes();//56
+        var   second=_time.getSeconds();//15
+        return   year+"-"+month+"-"+date+' '+ hour + ':' + minute + ':' +second;//这里自己按自己需要的格式拼接
+    }
+    var appModule = angular.module('app',[]);
+    appModule.controller('myCtrl',function($scope,$http) {
+        var token;
+        localStorage.setItem('token',window.location.href.slice(window.location.href.indexOf('token=') + 6));
+        if(localStorage.getItem('token')){
+            token = localStorage.getItem('token')
+        }else{
+            token = window.location.href.slice(window.location.href.indexOf('token=') + 6)
+        }
+        //金币
+        function gold(page) {
+            $http({
+                url: 'http://192.168.0.111:82/member/querygoldaccount',
+                method: 'post',
+                params: {
+                    page: page,
+                    size: 15,
+                    token: token
+                }
+            }).then(
+                function (res) {
+                    console.log(res.data.data);
+                    $scope.water = res.data.data.items;
+                    for(var i = 0;i < $scope.water.length;i++){
+                        $scope.water[i].accountingTime = gettime($scope.water[i].accountingTime);
+                        $scope.water[i].name = '金币'
+                    }
+                }
+            )
+        }
+
+        var finished=0;
+        var sover=0;
+
+        //加载更多
+        var vid=1;
+        function loadmore() {
+            vid++;
+            if (finished == 0 && sover == 0) {
+                let scrollTop = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop
+                if (scrollTop + window.innerHeight >= document.body.offsetHeight) {
+                    //此处是滚动条到底部时候触发的事件，在这里写要加载的数据，或者是拉动滚动条的操作
+                    $http({
+                        url:'http://192.168.0.111:82/member/querygoldaccount',
+                        method: 'post',
+                        params: {
+                            page: vid,
+                            size: 15,
+                            token: token
+                        }
+                    }).then(
+                        function (res) {
+                            $scope.water = res.data.data.items.concat($scope.water);
+                            console.log($scope.water.length);
+                            for(var i = 0;i < $scope.water.length;i++){
+                                $scope.water[i].accountingTime = gettime($scope.water[i].accountingTime);
+                                $scope.water[i].name = '金币'
+                            }
+                            if ($scope.water.length === res.data.data.totalItemsCount) {
+                                var txt = '<div class="loadmore"><span class="loading"></span>已全部加载</div>'
+                                $("body").append(txt);
+                            }
+                            finished = 1;
+                        }
+                    )
+                }
+            }
+        }
+
+        //初始化
+        gold(1);
+        //页面滚动执行事件
+        $(window).scroll(function (){
+            loadmore();
+        });
+
+        $('.integral').on('click', function () {
+            window.location.href = 'integral_water.html'
+        });
+    });
+
+</script>
+</html>
