@@ -19,6 +19,7 @@ public class MemberDbo {
 	private String realName;// 真实姓名
 	private String IDcard;// 身份证
 	private boolean verifyUser;// 实名认证，true:通过认证,false:未通过认证
+	private String state;
 
 	public String getId() {
 		return id;
@@ -162,5 +163,13 @@ public class MemberDbo {
 
 	public void setVerifyUser(boolean verifyUser) {
 		this.verifyUser = verifyUser;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 }

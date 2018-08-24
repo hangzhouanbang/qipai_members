@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -147,12 +148,19 @@ public class MemberController {
 	 * 实名认证
 	 */
 	@RequestMapping("/verify")
-	public CommonVO verifyMember(String realName, String IDcard, String token) {
+	public CommonVO verifyMember(@RequestParam(required = true) String realName,
+			@RequestParam(required = true) String IDcard, String token) {
 		CommonVO vo = new CommonVO();
 		String memberId = memberAuthService.getMemberIdBySessionId(token);
 		if (memberId == null) {
 			vo.setSuccess(false);
 			vo.setMsg("无效的凭证");
+			return vo;
+		}
+		// 332184199212153456
+		if (IDcard.length() != 18 || !Pattern.matches("[0-9]{14}\\S{4}", IDcard)) {
+			vo.setSuccess(false);
+			vo.setMsg("无效的身份证号");
 			return vo;
 		}
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
@@ -196,7 +204,7 @@ public class MemberController {
 			return vo;
 		}
 		vo.setSuccess(false);
-		vo.setMsg("认证不通过");
+		vo.setMsg("认证未通过");
 		return vo;
 	}
 

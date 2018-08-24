@@ -22,12 +22,12 @@ public class ClubCardService {
 		clubCardDao.addClubCard(clubCard);
 	}
 
-	public boolean deleteClubCards(String[] clubCardIds) {
-		return clubCardDao.deleteClubCardByIds(clubCardIds);
+	public void deleteClubCards(String[] clubCardIds) {
+		clubCardDao.deleteClubCardByIds(clubCardIds);
 	}
 
-	public boolean updateClubCard(MemberClubCard clubCard) {
-		return clubCardDao.updateClubCard(clubCard);
+	public void updateClubCard(MemberClubCard clubCard) {
+		clubCardDao.updateClubCard(clubCard);
 	}
 
 	public MemberClubCard findClubCardById(String clubCardId) {

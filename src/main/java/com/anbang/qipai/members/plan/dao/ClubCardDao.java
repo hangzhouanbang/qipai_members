@@ -12,7 +12,7 @@ public interface ClubCardDao {
 
 	void addClubCard(MemberClubCard clubCard);
 
-	boolean deleteClubCardByIds(String[] clubCardIds);
+	void deleteClubCardByIds(String[] clubCardIds);
 
-	boolean updateClubCard(MemberClubCard clubCard);
+	void updateClubCard(MemberClubCard clubCard);
 }

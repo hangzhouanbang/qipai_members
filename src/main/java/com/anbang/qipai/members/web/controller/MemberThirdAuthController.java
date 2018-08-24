@@ -6,6 +6,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.anbang.qipai.members.config.MemberStateConfig;
 import com.anbang.qipai.members.cqrs.c.domain.CreateMemberResult;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthCmdService;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthService;
@@ -30,6 +33,7 @@ import com.anbang.qipai.members.msg.service.ScoresMsgService;
 import com.anbang.qipai.members.plan.bean.MemberRightsConfiguration;
 import com.anbang.qipai.members.plan.service.MemberRightsConfigurationService;
 import com.anbang.qipai.members.plan.service.MemberService;
+import com.anbang.qipai.members.util.IPUtil;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.google.gson.Gson;
 
@@ -89,7 +93,7 @@ public class MemberThirdAuthController {
 	 */
 	@RequestMapping(value = "/wechatidlogin")
 	@ResponseBody
-	public CommonVO wechatidlogin(String unionid, String openid, String nickname, String headimgurl, Integer sex) {
+	public CommonVO wechatidlogin(HttpServletRequest request,String unionid, String openid, String nickname, String headimgurl, Integer sex) {
 		CommonVO vo = new CommonVO();
 		try {
 			AuthorizationDbo unionidAuthDbo = memberAuthQueryService.findThirdAuthorizationDbo("union.weixin", unionid);
@@ -104,7 +108,8 @@ public class MemberThirdAuthController {
 				// openid登录
 				String token = memberAuthService.thirdAuth("open.weixin.app.qipai", openid);
 				// 更新会员
-				checkMember(token);
+				String loginIp=IPUtil.getRealIp(request);
+				checkMember(token,loginIp);
 
 				vo.setSuccess(true);
 				Map data = new HashMap();
@@ -144,6 +149,9 @@ public class MemberThirdAuthController {
 				scoresMsgService.withdraw(scoreDbo);
 				// unionid登录
 				String token = memberAuthService.thirdAuth("union.weixin", unionid);
+				// 更新会员
+				String loginIp=IPUtil.getRealIp(request);
+				checkMember(token,loginIp);
 				vo.setSuccess(true);
 				Map data = new HashMap();
 				data.put("token", token);
@@ -196,10 +204,9 @@ public class MemberThirdAuthController {
 	/**检查会员VIP是否到期并更新登录时间
 	 * @param token
 	 */
-	private void checkMember(String token) {
+	private void checkMember(String token,String loginIp) {
 		String memberId = memberAuthService.getMemberIdBySessionId(token);
-		MemberDbo member=memberService.checkMemberVip(memberId);
-		member.setLastLoginTime(System.currentTimeMillis());
+		MemberDbo member=memberService.checkMember(memberId,loginIp,System.currentTimeMillis());
 		// kafka更新
 		membersMsgService.updateMemberLogin(member);
 	}

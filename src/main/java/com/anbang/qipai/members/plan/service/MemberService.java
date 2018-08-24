@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.anbang.qipai.members.config.MemberStateConfig;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.plan.bean.MemberGrade;
 import com.anbang.qipai.members.plan.bean.MemberOrder;
@@ -37,7 +38,7 @@ public class MemberService {
 		memberDao.updateMemberPhone(memberId, phone);
 	}
 
-	public boolean updateMemberVip(String memberId, long vipEndTime) {
+	public void updateMemberVip(String memberId, long vipEndTime) {
 		MemberDbo member = memberDao.findMemberById(memberId);
 		member.setVip(true);
 		long vipTime = 0;
@@ -49,10 +50,10 @@ public class MemberService {
 		} else {
 			member.setVipEndTime(vipEndTime + System.currentTimeMillis());
 		}
-		return memberDao.agentUpdateMemberVip(member);
+		memberDao.agentUpdateMemberVip(member);
 	}
 
-	public boolean updateVIP(MemberOrder order) {
+	public void updateVIP(MemberOrder order) {
 		MemberDbo member = memberDao.findMemberById(order.getPayerId());
 		member.setVip(true);
 		long vipEndTime = 0;
@@ -78,22 +79,23 @@ public class MemberService {
 				member.setVipLevel(level + 1);
 			}
 		}
-		return memberDao.updateMemberVIP(member);
+		memberDao.updateMemberVIP(member);
 	}
 
-	public boolean resetVIP(MemberDbo member) {
-		return memberDao.resetVip(member);
+	public void resetVIP(MemberDbo member) {
+		memberDao.resetVip(member);
 	}
 
-	public MemberDbo checkMemberVip(String memberId) {
+	public MemberDbo checkMember(String memberId,String loginIp,long loginTime) {
 		MemberDbo member = memberDao.findMemberById(memberId);
 		if (member.getVip() && member.getVipEndTime() < System.currentTimeMillis()) {
 			member.setVip(false);
 			memberDao.resetVip(member);
 		}
-		return member;
+		memberDao.updateMemberLogin(memberId, MemberStateConfig.ONLINE,loginIp, loginTime);
+		return memberDao.findMemberById(memberId);
 	}
-	
+
 	public MemberDbo verifyUser(String memberId, String realName, String IDcard, boolean verify) {
 		memberDao.verifyUser(memberId, realName, IDcard, verify);
 		return memberDao.findMemberById(memberId);

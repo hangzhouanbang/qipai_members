@@ -11,13 +11,17 @@ public interface MemberDao {
 
 	MemberDbo findMemberById(String memberId);
 
-	boolean updateMemberPhone(String memberId, String phone);
+	void updateMemberPhone(String memberId, String phone);
 
-	boolean updateMemberVIP(MemberDbo member);
+	void updateMemberVIP(MemberDbo member);
 
-	boolean agentUpdateMemberVip(MemberDbo member);
+	void agentUpdateMemberVip(MemberDbo member);
 
-	boolean resetVip(MemberDbo member);
+	void resetVip(MemberDbo member);
 	
 	void verifyUser(String memberId, String realName, String IDcard, boolean verify);
+	
+	void updateMemberLogin(String memberId,String state,String loginIp,long loginTime);
+	
+	void updateMemberLogout(String memberId,String state,long onlineTime);
 }

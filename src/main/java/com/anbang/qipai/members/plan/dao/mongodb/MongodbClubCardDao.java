@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.members.plan.bean.MemberClubCard;
 import com.anbang.qipai.members.plan.dao.ClubCardDao;
-import com.mongodb.WriteResult;
 
 @Component
 public class MongodbClubCardDao implements ClubCardDao {
@@ -36,15 +35,14 @@ public class MongodbClubCardDao implements ClubCardDao {
 	}
 
 	@Override
-	public boolean deleteClubCardByIds(String[] clubCardIds) {
+	public void deleteClubCardByIds(String[] clubCardIds) {
 		Object[] ids = clubCardIds;
 		Query query = new Query(Criteria.where("id").in(ids));
-		WriteResult writeResult = mongoTemplate.remove(query, MemberClubCard.class);
-		return writeResult.getN() <= clubCardIds.length;
+		mongoTemplate.remove(query, MemberClubCard.class);
 	}
 
 	@Override
-	public boolean updateClubCard(MemberClubCard clubCard) {
+	public void updateClubCard(MemberClubCard clubCard) {
 		Query query = new Query(Criteria.where("id").is(clubCard.getId()));
 		Update update = new Update();
 		update.set("name", clubCard.getName());
@@ -52,8 +50,7 @@ public class MongodbClubCardDao implements ClubCardDao {
 		update.set("gold", clubCard.getGold());
 		update.set("score", clubCard.getScore());
 		update.set("time", clubCard.getTime());
-		WriteResult writeResult = mongoTemplate.updateFirst(query, update, MemberClubCard.class);
-		return writeResult.getN() > 0;
+		mongoTemplate.updateFirst(query, update, MemberClubCard.class);
 	}
 
 }
