@@ -99,6 +99,7 @@ public class MemberController {
 		vo.setHeadimgurl(memberDbo.getHeadimgurl());
 		vo.setMemberId(memberId);
 		vo.setNickname(memberDbo.getNickname());
+		vo.setVerifyUser(memberDbo.isVerifyUser());
 		MemberGoldAccountDbo memberGoldAccountDbo = memberGoldQueryService.findMemberGoldAccount(memberId);
 		if (memberGoldAccountDbo != null) {
 			vo.setGold(memberGoldAccountDbo.getBalance());
@@ -190,12 +191,14 @@ public class MemberController {
 				member.setIDcard(idCard);
 				member.setVerifyUser(true);
 				membersMsgService.verifyMember(member);
+				return vo;
 			}
 		} catch (Exception e) {
 			vo.setSuccess(false);
 			vo.setMsg(e.getClass().getName());
 			return vo;
 		}
+		vo.setSuccess(false);
 		return vo;
 	}
 

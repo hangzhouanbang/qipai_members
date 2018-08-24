@@ -369,13 +369,14 @@ public class ClubCardController {
 						MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(order.getReceiverId(), goldrcd);
 						MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(order.getReceiverId(),
 								scorercd);
-						// TODO: rcd发kafka
+
 						goldsMsgService.withdraw(golddbo);
 						scoresMsgService.withdraw(scoredbo);
 					} catch (MemberNotFoundException e) {
 						e.printStackTrace();
 					}
 				}
+				return "<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>";
 			}
 		}
 		return "<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[验签失败]]></return_msg></xml>";
@@ -426,7 +427,7 @@ public class ClubCardController {
 							order.getScore(), "give for buy clubcard", System.currentTimeMillis());
 					MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(order.getReceiverId(), goldrcd);
 					MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(order.getReceiverId(), scorercd);
-					// TODO: rcd发kafka
+
 					goldsMsgService.withdraw(golddbo);
 					scoresMsgService.withdraw(scoredbo);
 				} catch (MemberNotFoundException e) {
