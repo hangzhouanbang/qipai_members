@@ -80,4 +80,14 @@ public class MongodbMemberDao implements MemberDao {
 		return result.getN() > 0;
 	}
 
+	@Override
+	public void verifyUser(String memberId, String realName, String IDcard, boolean verify) {
+		Query query = new Query(Criteria.where("id").is(memberId));
+		Update update = new Update();
+		update.set("realName", realName);
+		update.set("IDcard", IDcard);
+		update.set("verifyUser", verify);
+		mongoTemplate.updateFirst(query, update, MemberDbo.class);
+	}
+
 }

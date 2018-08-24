@@ -93,4 +93,9 @@ public class MemberService {
 		}
 		return member;
 	}
+	
+	public MemberDbo verifyUser(String memberId, String realName, String IDcard, boolean verify) {
+		memberDao.verifyUser(memberId, realName, IDcard, verify);
+		return memberDao.findMemberById(memberId);
+	}
 }

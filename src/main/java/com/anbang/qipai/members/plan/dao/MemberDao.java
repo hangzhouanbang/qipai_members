@@ -18,4 +18,6 @@ public interface MemberDao {
 	boolean agentUpdateMemberVip(MemberDbo member);
 
 	boolean resetVip(MemberDbo member);
+	
+	void verifyUser(String memberId, String realName, String IDcard, boolean verify);
 }

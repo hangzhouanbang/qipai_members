@@ -152,7 +152,7 @@ public class MemberController {
 		String memberId = memberAuthService.getMemberIdBySessionId(token);
 		if (memberId == null) {
 			vo.setSuccess(false);
-			vo.setMsg("invalid token");
+			vo.setMsg("无效的凭证");
 			return vo;
 		}
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
@@ -164,7 +164,7 @@ public class MemberController {
 			Date targetDate = format.parse(targetBirth);
 			if (System.currentTimeMillis() - targetDate.getTime() < 0) {
 				vo.setSuccess(false);
-				vo.setMsg("too young");
+				vo.setMsg("未到法定年龄");
 				return vo;
 			}
 			String host = "https://idcert.market.alicloudapi.com";
@@ -185,12 +185,9 @@ public class MemberController {
 			if ("01".equals(status)) {
 				String name = (String) map.get("name");
 				String idCard = (String) map.get("idCard");
-				MemberDbo member = new MemberDbo();
-				member.setId(memberId);
-				member.setRealName(name);
-				member.setIDcard(idCard);
-				member.setVerifyUser(true);
+				MemberDbo member = memberService.verifyUser(memberId, name, idCard, true);
 				membersMsgService.verifyMember(member);
+				vo.setMsg("认证通过");
 				return vo;
 			}
 		} catch (Exception e) {
@@ -199,6 +196,7 @@ public class MemberController {
 			return vo;
 		}
 		vo.setSuccess(false);
+		vo.setMsg("认证不通过");
 		return vo;
 	}
 

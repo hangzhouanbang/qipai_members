@@ -45,6 +45,7 @@ public class MemberAuthQueryService {
 		memberDbo.setVipEndTime(0L);
 		memberDbo.setLastLoginTime(System.currentTimeMillis());
 		memberDbo.setCreateTime(System.currentTimeMillis());
+		memberDbo.setVerifyUser(false);
 		if (memberRightsConfiguration != null) {
 			memberDbo.setRights(memberRightsConfiguration.generateRightsForPlanMembers());
 		}
