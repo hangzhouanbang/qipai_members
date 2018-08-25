@@ -1,11 +1,9 @@
-package com.anbang.qipai.members.msg.channel;
+package com.anbang.qipai.members.msg.channel.source;
 
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.messaging.MessageChannel;
 
-public interface MembersSource {
-
+public interface MemberGoldsSource {
 	@Output
-	MessageChannel members();
-
+	MessageChannel memberGolds();
 }

@@ -87,9 +87,26 @@ spring:
                 linger:
                   ms: 5
                 batch:
-                  size: 16384    
+                  size: 16384
+          memberLoginRecord:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
 
       bindings:
+        notice:
+          destination: notice
+          group: qipai_members
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
         members:
           destination: members
           contentType: application/json
@@ -128,6 +145,12 @@ spring:
             
         memberOrders:
           destination: memberOrders
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        
+        memberLoginRecord:
+          destination: memberLoginRecord
           contentType: application/json
           producer:
             partitionCount: 1

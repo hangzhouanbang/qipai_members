@@ -1,10 +1,11 @@
-package com.anbang.qipai.members.msg.channel;
+package com.anbang.qipai.members.msg.channel.source;
 
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.messaging.MessageChannel;
 
-public interface GradeSoure {
+public interface MembersSource {
 
 	@Output
-	MessageChannel grade();
+	MessageChannel members();
+
 }

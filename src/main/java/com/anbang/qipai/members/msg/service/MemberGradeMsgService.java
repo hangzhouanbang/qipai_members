@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.messaging.support.MessageBuilder;
 
-import com.anbang.qipai.members.msg.channel.GradeSoure;
+import com.anbang.qipai.members.msg.channel.source.GradeSoure;
 import com.anbang.qipai.members.plan.bean.MemberGrade;
 import com.anbang.qipai.members.web.vo.CommonVO;
 

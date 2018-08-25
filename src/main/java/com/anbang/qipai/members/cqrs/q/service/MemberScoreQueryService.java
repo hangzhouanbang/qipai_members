@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.anbang.qipai.members.cqrs.c.domain.CreateMemberResult;
 import com.anbang.qipai.members.cqrs.q.dao.MemberScoreAccountDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberScoreRecordDboDao;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreAccountDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreRecordDbo;
 import com.dml.accounting.AccountingRecord;
@@ -57,9 +58,9 @@ public class MemberScoreQueryService {
 	}
 
 	public ListPage findMemberScoreRecords(int page, int size, String memberId) {
-		PageRequest pageRequest = new PageRequest(page - 1, size);
-		List<MemberScoreRecordDbo> recordList = memberScoreRecordDboDao.findMemberScoreRecords(memberId, pageRequest);
-		long amount = memberScoreRecordDboDao.getCount();
+		List<MemberScoreRecordDbo> recordList = memberScoreRecordDboDao.findMemberScoreRecordByMemberId(memberId, page,
+				size);
+		long amount = memberScoreRecordDboDao.getCountByMemberId(memberId);
 		ListPage listPage = new ListPage(recordList, page, size, (int) amount);
 		return listPage;
 	}

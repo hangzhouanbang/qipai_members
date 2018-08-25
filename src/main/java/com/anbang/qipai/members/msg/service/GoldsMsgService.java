@@ -5,7 +5,7 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.messaging.support.MessageBuilder;
 
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
-import com.anbang.qipai.members.msg.channel.MemberGoldsSource;
+import com.anbang.qipai.members.msg.channel.source.MemberGoldsSource;
 import com.anbang.qipai.members.msg.msjobj.CommonMO;
 
 @EnableBinding(MemberGoldsSource.class)

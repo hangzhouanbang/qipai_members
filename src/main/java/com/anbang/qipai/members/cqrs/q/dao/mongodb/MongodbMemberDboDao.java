@@ -1,5 +1,7 @@
 package com.anbang.qipai.members.cqrs.q.dao.mongodb;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -34,11 +36,6 @@ public class MongodbMemberDboDao implements MemberDboDao {
 	}
 
 	@Override
-	public MemberDbo findById(String id) {
-		return repository.findOne(id);
-	}
-
-	@Override
 	public void updatePlanMembersRights(MemberRights memberRights) {
 		mongoTemplate.updateMulti(new Query(Criteria.where("vip").is(false)), new Update().set("rights", memberRights),
 				MemberDbo.class);
@@ -48,6 +45,84 @@ public class MongodbMemberDboDao implements MemberDboDao {
 	public void updateVipMembersRights(MemberRights memberRights) {
 		mongoTemplate.updateMulti(new Query(Criteria.where("vip").is(true)), new Update().set("rights", memberRights),
 				MemberDbo.class);
+	}
+
+	@Override
+	public List<MemberDbo> findMemberByVip(int page, int size, boolean vip) {
+		Query query = new Query(Criteria.where("vip").is(vip));
+		query.skip((page - 1) * size);
+		query.limit(size);
+		return mongoTemplate.find(query, MemberDbo.class);
+	}
+
+	@Override
+	public long getAmountByVip(boolean vip) {
+		Query query = new Query(Criteria.where("vip").is(vip));
+		return mongoTemplate.count(query, MemberDbo.class);
+	}
+
+	@Override
+	public MemberDbo findMemberById(String memberId) {
+		Query query = new Query(Criteria.where("id").is(memberId));
+		return mongoTemplate.findOne(query, MemberDbo.class);
+	}
+
+	@Override
+	public void updateMemberPhone(String memberId, String phone) {
+		Query query = new Query(Criteria.where("id").is(memberId));
+		Update update = new Update();
+		update.set("phone", phone);
+		mongoTemplate.updateFirst(query, update, MemberDbo.class);
+	}
+
+	@Override
+	public void updateMemberVIP(String memberId, boolean vip) {
+		Query query = new Query(Criteria.where("id").is(memberId));
+		Update update = new Update();
+		update.set("vip", vip);
+		mongoTemplate.updateFirst(query, update, MemberDbo.class);
+	}
+
+	@Override
+	public void updateMemberRealUser(String memberId, String realName, String IDcard, boolean verify) {
+		Query query = new Query(Criteria.where("id").is(memberId));
+		Update update = new Update();
+		update.set("realName", realName);
+		update.set("IDcard", IDcard);
+		update.set("verifyUser", verify);
+		mongoTemplate.updateFirst(query, update, MemberDbo.class);
+	}
+
+	@Override
+	public void updateMemberVipEndTime(String memberId, long vipEndTime) {
+		Query query = new Query(Criteria.where("id").is(memberId));
+		Update update = new Update();
+		update.set("vipEndTime", vipEndTime);
+		mongoTemplate.updateFirst(query, update, MemberDbo.class);
+	}
+
+	@Override
+	public void updateMemberVipScore(String memberId, double vipScore) {
+		Query query = new Query(Criteria.where("id").is(memberId));
+		Update update = new Update();
+		update.set("vipScore", vipScore);
+		mongoTemplate.updateFirst(query, update, MemberDbo.class);
+	}
+
+	@Override
+	public void updateMemberVipLevel(String memberId, int vipLevel) {
+		Query query = new Query(Criteria.where("id").is(memberId));
+		Update update = new Update();
+		update.set("vipLevel", vipLevel);
+		mongoTemplate.updateFirst(query, update, MemberDbo.class);
+	}
+
+	@Override
+	public void updateMemberOnlineState(String memberId, String onlineState) {
+		Query query = new Query(Criteria.where("id").is(memberId));
+		Update update = new Update();
+		update.set("onlineState", onlineState);
+		mongoTemplate.updateFirst(query, update, MemberDbo.class);
 	}
 
 }

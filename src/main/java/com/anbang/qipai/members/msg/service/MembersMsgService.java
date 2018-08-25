@@ -5,7 +5,7 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.messaging.support.MessageBuilder;
 
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
-import com.anbang.qipai.members.msg.channel.MembersSource;
+import com.anbang.qipai.members.msg.channel.source.MembersSource;
 import com.anbang.qipai.members.msg.msjobj.CommonMO;
 
 @EnableBinding(MembersSource.class)
@@ -28,6 +28,20 @@ public class MembersMsgService {
 		membersSource.members().send(MessageBuilder.withPayload(mo).build());
 	}
 
+	public void memberOrderDelive(MemberDbo member) {
+		CommonMO mo = new CommonMO();
+		mo.setMsg("memberOrder delive");
+		mo.setData(member);
+		membersSource.members().send(MessageBuilder.withPayload(mo).build());
+	}
+
+	public void rechargeVip(MemberDbo member) {
+		CommonMO mo = new CommonMO();
+		mo.setMsg("recharge vip");
+		mo.setData(member);
+		membersSource.members().send(MessageBuilder.withPayload(mo).build());
+	}
+
 	public void updateMemberVip(MemberDbo member) {
 		CommonMO mo = new CommonMO();
 		mo.setMsg("update member vip");
@@ -35,23 +49,16 @@ public class MembersMsgService {
 		membersSource.members().send(MessageBuilder.withPayload(mo).build());
 	}
 
-	public void resetMemberVip(MemberDbo member) {
+	public void updateMemberOnlineState(MemberDbo member) {
 		CommonMO mo = new CommonMO();
-		mo.setMsg("reset member vip");
+		mo.setMsg("update member onlineState");
 		mo.setData(member);
 		membersSource.members().send(MessageBuilder.withPayload(mo).build());
 	}
 
-	public void updateMemberLogin(MemberDbo member) {
+	public void updateMemberRealUser(MemberDbo member) {
 		CommonMO mo = new CommonMO();
-		mo.setMsg("member login");
-		mo.setData(member);
-		membersSource.members().send(MessageBuilder.withPayload(mo).build());
-	}
-
-	public void verifyMember(MemberDbo member) {
-		CommonMO mo = new CommonMO();
-		mo.setMsg("verify member");
+		mo.setMsg("update member realUser");
 		mo.setData(member);
 		membersSource.members().send(MessageBuilder.withPayload(mo).build());
 	}

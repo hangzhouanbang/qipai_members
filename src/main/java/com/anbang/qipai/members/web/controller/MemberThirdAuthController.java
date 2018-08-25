@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.anbang.qipai.members.config.MemberStateConfig;
+import com.anbang.qipai.members.config.MemberOnlineState;
 import com.anbang.qipai.members.cqrs.c.domain.CreateMemberResult;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthCmdService;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthService;
@@ -28,11 +28,13 @@ import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
 import com.anbang.qipai.members.msg.service.GoldsMsgService;
+import com.anbang.qipai.members.msg.service.MemberLoginRecordMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
+import com.anbang.qipai.members.plan.bean.MemberLoginRecord;
 import com.anbang.qipai.members.plan.bean.MemberRightsConfiguration;
+import com.anbang.qipai.members.plan.service.MemberLoginRecordService;
 import com.anbang.qipai.members.plan.service.MemberRightsConfigurationService;
-import com.anbang.qipai.members.plan.service.MemberService;
 import com.anbang.qipai.members.util.IPUtil;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.google.gson.Gson;
@@ -78,7 +80,10 @@ public class MemberThirdAuthController {
 	private MemberRightsConfigurationService memberRightsConfigurationService;
 
 	@Autowired
-	private MemberService memberService;
+	private MemberLoginRecordService memberLoginRecordService;
+
+	@Autowired
+	private MemberLoginRecordMsgService memberLoginRecordMsgService;
 
 	/**
 	 * 客户端已经获取好了openid/unionid和微信用户信息
@@ -93,7 +98,8 @@ public class MemberThirdAuthController {
 	 */
 	@RequestMapping(value = "/wechatidlogin")
 	@ResponseBody
-	public CommonVO wechatidlogin(HttpServletRequest request,String unionid, String openid, String nickname, String headimgurl, Integer sex) {
+	public CommonVO wechatidlogin(HttpServletRequest request, String unionid, String openid, String nickname,
+			String headimgurl, Integer sex) {
 		CommonVO vo = new CommonVO();
 		try {
 			AuthorizationDbo unionidAuthDbo = memberAuthQueryService.findThirdAuthorizationDbo("union.weixin", unionid);
@@ -107,9 +113,9 @@ public class MemberThirdAuthController {
 				}
 				// openid登录
 				String token = memberAuthService.thirdAuth("open.weixin.app.qipai", openid);
-				// 更新会员
-				String loginIp=IPUtil.getRealIp(request);
-				checkMember(token,loginIp);
+				String loginIp = IPUtil.getRealIp(request);
+				// 获取会员登录数据并检查VIP是否到期
+				checkMember(token, loginIp);
 
 				vo.setSuccess(true);
 				Map data = new HashMap();
@@ -135,7 +141,7 @@ public class MemberThirdAuthController {
 				// 填充用户信息
 				memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl, sex);
 				// 发送消息
-				MemberDbo memberDbo = memberAuthQueryService.findMember(createMemberResult.getMemberId());
+				MemberDbo memberDbo = memberAuthQueryService.findMemberById(createMemberResult.getMemberId());
 				membersMsgService.createMember(memberDbo);
 
 				// 创建金币帐户，赠送金币记账
@@ -149,9 +155,9 @@ public class MemberThirdAuthController {
 				scoresMsgService.withdraw(scoreDbo);
 				// unionid登录
 				String token = memberAuthService.thirdAuth("union.weixin", unionid);
-				// 更新会员
-				String loginIp=IPUtil.getRealIp(request);
-				checkMember(token,loginIp);
+				String loginIp = IPUtil.getRealIp(request);
+				// 获取会员登录数据并检查VIP是否到期
+				checkMember(token, loginIp);
 				vo.setSuccess(true);
 				Map data = new HashMap();
 				data.put("token", token);
@@ -201,13 +207,27 @@ public class MemberThirdAuthController {
 		return gson.fromJson(content, Map.class);
 	}
 
-	/**检查会员VIP是否到期并更新登录时间
+	/**
+	 * 获取会员登录数据并检查VIP是否到期
+	 * 
 	 * @param token
 	 */
-	private void checkMember(String token,String loginIp) {
+	private void checkMember(String token, String loginIp) {
 		String memberId = memberAuthService.getMemberIdBySessionId(token);
-		MemberDbo member=memberService.checkMember(memberId,loginIp,System.currentTimeMillis());
-		// kafka更新
-		membersMsgService.updateMemberLogin(member);
+		memberAuthQueryService.updateMemberOnlineState(memberId, MemberOnlineState.ONLINE);
+		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
+		MemberLoginRecord record = new MemberLoginRecord();
+		record.setLoginIp(loginIp);
+		record.setLoginTime(System.currentTimeMillis());
+		record.setMemberId(member.getId());
+		record.setNickname(member.getNickname());
+		memberLoginRecordService.save(record);
+		memberLoginRecordMsgService.memberLoginRecord(record);
+		// 检查VIP是否到期
+		if (member.isVip() && member.getVipEndTime() <= System.currentTimeMillis()) {
+			MemberDbo memberDbo = memberAuthQueryService.updateMemberVip(memberId, false);
+			membersMsgService.updateMemberVip(memberDbo);
+		}
+		membersMsgService.updateMemberOnlineState(member);
 	}
 }

@@ -4,22 +4,18 @@ public class MemberDbo {
 	private String id;// 会员id
 	private String nickname;// 会员昵称
 	private String gender;// 会员性别:男:male,女:female
-	private Boolean vip;// 是否VIP
-	private Integer vipLevel;// VIP等级
-	private Double vipScore;// VIP积分
-	private Double cost;// 消费总额RMB
+	private boolean vip;// 是否VIP
+	private int vipLevel;// VIP等级
+	private double vipScore;// VIP积分
 	private String headimgurl;// 头像url
 	private String phone;// 会员手机
-	private Integer onlineTime;// 在线时长
-	private String loginIp;// 登录ip
-	private Long lastLoginTime;// 最后登录时间
-	private Long createTime;// 注册时间
-	private Long vipEndTime;// VIP时间
+	private long createTime;// 注册时间
+	private long vipEndTime;// VIP时间
 	private MemberRights rights;
 	private String realName;// 真实姓名
 	private String IDcard;// 身份证
 	private boolean verifyUser;// 实名认证，true:通过认证,false:未通过认证
-	private String state;
+	private String onlineState;
 
 	public String getId() {
 		return id;
@@ -45,27 +41,27 @@ public class MemberDbo {
 		this.gender = gender;
 	}
 
-	public Boolean getVip() {
+	public boolean isVip() {
 		return vip;
 	}
 
-	public void setVip(Boolean vip) {
+	public void setVip(boolean vip) {
 		this.vip = vip;
 	}
 
-	public Integer getVipLevel() {
+	public int getVipLevel() {
 		return vipLevel;
 	}
 
-	public void setVipLevel(Integer vipLevel) {
+	public void setVipLevel(int vipLevel) {
 		this.vipLevel = vipLevel;
 	}
 
-	public Double getVipScore() {
+	public double getVipScore() {
 		return vipScore;
 	}
 
-	public void setVipScore(Double vipScore) {
+	public void setVipScore(double vipScore) {
 		this.vipScore = vipScore;
 	}
 
@@ -85,19 +81,19 @@ public class MemberDbo {
 		this.phone = phone;
 	}
 
-	public Long getCreateTime() {
+	public long getCreateTime() {
 		return createTime;
 	}
 
-	public void setCreateTime(Long createTime) {
+	public void setCreateTime(long createTime) {
 		this.createTime = createTime;
 	}
 
-	public Long getVipEndTime() {
+	public long getVipEndTime() {
 		return vipEndTime;
 	}
 
-	public void setVipEndTime(Long vipEndTime) {
+	public void setVipEndTime(long vipEndTime) {
 		this.vipEndTime = vipEndTime;
 	}
 
@@ -107,38 +103,6 @@ public class MemberDbo {
 
 	public void setRights(MemberRights rights) {
 		this.rights = rights;
-	}
-
-	public Integer getOnlineTime() {
-		return onlineTime;
-	}
-
-	public void setOnlineTime(Integer onlineTime) {
-		this.onlineTime = onlineTime;
-	}
-
-	public String getLoginIp() {
-		return loginIp;
-	}
-
-	public void setLoginIp(String loginIp) {
-		this.loginIp = loginIp;
-	}
-
-	public Double getCost() {
-		return cost;
-	}
-
-	public void setCost(Double cost) {
-		this.cost = cost;
-	}
-
-	public Long getLastLoginTime() {
-		return lastLoginTime;
-	}
-
-	public void setLastLoginTime(Long lastLoginTime) {
-		this.lastLoginTime = lastLoginTime;
 	}
 
 	public String getRealName() {
@@ -165,11 +129,12 @@ public class MemberDbo {
 		this.verifyUser = verifyUser;
 	}
 
-	public String getState() {
-		return state;
+	public String getOnlineState() {
+		return onlineState;
 	}
 
-	public void setState(String state) {
-		this.state = state;
+	public void setOnlineState(String onlineState) {
+		this.onlineState = onlineState;
 	}
+
 }

@@ -33,7 +33,6 @@ import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
 import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
-import com.anbang.qipai.members.plan.service.MemberService;
 import com.anbang.qipai.members.remote.service.QiPaiAgentsRemoteService;
 import com.anbang.qipai.members.remote.vo.CommonRemoteVO;
 import com.anbang.qipai.members.util.HttpUtil;
@@ -72,9 +71,6 @@ public class MemberController {
 	private MemberScoreCmdService memberScoreCmdService;
 
 	@Autowired
-	private MemberService memberService;
-
-	@Autowired
 	private MembersMsgService membersMsgService;
 
 	@Autowired
@@ -91,7 +87,7 @@ public class MemberController {
 	@RequestMapping(value = "/info")
 	public MemberVO info(String memberId) {
 		MemberVO vo = new MemberVO();
-		MemberDbo memberDbo = memberAuthQueryService.findMember(memberId);
+		MemberDbo memberDbo = memberAuthQueryService.findMemberById(memberId);
 		if (memberDbo == null) {
 			vo.setSuccess(false);
 			return vo;
@@ -129,11 +125,11 @@ public class MemberController {
 		if (memberScoreAccountDbo != null) {
 			vo.setScore(memberScoreAccountDbo.getBalance());
 		}
-		MemberDbo member = memberService.findMemberById(memberId);
+		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
 		vo.setVipLevel(member.getVipLevel());
 		vo.setPhone(member.getPhone());
 		String vipEndTime = "";
-		if (member.getVipEndTime() != null && member.getVipEndTime() > System.currentTimeMillis()) {
+		if (member.getVipEndTime() > System.currentTimeMillis()) {
 			long endTime = member.getVipEndTime();
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			vipEndTime = format.format(new Date(endTime));
@@ -157,7 +153,6 @@ public class MemberController {
 			vo.setMsg("无效的凭证");
 			return vo;
 		}
-		// 332184199212153456
 		if (IDcard.length() != 18 || !Pattern.matches("[0-9]{14}\\S{4}", IDcard)) {
 			vo.setSuccess(false);
 			vo.setMsg("无效的身份证号");
@@ -193,8 +188,8 @@ public class MemberController {
 			if ("01".equals(status)) {
 				String name = (String) map.get("name");
 				String idCard = (String) map.get("idCard");
-				MemberDbo member = memberService.verifyUser(memberId, name, idCard, true);
-				membersMsgService.verifyMember(member);
+				MemberDbo member = memberAuthQueryService.updateMemberRealUser(memberId, name, idCard, true);
+				membersMsgService.updateMemberRealUser(member);
 				vo.setMsg("认证通过");
 				return vo;
 			}
@@ -217,10 +212,8 @@ public class MemberController {
 			vo.setMsg("invalid token");
 			return vo;
 		}
-		memberService.registerPhone(memberId, phone);
-		MemberDbo memberdbo = memberService.findMemberById(memberId);
-		// kafka发消息更新
-		membersMsgService.updateMemberPhone(memberdbo);
+		MemberDbo member = memberAuthQueryService.registerPhone(memberId, phone);
+		membersMsgService.updateMemberPhone(member);
 		vo.setSuccess(true);
 		vo.setMsg("register success");
 		vo.setData(phone);
@@ -236,7 +229,7 @@ public class MemberController {
 			vo.setMsg("invalid token");
 			return vo;
 		}
-		MemberDbo member = memberService.findMemberById(memberId);
+		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
 		CommonRemoteVO commonRemoteVo = qiPaiAgentsRemoteService.agent_invitemember(member.getId(),
 				member.getNickname(), invitationCode);
 		vo.setSuccess(commonRemoteVo.isSuccess());
@@ -249,15 +242,15 @@ public class MemberController {
 			@RequestParam(name = "size", defaultValue = "10") Integer size, String token) {
 		CommonVO vo = new CommonVO();
 		String memberId = memberAuthService.getMemberIdBySessionId(token);
-		if (memberId != null) {
-			ListPage listPage = memberGoldQueryService.findMemberGoldRecords(page, size, memberId);
-			vo.setSuccess(true);
-			vo.setMsg("goldaccout");
-			vo.setData(listPage);
-		} else {
+		if (memberId == null) {
 			vo.setSuccess(false);
 			vo.setMsg("invalid token");
+			return vo;
 		}
+		ListPage listPage = memberGoldQueryService.findMemberGoldRecords(page, size, memberId);
+		vo.setSuccess(true);
+		vo.setMsg("goldaccout");
+		vo.setData(listPage);
 		return vo;
 	}
 
@@ -266,15 +259,15 @@ public class MemberController {
 			@RequestParam(name = "size", defaultValue = "10") Integer size, String token) {
 		CommonVO vo = new CommonVO();
 		String memberId = memberAuthService.getMemberIdBySessionId(token);
-		if (memberId != null) {
-			ListPage listPage = memberScoreQueryService.findMemberScoreRecords(page, size, memberId);
-			vo.setSuccess(true);
-			vo.setMsg("scoreaccout");
-			vo.setData(listPage);
-		} else {
+		if (memberId == null) {
 			vo.setSuccess(false);
 			vo.setMsg("invalid token");
+			return vo;
 		}
+		ListPage listPage = memberScoreQueryService.findMemberScoreRecords(page, size, memberId);
+		vo.setSuccess(true);
+		vo.setMsg("scoreaccout");
+		vo.setData(listPage);
 		return vo;
 	}
 
@@ -315,9 +308,8 @@ public class MemberController {
 	@RequestMapping("/rechargevip")
 	public CommonVO rechargeVip(String memberId, Long vipEndTime) {
 		CommonVO vo = new CommonVO();
-		memberService.updateMemberVip(memberId, vipEndTime);
-		MemberDbo member = memberService.findMemberById(memberId);
-		membersMsgService.updateMemberVip(member);
+		MemberDbo member = memberAuthQueryService.rechargeVip(memberId, vipEndTime);
+		membersMsgService.rechargeVip(member);
 		vo.setSuccess(true);
 		vo.setMsg("success");
 		return vo;
@@ -330,16 +322,15 @@ public class MemberController {
 	@Scheduled(cron = "0 0 0/8 * * ?") // 每8小时更新一次
 	public void resetVIP() {
 		int size = 2000;
-		long amount = memberService.getAmount();
+		long amount = memberAuthQueryService.getAmountByVip(true);
 		long pageCount = amount / size > 0 ? amount / size + 1 : amount / size;
 		for (int page = 1; page <= pageCount; page++) {
-			List<MemberDbo> memberList = memberService.findMemberByVip(page, size, true);
+			List<MemberDbo> memberList = memberAuthQueryService.findMemberByVip(page, size, true);
 			for (MemberDbo member : memberList) {
 				if (member.getVipEndTime() < System.currentTimeMillis()) {
-					member.setVip(false);
-					memberService.resetVIP(member);
+					memberAuthQueryService.updateMemberVip(member.getId(), false);
 					// kafka更新
-					membersMsgService.resetMemberVip(member);
+					membersMsgService.updateMemberVip(member);
 				}
 			}
 		}

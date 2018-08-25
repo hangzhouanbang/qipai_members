@@ -80,7 +80,7 @@ public class MemberGrade {
 		case 5:
 			return vip5;
 		default:
-			return 0;
+			return Long.MAX_VALUE;
 		}
 
 	}

@@ -2,14 +2,13 @@ package com.anbang.qipai.members.cqrs.q.dao;
 
 import java.util.List;
 
-import org.springframework.data.domain.PageRequest;
-
 import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreRecordDbo;
 
 public interface MemberScoreRecordDboDao {
+
 	void save(MemberScoreRecordDbo dbo);
 
-	long getCount();
+	long getCountByMemberId(String memberId);
 
-	List<MemberScoreRecordDbo> findMemberScoreRecords(String memberId, PageRequest pageRequest);
+	List<MemberScoreRecordDbo> findMemberScoreRecordByMemberId(String memberId, int page, int size);
 }

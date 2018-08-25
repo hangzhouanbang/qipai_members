@@ -28,7 +28,7 @@ public class MemberGradeInFoService {
 		GradeVo go = new GradeVo();
 		List<MemberClubCard> cardList = clubCardService.showClubCard();
 		MemberGrade memberGrade = memberGradeService.find_grade();
-		MemberDbo memberDbo = memberAuthQueryService.findMember(memberId);
+		MemberDbo memberDbo = memberAuthQueryService.findMemberById(memberId);
 		double shortage = 0;
 		double ProgressBar = 0;
 		if (memberGrade != null && memberDbo != null) {

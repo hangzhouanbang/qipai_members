@@ -21,6 +21,7 @@ import com.anbang.qipai.members.cqrs.c.service.MemberScoreCmdService;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreRecordDbo;
+import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
 import com.anbang.qipai.members.msg.service.GoldsMsgService;
@@ -33,7 +34,6 @@ import com.anbang.qipai.members.plan.bean.MemberOrder;
 import com.anbang.qipai.members.plan.service.AlipayService;
 import com.anbang.qipai.members.plan.service.ClubCardService;
 import com.anbang.qipai.members.plan.service.MemberOrderService;
-import com.anbang.qipai.members.plan.service.MemberService;
 import com.anbang.qipai.members.plan.service.WXpayService;
 import com.anbang.qipai.members.util.IPUtil;
 import com.anbang.qipai.members.web.vo.CommonVO;
@@ -60,7 +60,7 @@ public class ClubCardController {
 	private MemberOrderService memberOrderService;
 
 	@Autowired
-	private MemberService memberService;
+	private MemberAuthQueryService memberAuthQueryService;
 
 	@Autowired
 	private MemberScoreCmdService memberScoreCmdService;
@@ -138,7 +138,12 @@ public class ClubCardController {
 			return vo;
 		}
 		MemberClubCard card = clubCardService.findClubCardById(clubCardId);
-		MemberDbo member = memberService.findMemberById(memberId);
+		if (card == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid clubCardId");
+			return vo;
+		}
+		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
 		// 获取真实ip
 		String reqIP = IPUtil.getRealIp(request);
 		// 保存订单
@@ -182,9 +187,9 @@ public class ClubCardController {
 		// 交易成功
 		if ("TRADE_SUCCESS".equals(status)) {
 
-			memberService.updateVIP(order);
+			MemberDbo member = memberAuthQueryService.deliver(finishedOrder);
 			// 发送会员信息
-			membersMsgService.updateMemberVip(memberService.findMemberById(order.getReceiverId()));
+			membersMsgService.memberOrderDelive(member);
 			try {
 				AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(order.getReceiverId(), order.getGold(),
 						"give for buy clubcard", System.currentTimeMillis());
@@ -235,9 +240,9 @@ public class ClubCardController {
 		// 交易成功
 		if ("TRADE_SUCCESS".equals(status)) {
 
-			memberService.updateVIP(order);
+			MemberDbo member = memberAuthQueryService.deliver(finishedOrder);
 			// 发送会员信息
-			membersMsgService.updateMemberVip(memberService.findMemberById(order.getReceiverId()));
+			membersMsgService.memberOrderDelive(member);
 			try {
 				AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(order.getReceiverId(), order.getGold(),
 						"give for buy clubcard", System.currentTimeMillis());
@@ -267,7 +272,12 @@ public class ClubCardController {
 			return vo;
 		}
 		MemberClubCard card = clubCardService.findClubCardById(clubCardId);
-		MemberDbo member = memberService.findMemberById(memberId);
+		if (card == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid clubCardId");
+			return vo;
+		}
+		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
 
 		String reqIP = IPUtil.getRealIp(request);
 
@@ -302,7 +312,12 @@ public class ClubCardController {
 			return vo;
 		}
 		MemberClubCard card = clubCardService.findClubCardById(clubCardId);
-		MemberDbo member = memberService.findMemberById(memberId);
+		if (card == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid clubCardId");
+			return vo;
+		}
+		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
 
 		String reqIP = IPUtil.getRealIp(request);
 
@@ -358,9 +373,9 @@ public class ClubCardController {
 
 				// 交易成功
 				if ("SUCCESS".equals(trade_state)) {
-					memberService.updateVIP(order);
+					MemberDbo member = memberAuthQueryService.deliver(finishedOrder);
 					// 发送会员信息
-					membersMsgService.updateMemberVip(memberService.findMemberById(order.getReceiverId()));
+					membersMsgService.memberOrderDelive(member);
 					try {
 						AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(order.getReceiverId(),
 								order.getGold(), "give for buy clubcard", System.currentTimeMillis());
@@ -417,9 +432,9 @@ public class ClubCardController {
 				// kafka发消息
 				ordersMsgService.orderFinished(finishedOrder);
 
-				memberService.updateVIP(order);
+				MemberDbo member = memberAuthQueryService.deliver(finishedOrder);
 				// 发送会员信息
-				membersMsgService.updateMemberVip(memberService.findMemberById(order.getReceiverId()));
+				membersMsgService.memberOrderDelive(member);
 				try {
 					AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(order.getReceiverId(),
 							order.getGold(), "give for buy clubcard", System.currentTimeMillis());

@@ -6,16 +6,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class MemberClubCard {
 	private String id;// 会员卡id
 	private String name;// 会员卡名称
-	private Double price;// 会员卡价格
-	private Integer gold;// 买会员卡赠送金币
-	private Integer score;// 买会员卡赠送积分
-	private Long time;// 会员延长时间
-
-	@Override
-	public String toString() {
-		return "ClubCard [id=" + id + ", name=" + name + ", price=" + price + ", gold=" + gold + ", score=" + score
-				+ ", time=" + time + "]";
-	}
+	private double price;// 会员卡价格
+	private int gold;// 买会员卡赠送金币
+	private int score;// 买会员卡赠送积分
+	private long time;// 会员延长时间
 
 	public String getId() {
 		return id;
@@ -33,35 +27,35 @@ public class MemberClubCard {
 		this.name = name;
 	}
 
-	public Double getPrice() {
+	public double getPrice() {
 		return price;
 	}
 
-	public void setPrice(Double price) {
+	public void setPrice(double price) {
 		this.price = price;
 	}
 
-	public Integer getGold() {
+	public int getGold() {
 		return gold;
 	}
 
-	public void setGold(Integer gold) {
+	public void setGold(int gold) {
 		this.gold = gold;
 	}
 
-	public Integer getScore() {
+	public int getScore() {
 		return score;
 	}
 
-	public void setScore(Integer score) {
+	public void setScore(int score) {
 		this.score = score;
 	}
 
-	public Long getTime() {
+	public long getTime() {
 		return time;
 	}
 
-	public void setTime(Long time) {
+	public void setTime(long time) {
 		this.time = time;
 	}
 

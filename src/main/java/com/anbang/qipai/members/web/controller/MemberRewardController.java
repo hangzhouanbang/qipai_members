@@ -11,12 +11,12 @@ import com.anbang.qipai.members.cqrs.c.service.MemberScoreCmdService;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreRecordDbo;
+import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
 import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
-import com.anbang.qipai.members.plan.service.MemberService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.dml.accounting.AccountingRecord;
 
@@ -36,7 +36,7 @@ public class MemberRewardController {
 	private MemberScoreCmdService memberScoreCmdService;
 
 	@Autowired
-	private MemberService memberService;
+	private MemberAuthQueryService memberAuthQueryService;
 
 	@Autowired
 	private ScoresMsgService scoresMsgService;
@@ -80,9 +80,8 @@ public class MemberRewardController {
 		}
 		if (vipcard != null) {
 			long time = 1000 * 60 * 60 * 24 * vipcard;
-			memberService.updateMemberVip(memberId, System.currentTimeMillis() + time);
-			MemberDbo member = memberService.findMemberById(memberId);
-			membersMsgService.updateMemberVip(member);
+			MemberDbo member = memberAuthQueryService.rechargeVip(memberId, time);
+			membersMsgService.rechargeVip(member);
 		}
 		return vo;
 	}
@@ -111,9 +110,8 @@ public class MemberRewardController {
 			}
 			if (rewardVip != null) {
 				long time = 1000 * 60 * 60 * 24 * rewardVip;
-				memberService.updateMemberVip(memberId, System.currentTimeMillis() + time);
-				MemberDbo member = memberService.findMemberById(memberId);
-				membersMsgService.updateMemberVip(member);
+				MemberDbo member = memberAuthQueryService.rechargeVip(memberId, time);
+				membersMsgService.rechargeVip(member);
 			}
 		} catch (MemberNotFoundException e) {
 			vo.setSuccess(false);

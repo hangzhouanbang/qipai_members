@@ -11,15 +11,15 @@ public class MemberOrder {
 	private String receiverName;// 收货人名字
 	private String productId;// 商品id
 	private String productName;// 商品名称
-	private Double productPrice;// 商品单价
-	private Integer number;// 数量
-	private Integer gold;// 单个商品赠送的金币
-	private Integer score;// 单个商品赠送的积分
-	private Long vipTime;// 单个商品赠送的VIP时间
-	private Double totalamount;// 总价
+	private double productPrice;// 商品单价
+	private int number;// 数量
+	private int gold;// 单个商品赠送的金币
+	private int score;// 单个商品赠送的积分
+	private long vipTime;// 单个商品赠送的VIP时间
+	private double totalamount;// 总价
 	private String reqIP;// 终端ip
-	private Long createTime;// 订单创建时间
-	private Long deliveTime;// 发货时间
+	private long createTime;// 订单创建时间
+	private long deliveTime;// 发货时间
 
 	public String getId() {
 		return id;
@@ -101,51 +101,51 @@ public class MemberOrder {
 		this.productName = productName;
 	}
 
-	public Double getProductPrice() {
+	public double getProductPrice() {
 		return productPrice;
 	}
 
-	public void setProductPrice(Double productPrice) {
+	public void setProductPrice(double productPrice) {
 		this.productPrice = productPrice;
 	}
 
-	public Integer getNumber() {
+	public int getNumber() {
 		return number;
 	}
 
-	public void setNumber(Integer number) {
+	public void setNumber(int number) {
 		this.number = number;
 	}
 
-	public Integer getGold() {
+	public int getGold() {
 		return gold;
 	}
 
-	public void setGold(Integer gold) {
+	public void setGold(int gold) {
 		this.gold = gold;
 	}
 
-	public Integer getScore() {
+	public int getScore() {
 		return score;
 	}
 
-	public void setScore(Integer score) {
+	public void setScore(int score) {
 		this.score = score;
 	}
 
-	public Long getVipTime() {
+	public long getVipTime() {
 		return vipTime;
 	}
 
-	public void setVipTime(Long vipTime) {
+	public void setVipTime(long vipTime) {
 		this.vipTime = vipTime;
 	}
 
-	public Double getTotalamount() {
+	public double getTotalamount() {
 		return totalamount;
 	}
 
-	public void setTotalamount(Double totalamount) {
+	public void setTotalamount(double totalamount) {
 		this.totalamount = totalamount;
 	}
 
@@ -157,19 +157,20 @@ public class MemberOrder {
 		this.reqIP = reqIP;
 	}
 
-	public Long getCreateTime() {
+	public long getCreateTime() {
 		return createTime;
 	}
 
-	public void setCreateTime(Long createTime) {
+	public void setCreateTime(long createTime) {
 		this.createTime = createTime;
 	}
 
-	public Long getDeliveTime() {
+	public long getDeliveTime() {
 		return deliveTime;
 	}
 
-	public void setDeliveTime(Long deliveTime) {
+	public void setDeliveTime(long deliveTime) {
 		this.deliveTime = deliveTime;
 	}
+
 }
