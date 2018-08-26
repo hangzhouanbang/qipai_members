@@ -257,6 +257,8 @@ public class ClubCardController {
 				vo.setMsg("MemberNotFoundException");
 			}
 		}
+		MemberDbo member=memberAuthQueryService.findMemberById(order.getReceiverId());
+		data.put("vip", member.isVip());
 		vo.setSuccess(true);
 		vo.setData(data);
 		return vo;
@@ -449,6 +451,8 @@ public class ClubCardController {
 					vo.setMsg("MemberNotFoundException");
 				}
 			}
+			MemberDbo member=memberAuthQueryService.findMemberById(order.getReceiverId());
+			data.put("vip", member.isVip());
 			vo.setSuccess(true);
 			vo.setData(data);
 			return vo;
