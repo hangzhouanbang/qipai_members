@@ -127,7 +127,7 @@ public class MemberAuthQueryService {
 		MemberGrade grade = memberGradeDao.find_grade("1");
 		if (grade != null) {
 			int level = member.getVipLevel();
-			long score = grade.getLevel(level);
+			double score = grade.getLevel(level);
 			if (vipScore >= score) {
 				level += 1;
 				memberDboDao.updateMemberVipLevel(member.getId(), level);

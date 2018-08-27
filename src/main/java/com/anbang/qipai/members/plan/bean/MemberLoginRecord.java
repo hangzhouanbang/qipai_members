@@ -7,6 +7,7 @@ public class MemberLoginRecord {
 	private long onlineTime;// 在线时长
 	private String loginIp;// 登录ip
 	private long loginTime;// 登录时间
+	private long lastLoginTime;// 上次登录时间
 
 	public String getId() {
 		return id;
@@ -54,6 +55,14 @@ public class MemberLoginRecord {
 
 	public void setLoginTime(long loginTime) {
 		this.loginTime = loginTime;
+	}
+
+	public long getLastLoginTime() {
+		return lastLoginTime;
+	}
+
+	public void setLastLoginTime(long lastLoginTime) {
+		this.lastLoginTime = lastLoginTime;
 	}
 
 }

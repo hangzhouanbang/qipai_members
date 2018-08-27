@@ -21,9 +21,9 @@ public class MemberLoginRecordMsgService {
 		memberLoginRecordSource.memberLoginRecord().send(MessageBuilder.withPayload(mo).build());
 	}
 
-	public void memberLogoutRecord(MemberLoginRecord record) {
+	public void updateMemberOnlineRecord(MemberLoginRecord record) {
 		CommonMO mo = new CommonMO();
-		mo.setMsg("member logout");
+		mo.setMsg("update member online");
 		mo.setData(record);
 		memberLoginRecordSource.memberLoginRecord().send(MessageBuilder.withPayload(mo).build());
 	}

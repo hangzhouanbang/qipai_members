@@ -47,7 +47,17 @@ public class NoticeMsgReceiver {
 			long onlineTime = System.currentTimeMillis() - record.getLoginTime();
 			record.setOnlineTime(onlineTime);
 			memberLoginRecordService.updateOnlineTimeById(record.getId(), onlineTime);
-			memberLoginRecordMsgService.memberLogoutRecord(record);
+			memberLoginRecordMsgService.updateMemberOnlineRecord(record);
+		}
+
+		if ("update member online".equals(msg)) {
+			String memberId = gson.fromJson(json, String.class);
+			// 更新玩家登录记录
+			MemberLoginRecord record = memberLoginRecordService.findRecentRecordByMemberId(memberId);
+			long onlineTime = System.currentTimeMillis() - record.getLoginTime();
+			record.setOnlineTime(onlineTime);
+			memberLoginRecordService.updateOnlineTimeById(record.getId(), onlineTime);
+			memberLoginRecordMsgService.updateMemberOnlineRecord(record);
 		}
 	}
 }

@@ -216,7 +216,11 @@ public class MemberThirdAuthController {
 		String memberId = memberAuthService.getMemberIdBySessionId(token);
 		memberAuthQueryService.updateMemberOnlineState(memberId, MemberOnlineState.ONLINE);
 		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
+		MemberLoginRecord lastRecord = memberLoginRecordService.findRecentRecordByMemberId(memberId);
 		MemberLoginRecord record = new MemberLoginRecord();
+		if (lastRecord != null) {
+			record.setLastLoginTime(lastRecord.getLoginTime());
+		}
 		record.setLoginIp(loginIp);
 		record.setLoginTime(System.currentTimeMillis());
 		record.setMemberId(member.getId());
