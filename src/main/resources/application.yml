@@ -102,7 +102,7 @@ spring:
       bindings:
         notice:
           destination: notice
-          group: qipai_members
+          group: qipai-members
           consumer:
             concurrency: 1
             partitioned: false
