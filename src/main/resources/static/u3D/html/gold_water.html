@@ -142,7 +142,7 @@
         //金币
         function gold(page) {
             $http({
-                url: 'http://192.168.0.111:82/member/querygoldaccount',
+                url: 'http://192.168.0.134:82/member/querygoldaccount',
                 method: 'post',
                 params: {
                     page: page,
@@ -173,7 +173,7 @@
                 if (scrollTop + window.innerHeight >= document.body.offsetHeight) {
                     //此处是滚动条到底部时候触发的事件，在这里写要加载的数据，或者是拉动滚动条的操作
                     $http({
-                        url:'http://192.168.0.111:82/member/querygoldaccount',
+                        url:'http://192.168.0.134:82/member/querygoldaccount',
                         method: 'post',
                         params: {
                             page: vid,
