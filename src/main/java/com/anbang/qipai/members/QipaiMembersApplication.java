@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import com.anbang.qipai.members.conf.FilePathConfig;
 import com.anbang.qipai.members.cqrs.c.repository.SingletonEntityFactoryImpl;
 import com.anbang.qipai.members.cqrs.c.service.disruptor.CoreSnapshotFactory;
 import com.anbang.qipai.members.cqrs.c.service.disruptor.ProcessCoreCommandEventHandler;
@@ -33,6 +34,9 @@ public class QipaiMembersApplication {
 
 	@Autowired
 	private CoreSnapshotFactory coreSnapshotFactory;
+
+	@Autowired
+	private FilePathConfig filePathConfig;
 
 	@Bean
 	public HttpClient httpClient() {
@@ -72,7 +76,7 @@ public class QipaiMembersApplication {
 
 	@Bean
 	public ProcessCoreCommandEventHandler processCoreCommandEventHandler() {
-		return new ProcessCoreCommandEventHandler(coreSnapshotFactory, snapshotJsonUtil);
+		return new ProcessCoreCommandEventHandler(coreSnapshotFactory, snapshotJsonUtil, filePathConfig);
 	}
 
 	@Bean
