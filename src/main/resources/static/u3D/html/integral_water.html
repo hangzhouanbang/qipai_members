@@ -136,7 +136,7 @@
         //积分
         function score(page) {
             $http({
-                url: 'http://192.168.0.134:82/member/queryscoreaccount',
+                url: 'http://47.96.20.47:82/member/queryscoreaccount',
                 method: 'post',
                 params: {
                     page: page,
@@ -167,7 +167,7 @@
                 if (scrollTop + window.innerHeight >= document.body.offsetHeight) {
                     //此处是滚动条到底部时候触发的事件，在这里写要加载的数据，或者是拉动滚动条的操作
                     $http({
-                        url:'http://192.168.0.134:82/member/queryscoreaccount',
+                        url:'http://47.96.20.47:82/member/queryscoreaccount',
                         method: 'post',
                         params: {
                             page: vid,
@@ -199,7 +199,7 @@
             loadmore();
         });
         $('.gold').on('click', function () {
-            window.location.href = 'gold_water.html';
+            window.location.href = 'gold_water.html?token='+token;
         });
     });
 </script>
