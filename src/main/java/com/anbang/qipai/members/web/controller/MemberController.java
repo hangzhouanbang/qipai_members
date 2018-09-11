@@ -328,9 +328,9 @@ public class MemberController {
 			List<MemberDbo> memberList = memberAuthQueryService.findMemberByVip(page, size, true);
 			for (MemberDbo member : memberList) {
 				if (member.getVipEndTime() < System.currentTimeMillis()) {
-					memberAuthQueryService.updateMemberVip(member.getId(), false);
+					MemberDbo memberDbo = memberAuthQueryService.updateMemberVip(member.getId(), false);
 					// kafka更新
-					membersMsgService.updateMemberVip(member);
+					membersMsgService.updateMemberVip(memberDbo);
 				}
 			}
 		}
