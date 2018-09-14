@@ -183,6 +183,11 @@ public class MemberController {
 
 			HttpResponse response = HttpUtil.doGet(host, path, method, headers, querys);
 			Map map = gson.fromJson(EntityUtils.toString(response.getEntity()), Map.class);
+			if (map == null) {
+				vo.setSuccess(false);
+				vo.setMsg("系统异常");
+				return vo;
+			}
 			String status = (String) map.get("status");
 			// 认证成功
 			if ("01".equals(status)) {
