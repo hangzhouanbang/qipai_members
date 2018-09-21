@@ -94,7 +94,7 @@ public class MemberRewardController {
 		vo.setSuccess(true);
 		try {
 			if (rewardGold != null) {
-				int gold = rewardGold * 10000;
+				int gold = rewardGold;
 				AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(memberId, gold, "task_reward",
 						System.currentTimeMillis());
 				// 添加流水

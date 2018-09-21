@@ -64,6 +64,24 @@
             color: #333333;
             border-bottom:1px solid rgba(0,0,0,0.50);
         }
+        .content table tr th:nth-child(1),
+        .content table tr td:nth-child(1),
+        .content table tr th:nth-child(3),
+        .content table tr td:nth-child(3){
+            width:1.74rem;
+        }
+        .content table tr th:nth-child(2),
+        .content table tr td:nth-child(2){
+            width:0.9rem;
+        }
+        .content table tr th:nth-child(4),
+        .content table tr td:nth-child(4){
+            width:1.32rem;
+        }
+        .content table tr th:nth-child(5),
+        .content table tr td:nth-child(5){
+            width:1.64rem;
+        }
         .content table tr th{
             font-size: 14px;
         }
@@ -207,7 +225,7 @@
         });
 
         $('.integral').on('click', function () {
-            window.location.href = 'integral_water.html?token='+token;
+            window.location.href = 'integral_water.html?token='+token
         });
     });
 
