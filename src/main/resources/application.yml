@@ -154,6 +154,12 @@ spring:
           contentType: application/json
           producer:
             partitionCount: 1
+            
+        memberClubCard: 
+          destination: memberClubCard
+          contentType: application/json
+          producer:
+            partitionCount: 1
       
   application:
     name: qipai-members
