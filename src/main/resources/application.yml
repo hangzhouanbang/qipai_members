@@ -2,6 +2,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/qipai_members
+      
   cloud:
     stream:
       kafka:
@@ -154,6 +155,12 @@ spring:
           contentType: application/json
           producer:
             partitionCount: 1
+            
+        memberClubCard: 
+          destination: memberClubCard
+          contentType: application/json
+          producer:
+            partitionCount: 1
       
   application:
     name: qipai-members
@@ -166,5 +173,5 @@ eureka:
       defaultZone: http://127.0.0.1:8761/eureka/
       
 filepath:
-  snapshotFileBasePath: /usr/local/app/qipai_members/snapshot
-  jFileBasePath: /usr/local/app/qipai_members/journal
+  snapshotFileBasePath: /data/app/qipai_members/snapshot
+  jFileBasePath: /data/app/qipai_members/journal
