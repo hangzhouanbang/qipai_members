@@ -78,7 +78,7 @@ public class MemberRewardController {
 			vo.setMsg("member not found");
 			e.printStackTrace();
 		}
-		if (vipcard != null) {
+		if (vipcard != null && vipcard > 0) {
 			long time = 1000 * 60 * 60 * 24 * vipcard;
 			MemberDbo member = memberAuthQueryService.rechargeVip(memberId, time);
 			membersMsgService.rechargeVip(member);
@@ -108,7 +108,7 @@ public class MemberRewardController {
 				MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(memberId, scorercd);
 				scoresMsgService.withdraw(scoredbo);
 			}
-			if (rewardVip != null) {
+			if (rewardVip != null && rewardVip > 0) {
 				long time = 1000 * 60 * 60 * 24 * rewardVip;
 				MemberDbo member = memberAuthQueryService.rechargeVip(memberId, time);
 				membersMsgService.rechargeVip(member);
