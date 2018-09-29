@@ -10,7 +10,9 @@ import com.anbang.qipai.members.cqrs.q.dao.MemberGoldAccountDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberGoldRecordDboDao;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
+import com.anbang.qipai.members.web.vo.RecordSummaryTexts;
 import com.dml.accounting.AccountingRecord;
+import com.dml.accounting.TextAccountingSummary;
 import com.highto.framework.web.page.ListPage;
 
 @Component
@@ -59,6 +61,12 @@ public class MemberGoldQueryService {
 	public ListPage findMemberGoldRecords(int page, int size, String memberId) {
 		List<MemberGoldRecordDbo> recordList = memberGoldRecordDboDao.findMemberGoldRecordByMemberId(memberId, page,
 				size);
+		for (int i = 0; i < recordList.size(); i++) {
+			TextAccountingSummary summary = (TextAccountingSummary) recordList.get(i).getSummary();
+			TextAccountingSummary newSummary = new TextAccountingSummary(
+					RecordSummaryTexts.getSummaryText(summary.getText()));
+			recordList.get(i).setSummary(newSummary);
+		}
 		long amount = memberGoldRecordDboDao.getCountByMemberId(memberId);
 		ListPage listPage = new ListPage(recordList, page, size, (int) amount);
 		return listPage;

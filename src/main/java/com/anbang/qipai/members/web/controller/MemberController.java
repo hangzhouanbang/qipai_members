@@ -129,7 +129,7 @@ public class MemberController {
 		vo.setVipLevel(member.getVipLevel());
 		vo.setPhone(member.getPhone());
 		String vipEndTime = "";
-		if (member.getVipEndTime() > System.currentTimeMillis()) {
+		if (member.isVip() && member.getVipEndTime() > System.currentTimeMillis()) {
 			long endTime = member.getVipEndTime();
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			vipEndTime = format.format(new Date(endTime));
