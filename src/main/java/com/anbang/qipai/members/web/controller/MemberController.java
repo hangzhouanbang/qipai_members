@@ -324,7 +324,7 @@ public class MemberController {
 	 * 会员到期判定
 	 * 
 	 */
-	@Scheduled(cron = "0 0 0/8 * * ?") // 每8小时更新一次
+	@Scheduled(cron = "0 20 0 * * ?") // 每天凌晨20分刷新会员
 	public void resetVIP() {
 		int size = 2000;
 		long amount = memberAuthQueryService.getAmountByVip(true);
