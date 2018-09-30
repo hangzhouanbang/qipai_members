@@ -1,7 +1,7 @@
 package com.anbang.qipai.members.web.vo;
 
 public enum RecordSummaryTexts {
-	新玩家注册, 购买会员卡赠送, 管理员赠送金币, 管理员赠送积分, 邮件奖励, 任务奖励, 创建房间;
+	新玩家注册, 购买会员卡赠送, 管理员赠送金币, 管理员赠送积分, 邮件奖励, 任务奖励, 创建房间, 加入房间, 离开房间;
 
 	public static String getSummaryText(String text) {
 		switch (text) {
@@ -19,6 +19,10 @@ public enum RecordSummaryTexts {
 			return 任务奖励.name();
 		case "pay for create room":
 			return 创建房间.name();
+		case "pay for join room":
+			return 加入房间.name();
+		case "back gold to leave game":
+			return 离开房间.name();
 		default:
 			return text;
 		}
