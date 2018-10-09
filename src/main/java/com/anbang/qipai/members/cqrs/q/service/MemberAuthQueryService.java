@@ -133,16 +133,15 @@ public class MemberAuthQueryService {
 				memberDboDao.updateMemberVipLevel(member.getId(), level);
 			}
 		}
+		BigDecimal b3 = new BigDecimal(Double.toString(order.getTotalamount()));
+		BigDecimal b4 = new BigDecimal(Double.toString(member.getCost()));
+		double cost = b3.add(b4).doubleValue();
+		memberDboDao.updateMemberCost(member.getId(), cost);
 		return memberDboDao.findMemberById(member.getId());
 	}
 
 	public MemberDbo updateMemberVip(String memberId, boolean vip) {
 		memberDboDao.updateMemberVIP(memberId, vip);
-		return memberDboDao.findMemberById(memberId);
-	}
-
-	public MemberDbo updateMemberOnlineState(String memberId, String onlineState) {
-		memberDboDao.updateMemberOnlineState(memberId, onlineState);
 		return memberDboDao.findMemberById(memberId);
 	}
 

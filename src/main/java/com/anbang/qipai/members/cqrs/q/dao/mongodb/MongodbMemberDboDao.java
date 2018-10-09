@@ -118,10 +118,26 @@ public class MongodbMemberDboDao implements MemberDboDao {
 	}
 
 	@Override
-	public void updateMemberOnlineState(String memberId, String onlineState) {
+	public void updateMemberCost(String memberId, double cost) {
 		Query query = new Query(Criteria.where("id").is(memberId));
 		Update update = new Update();
-		update.set("onlineState", onlineState);
+		update.set("cost", cost);
+		mongoTemplate.updateFirst(query, update, MemberDbo.class);
+	}
+
+	@Override
+	public void updateMemberGold(String memberId, int gold) {
+		Query query = new Query(Criteria.where("id").is(memberId));
+		Update update = new Update();
+		update.set("gold", gold);
+		mongoTemplate.updateFirst(query, update, MemberDbo.class);
+	}
+
+	@Override
+	public void updateMemberScore(String memberId, int score) {
+		Query query = new Query(Criteria.where("id").is(memberId));
+		Update update = new Update();
+		update.set("score", score);
 		mongoTemplate.updateFirst(query, update, MemberDbo.class);
 	}
 

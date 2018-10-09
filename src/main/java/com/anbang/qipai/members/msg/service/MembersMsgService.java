@@ -49,13 +49,6 @@ public class MembersMsgService {
 		membersSource.members().send(MessageBuilder.withPayload(mo).build());
 	}
 
-	public void updateMemberOnlineState(MemberDbo member) {
-		CommonMO mo = new CommonMO();
-		mo.setMsg("update member onlineState");
-		mo.setData(member);
-		membersSource.members().send(MessageBuilder.withPayload(mo).build());
-	}
-
 	public void updateMemberRealUser(MemberDbo member) {
 		CommonMO mo = new CommonMO();
 		mo.setMsg("update member realUser");

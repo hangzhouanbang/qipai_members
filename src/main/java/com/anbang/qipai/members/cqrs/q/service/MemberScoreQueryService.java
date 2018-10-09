@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.anbang.qipai.members.cqrs.c.domain.CreateMemberResult;
+import com.anbang.qipai.members.cqrs.q.dao.MemberDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberScoreAccountDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberScoreRecordDboDao;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreAccountDbo;
@@ -22,6 +23,9 @@ public class MemberScoreQueryService {
 
 	@Autowired
 	private MemberScoreAccountDboDao memberScoreAccountDboDao;
+
+	@Autowired
+	private MemberDboDao memberDboDao;
 
 	public void recordMemberScoreRecord(AccountingRecord accountingRecord) {
 		MemberScoreRecordDbo dbo = new MemberScoreRecordDbo();
@@ -84,6 +88,7 @@ public class MemberScoreQueryService {
 		memberScoreRecordDboDao.save(dbo);
 
 		memberScoreAccountDboDao.update(accountingRecord.getAccountId(), (int) accountingRecord.getBalanceAfter());
+		memberDboDao.updateMemberScore(memberId, (int) accountingRecord.getBalanceAfter());
 		return dbo;
 	}
 }

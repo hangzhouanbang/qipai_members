@@ -15,7 +15,33 @@ public class MemberDbo {
 	private String realName;// 真实姓名
 	private String IDcard;// 身份证
 	private boolean verifyUser;// 实名认证，true:通过认证,false:未通过认证
-	private String onlineState;
+	private int gold;// 金币
+	private int score;// 积分
+	private double cost;// 累计消费
+
+	public int getGold() {
+		return gold;
+	}
+
+	public void setGold(int gold) {
+		this.gold = gold;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public double getCost() {
+		return cost;
+	}
+
+	public void setCost(double cost) {
+		this.cost = cost;
+	}
 
 	public String getId() {
 		return id;
@@ -127,14 +153,6 @@ public class MemberDbo {
 
 	public void setVerifyUser(boolean verifyUser) {
 		this.verifyUser = verifyUser;
-	}
-
-	public String getOnlineState() {
-		return onlineState;
-	}
-
-	public void setOnlineState(String onlineState) {
-		this.onlineState = onlineState;
 	}
 
 }

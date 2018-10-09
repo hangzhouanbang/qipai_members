@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.anbang.qipai.members.cqrs.c.domain.CreateMemberResult;
+import com.anbang.qipai.members.cqrs.q.dao.MemberDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberGoldAccountDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberGoldRecordDboDao;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
@@ -23,6 +24,9 @@ public class MemberGoldQueryService {
 
 	@Autowired
 	private MemberGoldAccountDboDao memberGoldAccountDboDao;
+
+	@Autowired
+	private MemberDboDao memberDboDao;
 
 	public void recordMemberGoldRecord(AccountingRecord accountingRecord) {
 		MemberGoldRecordDbo dbo = new MemberGoldRecordDbo();
@@ -85,6 +89,7 @@ public class MemberGoldQueryService {
 		memberGoldRecordDboDao.save(dbo);
 
 		memberGoldAccountDboDao.update(accountingRecord.getAccountId(), (int) accountingRecord.getBalanceAfter());
+		memberDboDao.updateMemberGold(memberId, (int) accountingRecord.getBalanceAfter());
 		return dbo;
 	}
 }

@@ -23,15 +23,19 @@ public interface MemberDboDao {
 
 	void updateMemberPhone(String memberId, String phone);
 
-	void updateMemberVIP(String memberId,boolean vip);
-	
-	void updateMemberOnlineState(String memberId,String onlineState);
-	
-	void updateMemberVipScore(String memberId,double vipScore);
-	
-	void updateMemberVipLevel(String memberId,int vipLevel);
-	
-	void updateMemberVipEndTime(String memberId,long vipEndTime);
+	void updateMemberVIP(String memberId, boolean vip);
+
+	void updateMemberVipScore(String memberId, double vipScore);
+
+	void updateMemberVipLevel(String memberId, int vipLevel);
+
+	void updateMemberVipEndTime(String memberId, long vipEndTime);
 
 	void updateMemberRealUser(String memberId, String realName, String IDcard, boolean verify);
+
+	void updateMemberCost(String memberId, double cost);
+
+	void updateMemberGold(String memberId, int gold);
+
+	void updateMemberScore(String memberId, int score);
 }
