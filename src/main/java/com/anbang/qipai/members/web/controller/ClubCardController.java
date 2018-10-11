@@ -149,7 +149,7 @@ public class ClubCardController {
 		// 保存订单
 		MemberOrder order = memberOrderService.addMemberOrder(member.getId(), member.getNickname(), member.getId(),
 				member.getNickname(), card.getId(), card.getName(), card.getPrice(), card.getGold(), card.getScore(),
-				card.getTime(), 1, "支付宝支付", reqIP);
+				card.getTime(), 1, "alipay", reqIP);
 		ordersMsgService.createOrder(order);
 		String orderString = null;
 		// 下订单
@@ -257,7 +257,7 @@ public class ClubCardController {
 				vo.setMsg("MemberNotFoundException");
 			}
 		}
-		MemberDbo member=memberAuthQueryService.findMemberById(order.getReceiverId());
+		MemberDbo member = memberAuthQueryService.findMemberById(order.getReceiverId());
 		data.put("vip", member.isVip());
 		vo.setSuccess(true);
 		vo.setData(data);
@@ -285,7 +285,7 @@ public class ClubCardController {
 
 		MemberOrder order = memberOrderService.addMemberOrder(member.getId(), member.getNickname(), member.getId(),
 				member.getNickname(), card.getId(), card.getName(), card.getPrice(), card.getGold(), card.getScore(),
-				card.getTime(), 1, "微信支付", reqIP);
+				card.getTime(), 1, "wxpay", reqIP);
 		ordersMsgService.createOrder(order);
 		try {
 			Map<String, String> resultMap = wxpayService.createOrder_APP(order);
@@ -451,7 +451,7 @@ public class ClubCardController {
 					vo.setMsg("MemberNotFoundException");
 				}
 			}
-			MemberDbo member=memberAuthQueryService.findMemberById(order.getReceiverId());
+			MemberDbo member = memberAuthQueryService.findMemberById(order.getReceiverId());
 			data.put("vip", member.isVip());
 			vo.setSuccess(true);
 			vo.setData(data);
