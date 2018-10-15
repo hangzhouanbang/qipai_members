@@ -55,6 +55,7 @@ public class MemberGoldQueryService {
 		memberGoldRecordDboDao.save(dbo);
 
 		memberGoldAccountDboDao.update(account.getId(), (int) accountingRecord.getBalanceAfter());
+		memberDboDao.updateMemberGold(createMemberResult.getMemberId(), (int) accountingRecord.getBalanceAfter());
 		return dbo;
 	}
 

@@ -54,6 +54,7 @@ public class MemberScoreQueryService {
 		memberScoreRecordDboDao.save(dbo);
 
 		memberScoreAccountDboDao.update(account.getId(), (int) accountingRecord.getBalanceAfter());
+		memberDboDao.updateMemberScore(createMemberResult.getMemberId(), (int) accountingRecord.getBalanceAfter());
 		return dbo;
 	}
 
