@@ -1,5 +1,6 @@
 package com.anbang.qipai.members.plan.service;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +29,12 @@ public class MemberOrderService {
 		order.setReceiverName(receiverName);
 		order.setProductId(productId);
 		order.setProductName(productName);
-		order.setProductPrice(productPrice);
+		order.setProductPrice(new BigDecimal(productPrice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
 		order.setNumber(number);
 		order.setGold(gold);
 		order.setScore(score);
 		order.setVipTime(time);
-		order.setTotalamount(productPrice * number);
+		order.setTotalamount(order.getProductPrice() * number);
 		order.setReqIP(reqIp);
 		order.setCreateTime(System.currentTimeMillis());
 		memberOrderDao.addMemberOrder(order);

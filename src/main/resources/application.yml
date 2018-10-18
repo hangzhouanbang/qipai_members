@@ -2,7 +2,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/qipai_members
-      
+
   cloud:
     stream:
       kafka:
@@ -89,7 +89,7 @@ spring:
                   ms: 5
                 batch:
                   size: 16384
-          memberLoginRecord:
+          memberLoginLimitRecord:
             producer:
               configuration:
                 request:
@@ -99,15 +99,9 @@ spring:
                   ms: 5
                 batch:
                   size: 16384
+          
 
       bindings:
-        notice:
-          destination: notice
-          group: qipai-members
-          consumer:
-            concurrency: 1
-            partitioned: false
-          contentType: application/json
         members:
           destination: members
           contentType: application/json
@@ -150,14 +144,14 @@ spring:
           producer:
             partitionCount: 1
         
-        memberLoginRecord:
-          destination: memberLoginRecord
+        memberClubCard: 
+          destination: memberClubCard
           contentType: application/json
           producer:
             partitionCount: 1
             
-        memberClubCard: 
-          destination: memberClubCard
+        memberLoginLimitRecord: 
+          destination: memberLoginLimitRecord
           contentType: application/json
           producer:
             partitionCount: 1

@@ -26,6 +26,8 @@ public class MemberRightsConfiguration {
 	private float vipGrowIntegralSpeed;// 会员积分增长速度
 	private float planGrowIntegralSpeed;// 普通会员积分增长速度
 
+	private int goldForAgentInvite;// 填写邀请码赠送玉石数
+
 	private float vipGrowGradeSpeed;// 会员等级增长速度
 
 	public MemberRights generateRightsForPlanMembers() {
@@ -35,6 +37,7 @@ public class MemberRightsConfiguration {
 		rights.setInviteIntegralNumber(inviteIntegralNumber);
 		rights.setScoreForNewNember(scoreForNewNember);
 		rights.setSignGoldNumber(signGoldNumber);
+		rights.setGoldForAgentInvite(goldForAgentInvite);
 		return rights;
 	}
 
@@ -46,6 +49,7 @@ public class MemberRightsConfiguration {
 		rights.setInviteIntegralNumber(inviteIntegralNumber);
 		rights.setScoreForNewNember(scoreForNewNember);
 		rights.setSignGoldNumber(signGoldNumber);
+		rights.setGoldForAgentInvite(goldForAgentInvite);
 		return rights;
 	}
 
@@ -103,6 +107,14 @@ public class MemberRightsConfiguration {
 
 	public void setVipGrowGradeSpeed(float vipGrowGradeSpeed) {
 		this.vipGrowGradeSpeed = vipGrowGradeSpeed;
+	}
+
+	public int getGoldForAgentInvite() {
+		return goldForAgentInvite;
+	}
+
+	public void setGoldForAgentInvite(int goldForAgentInvite) {
+		this.goldForAgentInvite = goldForAgentInvite;
 	}
 
 	public int getScoreForNewNember() {

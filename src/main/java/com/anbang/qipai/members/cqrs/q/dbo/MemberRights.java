@@ -14,6 +14,8 @@ public class MemberRights {
 
 	private float growGradeSpeed;// 会员等级增长速度
 
+	private int goldForAgentInvite;// 填写邀请码赠送玉石数
+
 	public int getSignGoldNumber() {
 		return signGoldNumber;
 	}
@@ -60,6 +62,14 @@ public class MemberRights {
 
 	public void setGrowGradeSpeed(float growGradeSpeed) {
 		this.growGradeSpeed = growGradeSpeed;
+	}
+
+	public int getGoldForAgentInvite() {
+		return goldForAgentInvite;
+	}
+
+	public void setGoldForAgentInvite(int goldForAgentInvite) {
+		this.goldForAgentInvite = goldForAgentInvite;
 	}
 
 }

@@ -141,4 +141,12 @@ public class MongodbMemberDboDao implements MemberDboDao {
 		mongoTemplate.updateFirst(query, update, MemberDbo.class);
 	}
 
+	@Override
+	public void updateMemberBindAgent(String memberId, boolean bindAgent) {
+		Query query = new Query(Criteria.where("id").is(memberId));
+		Update update = new Update();
+		update.set("bindAgent", bindAgent);
+		mongoTemplate.updateFirst(query, update, MemberDbo.class);
+	}
+
 }

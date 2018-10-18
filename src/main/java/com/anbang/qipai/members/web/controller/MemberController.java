@@ -25,6 +25,7 @@ import com.anbang.qipai.members.cqrs.c.service.MemberScoreCmdService;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberRights;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreAccountDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreRecordDbo;
 import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
@@ -97,6 +98,7 @@ public class MemberController {
 		vo.setMemberId(memberId);
 		vo.setNickname(memberDbo.getNickname());
 		vo.setVerifyUser(memberDbo.isVerifyUser());
+		vo.setBindAgent(memberDbo.isBindAgent());
 		MemberGoldAccountDbo memberGoldAccountDbo = memberGoldQueryService.findMemberGoldAccount(memberId);
 		if (memberGoldAccountDbo != null) {
 			vo.setGold(memberGoldAccountDbo.getBalance());
@@ -237,6 +239,27 @@ public class MemberController {
 		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
 		CommonRemoteVO commonRemoteVo = qiPaiAgentsRemoteService.agent_invitemember(member.getId(),
 				member.getNickname(), invitationCode);
+		if ("invitation already exist".equals(commonRemoteVo.getMsg())) {
+			member = memberAuthQueryService.updateMemberBindAgent(memberId, true);
+			membersMsgService.updateMemberBindAgent(member);
+		}
+		if (commonRemoteVo.isSuccess()) {
+			MemberRights rights = member.getRights();
+			Map data = new HashMap<>();
+			data.put("goldForAgentInvite", rights.getGoldForAgentInvite());
+			vo.setData(data);
+			member = memberAuthQueryService.updateMemberBindAgent(memberId, true);
+			membersMsgService.updateMemberBindAgent(member);
+			try {
+				AccountingRecord rcd = memberGoldCmdService.giveGoldToMember(memberId, rights.getGoldForAgentInvite(),
+						"bind invitioncode", System.currentTimeMillis());
+				MemberGoldRecordDbo dbo = memberGoldQueryService.withdraw(memberId, rcd);
+				// rcd发kafka
+				goldsMsgService.withdraw(dbo);
+			} catch (MemberNotFoundException e) {
+
+			}
+		}
 		vo.setSuccess(commonRemoteVo.isSuccess());
 		vo.setMsg(commonRemoteVo.getMsg());
 		return vo;
@@ -315,6 +338,18 @@ public class MemberController {
 		CommonVO vo = new CommonVO();
 		MemberDbo member = memberAuthQueryService.rechargeVip(memberId, vipEndTime);
 		membersMsgService.rechargeVip(member);
+		vo.setSuccess(true);
+		vo.setMsg("success");
+		return vo;
+	}
+
+	@RequestMapping("/update_viptime")
+	public CommonVO update_viptime(@RequestBody String[] ids, Long vipEndTime) {
+		CommonVO vo = new CommonVO();
+		for (String id : ids) {
+			MemberDbo member = memberAuthQueryService.rechargeVip(id, vipEndTime);
+			membersMsgService.rechargeVip(member);
+		}
 		vo.setSuccess(true);
 		vo.setMsg("success");
 		return vo;

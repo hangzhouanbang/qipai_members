@@ -145,6 +145,11 @@ public class MemberAuthQueryService {
 		return memberDboDao.findMemberById(memberId);
 	}
 
+	public MemberDbo updateMemberBindAgent(String memberId, boolean bindAgent) {
+		memberDboDao.updateMemberBindAgent(memberId, bindAgent);
+		return memberDboDao.findMemberById(memberId);
+	}
+
 	public MemberDbo updateMemberRealUser(String memberId, String realName, String IDcard, boolean verify) {
 		memberDboDao.updateMemberRealUser(memberId, realName, IDcard, verify);
 		return memberDboDao.findMemberById(memberId);

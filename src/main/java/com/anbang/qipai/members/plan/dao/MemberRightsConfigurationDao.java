@@ -8,12 +8,12 @@ public interface MemberRightsConfigurationDao {
 
 	MemberRightsConfiguration find();
 
-	void setPlanMembersRights(float planGrowIntegralSpeed, int goldForNewNember);
+	void setPlanMembersRights(float planGrowIntegralSpeed, int goldForAgentInvite, int goldForNewNember);
 
 	void setVipMembersRights(float vipGrowGradeSpeed);
 
 	void updatePlanMembersRights(int signGoldNumber, int goldForNewNember, int inviteIntegralNumber,
-			float planGrowIntegralSpeed);
+			int goldForAgentInvite, float planGrowIntegralSpeed);
 
 	void updateVipMembersRights(int signGoldNumber, int inviteIntegralNumber, float vipGrowIntegralSpeed,
 			float vipGrowGradeSpeed);

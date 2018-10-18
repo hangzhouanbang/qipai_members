@@ -74,6 +74,9 @@ public class MemberThirdAuthController {
 	@Autowired
 	private MemberRightsConfigurationService memberRightsConfigurationService;
 
+	// @Autowired
+	// private MemberLoginLimitRecordService memberLoginLimitRecordService;
+
 	/**
 	 * 客户端已经获取好了openid/unionid和微信用户信息
 	 * 
@@ -93,6 +96,14 @@ public class MemberThirdAuthController {
 		try {
 			AuthorizationDbo unionidAuthDbo = memberAuthQueryService.findThirdAuthorizationDbo("union.weixin", unionid);
 			if (unionidAuthDbo != null) {// 已unionid注册
+
+				// MemberLoginLimitRecord record = memberLoginLimitRecordService
+				// .findByMemberId(unionidAuthDbo.getMemberId(), true);
+				// if (record != null) {// 被封号
+				// vo.setSuccess(false);
+				// vo.setMsg("login limited");
+				// return vo;
+				// }
 				AuthorizationDbo openidAuthDbo = memberAuthQueryService
 						.findThirdAuthorizationDbo("open.weixin.app.qipai", openid);
 				if (openidAuthDbo == null) {// openid未注册

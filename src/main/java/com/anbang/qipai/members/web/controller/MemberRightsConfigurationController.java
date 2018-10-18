@@ -38,9 +38,9 @@ public class MemberRightsConfigurationController {
 	@RequestMapping(value = "/commonuser")
 	@ResponseBody
 	public CommonVO commonuser(int signGoldNumber, int goldForNewNember, int inviteIntegralNumber,
-			float planGrowIntegralSpeed) {
+			int goldForAgentInvite, float planGrowIntegralSpeed) {
 		memberRightsConfigurationService.savePlanMemberRightsConfiguration(signGoldNumber, goldForNewNember,
-				inviteIntegralNumber, planGrowIntegralSpeed);
+				inviteIntegralNumber, goldForAgentInvite, planGrowIntegralSpeed);
 		MemberRightsConfiguration conf = memberRightsConfigurationService.findMemberRightsConfiguration();
 
 		MemberRights memberRights = conf.generateRightsForPlanMembers();

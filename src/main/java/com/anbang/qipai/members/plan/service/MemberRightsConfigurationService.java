@@ -12,7 +12,7 @@ public class MemberRightsConfigurationService {
 	private MemberRightsConfigurationDao memberRightsConfigurationDao;
 
 	public void savePlanMemberRightsConfiguration(int signGoldNumber, int goldForNewNember, int inviteIntegralNumber,
-			float planGrowIntegralSpeed) {
+			int goldForAgentInvite, float planGrowIntegralSpeed) {
 		MemberRightsConfiguration memberRightsConfiguration = memberRightsConfigurationDao.find();
 		if (memberRightsConfiguration == null) {
 			MemberRightsConfiguration conf = new MemberRightsConfiguration();
@@ -20,13 +20,15 @@ public class MemberRightsConfigurationService {
 			conf.setSignGoldNumber(signGoldNumber);
 			conf.setGoldForNewNember(goldForNewNember);
 			conf.setInviteIntegralNumber(inviteIntegralNumber);
+			conf.setGoldForAgentInvite(goldForAgentInvite);
 			conf.setPlanGrowIntegralSpeed(planGrowIntegralSpeed);
 			memberRightsConfigurationDao.save(conf);
 		} else {
-			memberRightsConfigurationDao.setPlanMembersRights(planGrowIntegralSpeed, goldForNewNember);
+			memberRightsConfigurationDao.setPlanMembersRights(planGrowIntegralSpeed, goldForAgentInvite,
+					goldForNewNember);
 		}
 		memberRightsConfigurationDao.updatePlanMembersRights(signGoldNumber, goldForNewNember, inviteIntegralNumber,
-				planGrowIntegralSpeed);
+				goldForAgentInvite, planGrowIntegralSpeed);
 
 	}
 

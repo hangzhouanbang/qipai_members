@@ -19,8 +19,10 @@ public class MemberVO {
 	private int gold;
 
 	private int score;
-	
+
 	private boolean verifyUser;// 实名认证，true:通过认证,false:未通过认证
+
+	private boolean bindAgent;// 绑定推广员，true:绑定,false:未绑定
 
 	public boolean isSuccess() {
 		return success;
@@ -82,6 +84,14 @@ public class MemberVO {
 
 	public void setVerifyUser(boolean verifyUser) {
 		this.verifyUser = verifyUser;
+	}
+
+	public boolean isBindAgent() {
+		return bindAgent;
+	}
+
+	public void setBindAgent(boolean bindAgent) {
+		this.bindAgent = bindAgent;
 	}
 
 }

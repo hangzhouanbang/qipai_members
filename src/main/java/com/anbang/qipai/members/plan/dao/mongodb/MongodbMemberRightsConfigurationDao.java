@@ -27,10 +27,10 @@ public class MongodbMemberRightsConfigurationDao implements MemberRightsConfigur
 	}
 
 	@Override
-	public void setPlanMembersRights(float planGrowIntegralSpeed, int goldForNewNember) {
-		mongoTemplate.updateFirst(
-				new Query(Criteria.where("id").is("1")), new Update()
-						.set("planGrowIntegralSpeed", planGrowIntegralSpeed).set("goldForNewNember", goldForNewNember),
+	public void setPlanMembersRights(float planGrowIntegralSpeed, int goldForAgentInvite, int goldForNewNember) {
+		mongoTemplate.updateFirst(new Query(Criteria.where("id").is("1")),
+				new Update().set("planGrowIntegralSpeed", planGrowIntegralSpeed)
+						.set("goldForNewNember", goldForNewNember).set("goldForAgentInvite", goldForAgentInvite),
 				MemberRightsConfiguration.class);
 	}
 
@@ -42,10 +42,10 @@ public class MongodbMemberRightsConfigurationDao implements MemberRightsConfigur
 
 	@Override
 	public void updatePlanMembersRights(int signGoldNumber, int goldForNewNember, int inviteIntegralNumber,
-			float planGrowIntegralSpeed) {
+			int goldForAgentInvite, float planGrowIntegralSpeed) {
 		mongoTemplate.updateMulti(new Query(Criteria.where("id").is("1")),
 				new Update().set("signGoldNumber", signGoldNumber).set("goldForNewNember", goldForNewNember)
-						.set("inviteIntegralNumber", inviteIntegralNumber)
+						.set("inviteIntegralNumber", inviteIntegralNumber).set("goldForAgentInvite", goldForAgentInvite)
 						.set("planGrowIntegralSpeed", planGrowIntegralSpeed),
 				MemberRightsConfiguration.class);
 	}

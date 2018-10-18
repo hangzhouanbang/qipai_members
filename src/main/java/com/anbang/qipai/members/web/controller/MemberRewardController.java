@@ -17,6 +17,8 @@ import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
 import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
+import com.anbang.qipai.members.plan.bean.MemberClubCard;
+import com.anbang.qipai.members.plan.service.ClubCardService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.dml.accounting.AccountingRecord;
 
@@ -53,9 +55,12 @@ public class MemberRewardController {
 	@Autowired
 	private MembersMsgService membersMsgService;
 
+	@Autowired
+	private ClubCardService clubCardService;
+
 	@RequestMapping("/mail_reward")
 	@ResponseBody
-	public CommonVO mail_Reward(String memberId, Integer number, Integer integral, Integer vipcard) {
+	public CommonVO mail_Reward(String memberId, Integer number, Integer integral, String vipCardId) {
 		CommonVO vo = new CommonVO();
 		vo.setSuccess(true);
 		try {
@@ -78,9 +83,9 @@ public class MemberRewardController {
 			vo.setMsg("member not found");
 			e.printStackTrace();
 		}
-		if (vipcard != null && vipcard > 0) {
-			long time = 1000 * 60 * 60 * 24 * vipcard;
-			MemberDbo member = memberAuthQueryService.rechargeVip(memberId, time);
+		if (vipCardId != null) {
+			MemberClubCard card = clubCardService.findClubCardById(vipCardId);
+			MemberDbo member = memberAuthQueryService.rechargeVip(memberId, card.getTime());
 			membersMsgService.rechargeVip(member);
 		}
 		return vo;
