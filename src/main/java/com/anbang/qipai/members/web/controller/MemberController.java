@@ -34,6 +34,8 @@ import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
 import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
+import com.anbang.qipai.members.plan.bean.MemberLoginLimitRecord;
+import com.anbang.qipai.members.plan.service.MemberLoginLimitRecordService;
 import com.anbang.qipai.members.remote.service.QiPaiAgentsRemoteService;
 import com.anbang.qipai.members.remote.vo.CommonRemoteVO;
 import com.anbang.qipai.members.util.HttpUtil;
@@ -83,6 +85,9 @@ public class MemberController {
 	@Autowired
 	private QiPaiAgentsRemoteService qiPaiAgentsRemoteService;
 
+	@Autowired
+	private MemberLoginLimitRecordService memberLoginLimitRecordService;
+
 	private Gson gson = new Gson();
 
 	@RequestMapping(value = "/info")
@@ -117,6 +122,12 @@ public class MemberController {
 		if (memberId == null) {
 			vo.setSuccess(false);
 			vo.setMsg("invalid token");
+			return vo;
+		}
+		MemberLoginLimitRecord record = memberLoginLimitRecordService.findByMemberId(memberId, true);
+		if (record != null) {// 被封号
+			vo.setSuccess(false);
+			vo.setMsg("login limited");
 			return vo;
 		}
 		MemberGoldAccountDbo memberGoldAccountDbo = memberGoldQueryService.findMemberGoldAccount(memberId);
@@ -360,10 +371,11 @@ public class MemberController {
 	 * 
 	 */
 	@Scheduled(cron = "0 20 0 * * ?") // 每天凌晨20分刷新会员
+	@RequestMapping("/resetvip")
 	public void resetVIP() {
 		int size = 2000;
 		long amount = memberAuthQueryService.getAmountByVip(true);
-		long pageCount = amount / size > 0 ? amount / size + 1 : amount / size;
+		long pageCount = amount % size > 0 ? amount / size + 1 : amount / size;
 		for (int page = 1; page <= pageCount; page++) {
 			List<MemberDbo> memberList = memberAuthQueryService.findMemberByVip(page, size, true);
 			for (MemberDbo member : memberList) {

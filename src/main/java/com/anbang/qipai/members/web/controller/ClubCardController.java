@@ -30,9 +30,11 @@ import com.anbang.qipai.members.msg.service.MemberOrdersMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
 import com.anbang.qipai.members.plan.bean.MemberClubCard;
+import com.anbang.qipai.members.plan.bean.MemberLoginLimitRecord;
 import com.anbang.qipai.members.plan.bean.MemberOrder;
 import com.anbang.qipai.members.plan.service.AlipayService;
 import com.anbang.qipai.members.plan.service.ClubCardService;
+import com.anbang.qipai.members.plan.service.MemberLoginLimitRecordService;
 import com.anbang.qipai.members.plan.service.MemberOrderService;
 import com.anbang.qipai.members.plan.service.WXpayService;
 import com.anbang.qipai.members.util.IPUtil;
@@ -90,6 +92,9 @@ public class ClubCardController {
 	private MemberClubCardsMsgService memberClubCardsMsgService;
 
 	@Autowired
+	private MemberLoginLimitRecordService memberLoginLimitRecordService;
+
+	@Autowired
 	private WXpayService wxpayService;
 
 	@Autowired
@@ -141,6 +146,12 @@ public class ClubCardController {
 		if (card == null) {
 			vo.setSuccess(false);
 			vo.setMsg("invalid clubCardId");
+			return vo;
+		}
+		MemberLoginLimitRecord record = memberLoginLimitRecordService.findByMemberId(memberId, true);
+		if (record != null) {// 被封号
+			vo.setSuccess(false);
+			vo.setMsg("login limited");
 			return vo;
 		}
 		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
@@ -279,6 +290,12 @@ public class ClubCardController {
 			vo.setMsg("invalid clubCardId");
 			return vo;
 		}
+		MemberLoginLimitRecord record = memberLoginLimitRecordService.findByMemberId(memberId, true);
+		if (record != null) {// 被封号
+			vo.setSuccess(false);
+			vo.setMsg("login limited");
+			return vo;
+		}
 		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
 
 		String reqIP = IPUtil.getRealIp(request);
@@ -317,6 +334,12 @@ public class ClubCardController {
 		if (card == null) {
 			vo.setSuccess(false);
 			vo.setMsg("invalid clubCardId");
+			return vo;
+		}
+		MemberLoginLimitRecord record = memberLoginLimitRecordService.findByMemberId(memberId, true);
+		if (record != null) {// 被封号
+			vo.setSuccess(false);
+			vo.setMsg("login limited");
 			return vo;
 		}
 		MemberDbo member = memberAuthQueryService.findMemberById(memberId);

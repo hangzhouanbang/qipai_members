@@ -29,7 +29,9 @@ import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
 import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
+import com.anbang.qipai.members.plan.bean.MemberLoginLimitRecord;
 import com.anbang.qipai.members.plan.bean.MemberRightsConfiguration;
+import com.anbang.qipai.members.plan.service.MemberLoginLimitRecordService;
 import com.anbang.qipai.members.plan.service.MemberRightsConfigurationService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.google.gson.Gson;
@@ -74,8 +76,8 @@ public class MemberThirdAuthController {
 	@Autowired
 	private MemberRightsConfigurationService memberRightsConfigurationService;
 
-	// @Autowired
-	// private MemberLoginLimitRecordService memberLoginLimitRecordService;
+	@Autowired
+	private MemberLoginLimitRecordService memberLoginLimitRecordService;
 
 	/**
 	 * 客户端已经获取好了openid/unionid和微信用户信息
@@ -97,13 +99,13 @@ public class MemberThirdAuthController {
 			AuthorizationDbo unionidAuthDbo = memberAuthQueryService.findThirdAuthorizationDbo("union.weixin", unionid);
 			if (unionidAuthDbo != null) {// 已unionid注册
 
-				// MemberLoginLimitRecord record = memberLoginLimitRecordService
-				// .findByMemberId(unionidAuthDbo.getMemberId(), true);
-				// if (record != null) {// 被封号
-				// vo.setSuccess(false);
-				// vo.setMsg("login limited");
-				// return vo;
-				// }
+				MemberLoginLimitRecord record = memberLoginLimitRecordService
+						.findByMemberId(unionidAuthDbo.getMemberId(), true);
+				if (record != null) {// 被封号
+					vo.setSuccess(false);
+					vo.setMsg("login limited");
+					return vo;
+				}
 				AuthorizationDbo openidAuthDbo = memberAuthQueryService
 						.findThirdAuthorizationDbo("open.weixin.app.qipai", openid);
 				if (openidAuthDbo == null) {// openid未注册
@@ -139,6 +141,8 @@ public class MemberThirdAuthController {
 				memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl, sex);
 				// 发送消息
 				MemberDbo memberDbo = memberAuthQueryService.findMemberById(createMemberResult.getMemberId());
+				memberDbo.setGold((int) createMemberResult.getAccountingRecordForGiveGold().getBalanceAfter());
+				memberDbo.setScore((int) createMemberResult.getAccountingRecordForGiveScore().getBalanceAfter());
 				membersMsgService.createMember(memberDbo);
 
 				// 创建金币帐户，赠送金币记账
