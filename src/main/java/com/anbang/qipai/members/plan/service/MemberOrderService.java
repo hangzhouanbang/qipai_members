@@ -18,7 +18,7 @@ public class MemberOrderService {
 	public MemberOrder addMemberOrder(String payerId, String payerName, String receiverId, String receiverName,
 			String productId, String productName, double productPrice, int gold, int score, long time, int number,
 			String payType, String reqIp) {
-		String id = UUID.randomUUID().toString().substring(0, 32);
+		String id = UUID.randomUUID().toString().replace("-", "");
 		MemberOrder order = new MemberOrder();
 		order.setId(id);
 		order.setPay_type(payType);
