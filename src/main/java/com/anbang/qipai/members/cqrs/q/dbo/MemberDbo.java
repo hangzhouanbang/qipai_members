@@ -16,9 +16,18 @@ public class MemberDbo {
 	private String IDcard;// 身份证
 	private boolean verifyUser;// 实名认证，true:通过认证,false:未通过认证
 	private boolean bindAgent;// 绑定推广员，true:绑定,false:未绑定
+	private String agentId;// 推广员id
 	private int gold;// 金币
 	private int score;// 积分
 	private double cost;// 累计消费
+
+	public String getAgentId() {
+		return agentId;
+	}
+
+	public void setAgentId(String agentId) {
+		this.agentId = agentId;
+	}
 
 	public int getGold() {
 		return gold;

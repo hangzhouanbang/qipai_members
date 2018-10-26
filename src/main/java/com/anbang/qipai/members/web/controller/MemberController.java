@@ -230,8 +230,15 @@ public class MemberController {
 			vo.setMsg("invalid token");
 			return vo;
 		}
+		if (!Pattern.matches("[0-9]{11}", phone)) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid phone");
+			return vo;
+		}
 		MemberDbo member = memberAuthQueryService.registerPhone(memberId, phone);
 		membersMsgService.updateMemberPhone(member);
+		member = memberAuthQueryService.rechargeVip(memberId, 24 * 60 * 60 * 1000);
+		membersMsgService.rechargeVip(member);
 		vo.setSuccess(true);
 		vo.setMsg("register success");
 		vo.setData(phone);
@@ -251,7 +258,8 @@ public class MemberController {
 		CommonRemoteVO commonRemoteVo = qiPaiAgentsRemoteService.agent_invitemember(member.getId(),
 				member.getNickname(), invitationCode);
 		if ("invitation already exist".equals(commonRemoteVo.getMsg())) {
-			member = memberAuthQueryService.updateMemberBindAgent(memberId, true);
+			Map map = (Map) commonRemoteVo.getData();
+			member = memberAuthQueryService.updateMemberBindAgent(memberId, (String) map.get("agentId"), true);
 			membersMsgService.updateMemberBindAgent(member);
 		}
 		if (commonRemoteVo.isSuccess()) {
@@ -259,7 +267,8 @@ public class MemberController {
 			Map data = new HashMap<>();
 			data.put("goldForAgentInvite", rights.getGoldForAgentInvite());
 			vo.setData(data);
-			member = memberAuthQueryService.updateMemberBindAgent(memberId, true);
+			Map map = (Map) commonRemoteVo.getData();
+			member = memberAuthQueryService.updateMemberBindAgent(memberId, (String) map.get("agentId"), true);
 			membersMsgService.updateMemberBindAgent(member);
 			try {
 				AccountingRecord rcd = memberGoldCmdService.giveGoldToMember(memberId, rights.getGoldForAgentInvite(),
