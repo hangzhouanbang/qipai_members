@@ -6,8 +6,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
@@ -92,8 +90,14 @@ public class MemberThirdAuthController {
 	 */
 	@RequestMapping(value = "/wechatidlogin")
 	@ResponseBody
-	public CommonVO wechatidlogin(HttpServletRequest request, String unionid, String openid, String nickname,
-			String headimgurl, Integer sex) {
+	public CommonVO wechatidlogin(String unionid, String openid, String nickname, String headimgurl, Integer sex) {
+		// public CommonVO wechatidlogin(HttpServletRequest request) {
+		// String unionid = "002";
+		// String openid = "002";
+		// String nickname = "002";
+		// ;
+		// String headimgurl = "002";
+		// Integer sex = 1;
 		CommonVO vo = new CommonVO();
 		try {
 			AuthorizationDbo unionidAuthDbo = memberAuthQueryService.findThirdAuthorizationDbo("union.weixin", unionid);

@@ -29,7 +29,8 @@ public class MemberOrderService {
 		order.setReceiverName(receiverName);
 		order.setProductId(productId);
 		order.setProductName(productName);
-		order.setProductPrice(new BigDecimal(productPrice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+		order.setProductPrice(
+				new BigDecimal(Double.toString(productPrice)).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
 		order.setNumber(number);
 		order.setGold(gold);
 		order.setScore(score);

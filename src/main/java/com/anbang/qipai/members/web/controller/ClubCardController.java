@@ -484,5 +484,4 @@ public class ClubCardController {
 		vo.setMsg("query fail");
 		return vo;
 	}
-
 }
