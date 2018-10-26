@@ -85,8 +85,10 @@ public class MemberRewardController {
 		}
 		if (vipCardId != null) {
 			MemberClubCard card = clubCardService.findClubCardById(vipCardId);
-			MemberDbo member = memberAuthQueryService.rechargeVip(memberId, card.getTime());
-			membersMsgService.rechargeVip(member);
+			if (card != null) {
+				MemberDbo member = memberAuthQueryService.rechargeVip(memberId, card.getTime());
+				membersMsgService.rechargeVip(member);
+			}
 		}
 		return vo;
 	}

@@ -57,4 +57,20 @@ public class MemberScoreAccountManager {
 		return record;
 	}
 
+	public Map<String, Account> getIdAccountMap() {
+		return idAccountMap;
+	}
+
+	public void setIdAccountMap(Map<String, Account> idAccountMap) {
+		this.idAccountMap = idAccountMap;
+	}
+
+	public Map<String, String> getMemberIdAccountIdMap() {
+		return memberIdAccountIdMap;
+	}
+
+	public void setMemberIdAccountIdMap(Map<String, String> memberIdAccountIdMap) {
+		this.memberIdAccountIdMap = memberIdAccountIdMap;
+	}
+
 }

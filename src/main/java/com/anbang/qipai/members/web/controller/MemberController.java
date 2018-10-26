@@ -239,9 +239,12 @@ public class MemberController {
 		membersMsgService.updateMemberPhone(member);
 		member = memberAuthQueryService.rechargeVip(memberId, 24 * 60 * 60 * 1000);
 		membersMsgService.rechargeVip(member);
+		Map data = new HashMap<>();
+		data.put("phone", phone);
+		data.put("phone", phone);
+		vo.setData(data);
 		vo.setSuccess(true);
 		vo.setMsg("register success");
-		vo.setData(phone);
 		return vo;
 	}
 
