@@ -21,19 +21,16 @@ import com.anbang.qipai.members.config.RealNameVerifyConfig;
 import com.anbang.qipai.members.cqrs.c.domain.MemberNotFoundException;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthService;
 import com.anbang.qipai.members.cqrs.c.service.MemberGoldCmdService;
-import com.anbang.qipai.members.cqrs.c.service.MemberScoreCmdService;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldRecordDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberRights;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreAccountDbo;
-import com.anbang.qipai.members.cqrs.q.dbo.MemberScoreRecordDbo;
 import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
 import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
-import com.anbang.qipai.members.msg.service.ScoresMsgService;
 import com.anbang.qipai.members.plan.bean.MemberLoginLimitRecord;
 import com.anbang.qipai.members.plan.service.MemberLoginLimitRecordService;
 import com.anbang.qipai.members.remote.service.QiPaiAgentsRemoteService;
@@ -71,16 +68,10 @@ public class MemberController {
 	private MemberGoldCmdService memberGoldCmdService;
 
 	@Autowired
-	private MemberScoreCmdService memberScoreCmdService;
-
-	@Autowired
 	private MembersMsgService membersMsgService;
 
 	@Autowired
 	private GoldsMsgService goldsMsgService;
-
-	@Autowired
-	private ScoresMsgService scoresMsgService;
 
 	@Autowired
 	private QiPaiAgentsRemoteService qiPaiAgentsRemoteService;
@@ -139,6 +130,7 @@ public class MemberController {
 			vo.setScore(memberScoreAccountDbo.getBalance());
 		}
 		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
+		vo.setVip(member.isVip());
 		vo.setVipLevel(member.getVipLevel());
 		vo.setPhone(member.getPhone());
 		String vipEndTime = "";
@@ -241,7 +233,13 @@ public class MemberController {
 		membersMsgService.rechargeVip(member);
 		Map data = new HashMap<>();
 		data.put("phone", phone);
-		data.put("phone", phone);
+		String vipEndTime = "";
+		if (member.isVip() && member.getVipEndTime() > System.currentTimeMillis()) {
+			long endTime = member.getVipEndTime();
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			vipEndTime = format.format(new Date(endTime));
+		}
+		data.put("vipEndTime", vipEndTime);
 		vo.setData(data);
 		vo.setSuccess(true);
 		vo.setMsg("register success");
@@ -319,40 +317,6 @@ public class MemberController {
 		vo.setSuccess(true);
 		vo.setMsg("scoreaccout");
 		vo.setData(listPage);
-		return vo;
-	}
-
-	/**
-	 * 管理后台赠送积分或金币，修改积分金币
-	 * 
-	 * @throws MemberNotFoundException
-	 **/
-	@RequestMapping("/update_score_gold")
-	public CommonVO update_score_gold(@RequestBody String[] ids, Integer score, Integer gold) {
-		CommonVO vo = new CommonVO();
-		vo.setSuccess(true);
-		for (String id : ids) {
-			try {
-				if (score != null) {
-					// 添加积分
-					AccountingRecord scorercd = memberScoreCmdService.giveScoreToMember(id, score, "admin_give_score",
-							System.currentTimeMillis());
-					MemberScoreRecordDbo scoredbo = memberScoreQueryService.withdraw(id, scorercd);
-					scoresMsgService.withdraw(scoredbo);
-				}
-				if (gold != null) {
-					// 添加金币
-					AccountingRecord goldrcd = memberGoldCmdService.giveGoldToMember(id, gold, "admin_give_gold",
-							System.currentTimeMillis());
-					MemberGoldRecordDbo golddbo = memberGoldQueryService.withdraw(id, goldrcd);
-					goldsMsgService.withdraw(golddbo);
-				}
-			} catch (MemberNotFoundException e) {
-				vo.setSuccess(false);
-				vo.setMsg("member not found");
-				e.printStackTrace();
-			}
-		}
 		return vo;
 	}
 

@@ -2,6 +2,7 @@ package com.anbang.qipai.members.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -66,5 +67,45 @@ public class MemberScoreController {
 			vo.setMsg("MemberNotFoundException");
 			return vo;
 		}
+	}
+
+	@RequestMapping(value = "/memebrs_withdraw")
+	@ResponseBody
+	public CommonVO memebrsWithdraw(@RequestBody String[] memberIds, int amount, String textSummary) {
+		CommonVO vo = new CommonVO();
+		try {
+			for (String memberId : memberIds) {
+				AccountingRecord rcd = memberScoreCmdService.withdraw(memberId, amount, textSummary,
+						System.currentTimeMillis());
+				MemberScoreRecordDbo dbo = memberScoreQueryService.withdraw(memberId, rcd);
+
+				scoresMsgService.withdraw(dbo);
+			}
+		} catch (InsufficientBalanceException e) {
+
+		} catch (MemberNotFoundException e) {
+
+		}
+		vo.setSuccess(true);
+		return vo;
+	}
+
+	@RequestMapping(value = "/givescoretomembers")
+	@ResponseBody
+	public CommonVO giveScoreToMembers(@RequestBody String[] memberIds, int amount, String textSummary) {
+		CommonVO vo = new CommonVO();
+		try {
+			for (String memberId : memberIds) {
+				AccountingRecord rcd = memberScoreCmdService.giveScoreToMember(memberId, amount, textSummary,
+						System.currentTimeMillis());
+				MemberScoreRecordDbo dbo = memberScoreQueryService.withdraw(memberId, rcd);
+
+				scoresMsgService.withdraw(dbo);
+			}
+		} catch (MemberNotFoundException e) {
+
+		}
+		vo.setSuccess(true);
+		return vo;
 	}
 }
