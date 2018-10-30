@@ -3,17 +3,15 @@ package com.anbang.qipai.members.web.vo;
 import java.math.BigDecimal;
 
 public class GradeVo {
-	
+
 	private boolean success = true;
 
 	private String msg;
 
 	private Object data;
-	
-	private Object vipcard;
-	
+
 	private double shortage;
-	
+
 	private BigDecimal ProgressBar;
 
 	public boolean isSuccess() {
@@ -55,14 +53,4 @@ public class GradeVo {
 	public void setProgressBar(BigDecimal progressBar) {
 		ProgressBar = progressBar;
 	}
-
-	public Object getVipcard() {
-		return vipcard;
-	}
-
-	public void setVipcard(Object vipcard) {
-		this.vipcard = vipcard;
-	}
-
-	
 }

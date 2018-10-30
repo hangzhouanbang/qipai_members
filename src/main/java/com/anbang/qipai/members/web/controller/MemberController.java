@@ -97,11 +97,21 @@ public class MemberController {
 		vo.setBindAgent(memberDbo.isBindAgent());
 		MemberGoldAccountDbo memberGoldAccountDbo = memberGoldQueryService.findMemberGoldAccount(memberId);
 		if (memberGoldAccountDbo != null) {
-			vo.setGold(memberGoldAccountDbo.getBalance());
+			int gold = memberGoldAccountDbo.getBalance();
+			if (gold > 999999) {
+				vo.setGold(gold / 10000 + "w");
+			} else {
+				vo.setGold(String.valueOf(gold));
+			}
 		}
 		MemberScoreAccountDbo memberScoreAccountDbo = memberScoreQueryService.findMemberScoreAccount(memberId);
 		if (memberScoreAccountDbo != null) {
-			vo.setScore(memberScoreAccountDbo.getBalance());
+			int score = memberScoreAccountDbo.getBalance();
+			if (score > 999999) {
+				vo.setScore(score / 10000 + "w");
+			} else {
+				vo.setScore(String.valueOf(score));
+			}
 		}
 		return vo;
 	}
@@ -123,11 +133,21 @@ public class MemberController {
 		}
 		MemberGoldAccountDbo memberGoldAccountDbo = memberGoldQueryService.findMemberGoldAccount(memberId);
 		if (memberGoldAccountDbo != null) {
-			vo.setGold(memberGoldAccountDbo.getBalance());
+			int gold = memberGoldAccountDbo.getBalance();
+			if (gold > 999999) {
+				vo.setGold(gold / 10000 + "w");
+			} else {
+				vo.setGold(String.valueOf(gold));
+			}
 		}
 		MemberScoreAccountDbo memberScoreAccountDbo = memberScoreQueryService.findMemberScoreAccount(memberId);
 		if (memberScoreAccountDbo != null) {
-			vo.setScore(memberScoreAccountDbo.getBalance());
+			int score = memberScoreAccountDbo.getBalance();
+			if (score > 999999) {
+				vo.setScore(score / 10000 + "w");
+			} else {
+				vo.setScore(String.valueOf(score));
+			}
 		}
 		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
 		vo.setVip(member.isVip());

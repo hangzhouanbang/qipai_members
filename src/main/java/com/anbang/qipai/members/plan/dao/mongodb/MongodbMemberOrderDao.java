@@ -36,4 +36,12 @@ public class MongodbMemberOrderDao implements MemberOrderDao {
 		return mongoTemplate.findOne(new Query(Criteria.where("id").is(id)), MemberOrder.class);
 	}
 
+	@Override
+	public MemberOrder findMemberOrderByPayerIdAndProductName(String payerId, String productName) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("payerId").is(payerId));
+		query.addCriteria(Criteria.where("productName").is(productName));
+		return mongoTemplate.findOne(query, MemberOrder.class);
+	}
+
 }

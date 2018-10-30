@@ -3,6 +3,7 @@ package com.anbang.qipai.members.web.controller;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
@@ -39,6 +40,7 @@ import com.anbang.qipai.members.plan.service.MemberOrderService;
 import com.anbang.qipai.members.plan.service.WXpayService;
 import com.anbang.qipai.members.util.IPUtil;
 import com.anbang.qipai.members.web.vo.CommonVO;
+import com.anbang.qipai.members.web.vo.MemberClubCardVO;
 import com.dml.accounting.AccountingRecord;
 
 /**
@@ -99,6 +101,24 @@ public class ClubCardController {
 
 	@Autowired
 	private AlipayService alipayService;
+
+	@RequestMapping("/queryclubcard")
+	public CommonVO queryClubCard(String token) {
+		CommonVO vo = new CommonVO();
+		String memberId = memberAuthService.getMemberIdBySessionId(token);
+		if (memberId == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
+		Map data = new HashMap<>();
+		List<MemberClubCardVO> cardList = clubCardService.showClubCard(memberId);
+		data.put("cardList", cardList);
+		vo.setData(data);
+		vo.setSuccess(true);
+		vo.setMsg("clubcard");
+		return vo;
+	}
 
 	@RequestMapping("/addclubcard")
 	public CommonVO addClubCard(@RequestBody MemberClubCard clubCard) {

@@ -3,8 +3,8 @@ package com.anbang.qipai.members.web.vo;
 public class DetailsVo {
 	private boolean success = true;
 	private String msg;
-	private int gold;
-	private int score;
+	private String gold;
+	private String score;
 	private boolean vip;// 是否vip
 	private int vipLevel;// VIP等级
 	private String phone;// 手机号
@@ -26,19 +26,19 @@ public class DetailsVo {
 		this.msg = msg;
 	}
 
-	public int getGold() {
+	public String getGold() {
 		return gold;
 	}
 
-	public void setGold(int gold) {
+	public void setGold(String gold) {
 		this.gold = gold;
 	}
 
-	public int getScore() {
+	public String getScore() {
 		return score;
 	}
 
-	public void setScore(int score) {
+	public void setScore(String score) {
 		this.score = score;
 	}
 

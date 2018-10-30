@@ -9,4 +9,6 @@ public interface MemberOrderDao {
 	void orderFinished(String id, String transaction_id, String status, long deliveTime);
 
 	MemberOrder findMemberOrderById(String id);
+
+	MemberOrder findMemberOrderByPayerIdAndProductName(String payerId, String productName);
 }
