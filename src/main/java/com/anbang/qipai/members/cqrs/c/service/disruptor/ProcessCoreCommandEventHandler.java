@@ -1,8 +1,5 @@
 package com.anbang.qipai.members.cqrs.c.service.disruptor;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
 import com.anbang.qipai.members.conf.FilePathConfig;
 import com.highto.framework.ddd.CRPair;
 import com.highto.framework.ddd.Command;
@@ -13,6 +10,9 @@ import com.highto.framework.nio.ByteBufferAble;
 import com.highto.framework.nio.ByteBufferSerializer;
 import com.highto.framework.nio.ReuseByteBuffer;
 import com.lmax.disruptor.EventHandler;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * 记录命令事件，用于命令事件replay。<br/>
@@ -91,6 +91,7 @@ public class ProcessCoreCommandEventHandler implements EventHandler<CommandEvent
 			}
 			jFile.write(bb);
 		} catch (Throwable e) {
+			e.printStackTrace();
 			System.exit(0);// 任何失败系统停机。
 		}
 	}

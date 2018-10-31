@@ -22,4 +22,11 @@ public class CommonMO {
 		this.data = data;
 	}
 
+	@Override
+	public String toString() {
+		return "CommonMO{" +
+				"msg='" + msg + '\'' +
+				", data=" + data +
+				'}';
+	}
 }

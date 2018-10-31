@@ -2,7 +2,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/qipai_members
-
+      
   cloud:
     stream:
       kafka:
@@ -89,7 +89,7 @@ spring:
                   ms: 5
                 batch:
                   size: 16384
-          memberLoginLimitRecord:
+          memberLoginRecord:
             producer:
               configuration:
                 request:
@@ -99,9 +99,34 @@ spring:
                   ms: 5
                 batch:
                   size: 16384
-          
+          signInPrizeLog:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
 
       bindings:
+        notice:
+          destination: notice
+          group: qipai-members
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+
+        signInPrize:
+          destination: signInPrize
+          group: qipai-members
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+
         members:
           destination: members
           contentType: application/json
@@ -144,18 +169,24 @@ spring:
           producer:
             partitionCount: 1
         
+        memberLoginRecord:
+          destination: memberLoginRecord
+          contentType: application/json
+          producer:
+            partitionCount: 1
+            
         memberClubCard: 
           destination: memberClubCard
           contentType: application/json
           producer:
             partitionCount: 1
-            
-        memberLoginLimitRecord: 
-          destination: memberLoginLimitRecord
+        signInPrizeLog:
+          destinationL: addSignInPrizeLog
           contentType: application/json
           producer:
             partitionCount: 1
-      
+
+
   application:
     name: qipai-members
 server:
@@ -165,7 +196,7 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://127.0.0.1:8761/eureka/
-      
+
 filepath:
   snapshotFileBasePath: /data/app/qipai_members/snapshot
   jFileBasePath: /data/app/qipai_members/journal

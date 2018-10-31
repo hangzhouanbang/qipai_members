@@ -1,10 +1,5 @@
 package com.anbang.qipai.members.cqrs.q.service;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.anbang.qipai.members.cqrs.c.domain.CreateMemberResult;
 import com.anbang.qipai.members.cqrs.q.dao.MemberDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberGoldAccountDboDao;
@@ -15,6 +10,10 @@ import com.anbang.qipai.members.web.vo.RecordSummaryTexts;
 import com.dml.accounting.AccountingRecord;
 import com.dml.accounting.TextAccountingSummary;
 import com.highto.framework.web.page.ListPage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class MemberGoldQueryService {

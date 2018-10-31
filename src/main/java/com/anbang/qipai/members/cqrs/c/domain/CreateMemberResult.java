@@ -6,20 +6,35 @@ public class CreateMemberResult {
 
 	private String memberId;
 	private String goldAccountId;
+    private String scoreAccountId;
+    private String hongBaoAccountId;
+    private String phoneFeeAccountId;
 	private AccountingRecord accountingRecordForGiveGold;
 	private AccountingRecord accountingRecordForGiveScore;
-	private String scoreAccountId;
+	private AccountingRecord accountingRecordForHongBao;
+	private AccountingRecord accountingRecordForPhoneFee;
 
-	public CreateMemberResult(String memberId, String goldAccountId, AccountingRecord accountingRecordForGiveGold,
-			String scoreAccountId, AccountingRecord accountingRecordForGiveScore) {
-		this.memberId = memberId;
-		this.goldAccountId = goldAccountId;
-		this.accountingRecordForGiveGold = accountingRecordForGiveGold;
-		this.scoreAccountId = scoreAccountId;
-		this.accountingRecordForGiveScore = accountingRecordForGiveScore;
-	}
+    public CreateMemberResult(String memberId,
+                              String goldAccountId,
+                              String scoreAccountId,
+                              String hongBaoAccountId,
+                              String phoneFeeAccountId,
+                              AccountingRecord accountingRecordForGiveGold,
+                              AccountingRecord accountingRecordForGiveScore,
+                              AccountingRecord accountingRecordForHongBao,
+                              AccountingRecord accountingRecordForPhoneFee) {
+        this.memberId = memberId;
+        this.goldAccountId = goldAccountId;
+        this.scoreAccountId = scoreAccountId;
+        this.hongBaoAccountId = hongBaoAccountId;
+        this.phoneFeeAccountId = phoneFeeAccountId;
+        this.accountingRecordForGiveGold = accountingRecordForGiveGold;
+        this.accountingRecordForGiveScore = accountingRecordForGiveScore;
+        this.accountingRecordForHongBao = accountingRecordForHongBao;
+        this.accountingRecordForPhoneFee = accountingRecordForPhoneFee;
+    }
 
-	public String getMemberId() {
+    public String getMemberId() {
 		return memberId;
 	}
 
@@ -59,4 +74,35 @@ public class CreateMemberResult {
 		this.scoreAccountId = scoreAccountId;
 	}
 
+    public AccountingRecord getAccountingRecordForHongBao() {
+        return accountingRecordForHongBao;
+    }
+
+    public void setAccountingRecordForHongBao(AccountingRecord accountingRecordForHongBao) {
+        this.accountingRecordForHongBao = accountingRecordForHongBao;
+    }
+
+    public AccountingRecord getAccountingRecordForPhoneFee() {
+        return accountingRecordForPhoneFee;
+    }
+
+    public void setAccountingRecordForPhoneFee(AccountingRecord accountingRecordForPhoneFee) {
+        this.accountingRecordForPhoneFee = accountingRecordForPhoneFee;
+    }
+
+    public String getHongBaoAccountId() {
+        return hongBaoAccountId;
+    }
+
+    public void setHongBaoAccountId(String hongBaoAccountId) {
+        this.hongBaoAccountId = hongBaoAccountId;
+    }
+
+    public String getPhoneFeeAccountId() {
+        return phoneFeeAccountId;
+    }
+
+    public void setPhoneFeeAccountId(String phoneFeeAccountId) {
+        this.phoneFeeAccountId = phoneFeeAccountId;
+    }
 }

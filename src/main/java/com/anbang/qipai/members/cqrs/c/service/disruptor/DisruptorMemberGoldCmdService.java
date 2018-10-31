@@ -1,5 +1,7 @@
 package com.anbang.qipai.members.cqrs.c.service.disruptor;
 
+import com.anbang.qipai.members.cqrs.c.domain.prize.ObatinSigningPrizeRecord;
+import com.anbang.qipai.members.cqrs.c.domain.sign.SignTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +40,11 @@ public class DisruptorMemberGoldCmdService extends DisruptorCmdServiceBase imple
 				throw new RuntimeException(e);
 			}
 		}
+	}
+
+	@Override
+	public ObatinSigningPrizeRecord obtainSignPrizeGold(String memberId, SignTypeEnum signTypeEnum) {
+		return null;
 	}
 
 	@Override

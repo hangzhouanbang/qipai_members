@@ -1,11 +1,8 @@
 package com.anbang.qipai.members.cqrs.q.service;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
+import com.anbang.qipai.members.cqrs.c.domain.prize.LotteryTypeEnum;
+import com.anbang.qipai.members.cqrs.c.domain.prize.PrizeEnum;
+import com.anbang.qipai.members.cqrs.c.domain.sign.Constant;
 import com.anbang.qipai.members.cqrs.q.dao.AuthorizationDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberDboDao;
 import com.anbang.qipai.members.cqrs.q.dbo.AuthorizationDbo;
@@ -15,6 +12,14 @@ import com.anbang.qipai.members.plan.bean.MemberGrade;
 import com.anbang.qipai.members.plan.bean.MemberOrder;
 import com.anbang.qipai.members.plan.bean.MemberRightsConfiguration;
 import com.anbang.qipai.members.plan.dao.MemberGradeDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import static com.anbang.qipai.members.cqrs.c.domain.prize.PrizeEnum.ONE_DAY_MEMBER_CARD;
+import static com.anbang.qipai.members.cqrs.c.domain.prize.PrizeEnum.TWO_DAY_MEMBER_CARD;
 
 @Component
 public class MemberAuthQueryService {
@@ -140,6 +145,39 @@ public class MemberAuthQueryService {
 		return memberDboDao.findMemberById(member.getId());
 	}
 
+
+	public MemberDbo prolongPrizeVipTime(String memberId, PrizeEnum prizeEnum){
+
+	    if (!PrizeEnum.isMemberCardType(prizeEnum)){
+	        throw new IllegalArgumentException("prize type must be member card");
+        }
+        long time=0;
+	    if (prizeEnum == ONE_DAY_MEMBER_CARD){
+	        time= Constant.ONE_DAY_MS * 1;
+        }
+        if (prizeEnum==TWO_DAY_MEMBER_CARD){
+	        time=Constant.ONE_DAY_MS * 2;
+        }
+        return this.prolongVipTime(memberId,time);
+    }
+
+    public MemberDbo prolongVipTime(String memberId , long time){
+		memberDboDao.updateMemberVIP(memberId, true);
+        MemberDbo member = this.memberDboDao.findMemberById(memberId);
+        long vipEndTime = member.getVipEndTime();
+        if (vipEndTime > System.currentTimeMillis()) {
+            vipEndTime = time + vipEndTime;
+        } else {
+            vipEndTime = time + System.currentTimeMillis();
+        }
+        member.setVipEndTime(vipEndTime);
+        memberDboDao.updateMemberVipEndTime(memberId,vipEndTime);
+        return member;
+    }
+
+
+
+
 	public MemberDbo updateMemberVip(String memberId, boolean vip) {
 		memberDboDao.updateMemberVIP(memberId, vip);
 		return memberDboDao.findMemberById(memberId);
@@ -154,4 +192,16 @@ public class MemberAuthQueryService {
 		memberDboDao.updateMemberRealUser(memberId, realName, IDcard, verify);
 		return memberDboDao.findMemberById(memberId);
 	}
+
+    public void prolongVipTimeByRaffle(String memberId, LotteryTypeEnum lotteryType, int singleNum) {
+    	long time=0;
+    	switch (lotteryType){
+            case MEMBER_CARD_DAY:time=Constant.ONE_DAY_MS*1*singleNum;break;
+            case MEMBER_CARD_WEAK:time=Constant.ONE_DAY_MS*7*singleNum;break;
+            case MEMBER_CARD_MONTH:time=Constant.ONE_DAY_MS*30*singleNum;break;
+            case MEMBER_CARD_SEASON:time=Constant.ONE_DAY_MS*90*singleNum;break;
+            default:throw new RuntimeException("lottery type must be membercard");
+        }
+        this.prolongVipTime(memberId,time);
+    }
 }
