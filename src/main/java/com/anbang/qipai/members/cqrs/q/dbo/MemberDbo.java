@@ -13,45 +13,13 @@ public class MemberDbo {
 	private long vipEndTime;// VIP时间
 	private MemberRights rights;
 	private String realName;// 真实姓名
-	private String IDcard;// 身份证
+	private String idCard;// 身份证
 	private boolean verifyUser;// 实名认证，true:通过认证,false:未通过认证
 	private boolean bindAgent;// 绑定推广员，true:绑定,false:未绑定
 	private String agentId;// 推广员id
 	private int gold;// 金币
 	private int score;// 积分
 	private double cost;// 累计消费
-
-	public String getAgentId() {
-		return agentId;
-	}
-
-	public void setAgentId(String agentId) {
-		this.agentId = agentId;
-	}
-
-	public int getGold() {
-		return gold;
-	}
-
-	public void setGold(int gold) {
-		this.gold = gold;
-	}
-
-	public int getScore() {
-		return score;
-	}
-
-	public void setScore(int score) {
-		this.score = score;
-	}
-
-	public double getCost() {
-		return cost;
-	}
-
-	public void setCost(double cost) {
-		this.cost = cost;
-	}
 
 	public String getId() {
 		return id;
@@ -149,12 +117,12 @@ public class MemberDbo {
 		this.realName = realName;
 	}
 
-	public String getIDcard() {
-		return IDcard;
+	public String getIdCard() {
+		return idCard;
 	}
 
-	public void setIDcard(String iDcard) {
-		IDcard = iDcard;
+	public void setIdCard(String idCard) {
+		this.idCard = idCard;
 	}
 
 	public boolean isVerifyUser() {
@@ -173,4 +141,35 @@ public class MemberDbo {
 		this.bindAgent = bindAgent;
 	}
 
+	public String getAgentId() {
+		return agentId;
+	}
+
+	public void setAgentId(String agentId) {
+		this.agentId = agentId;
+	}
+
+	public int getGold() {
+		return gold;
+	}
+
+	public void setGold(int gold) {
+		this.gold = gold;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public double getCost() {
+		return cost;
+	}
+
+	public void setCost(double cost) {
+		this.cost = cost;
+	}
 }

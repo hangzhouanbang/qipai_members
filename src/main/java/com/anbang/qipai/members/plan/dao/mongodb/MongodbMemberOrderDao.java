@@ -41,6 +41,7 @@ public class MongodbMemberOrderDao implements MemberOrderDao {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("payerId").is(payerId));
 		query.addCriteria(Criteria.where("productName").is(productName));
+		query.addCriteria(Criteria.where("status").in("TRADE_SUCCESS", "TRADE_FINISHED", "SUCCESS"));
 		return mongoTemplate.findOne(query, MemberOrder.class);
 	}
 
