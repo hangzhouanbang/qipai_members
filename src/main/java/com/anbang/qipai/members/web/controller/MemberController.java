@@ -154,10 +154,14 @@ public class MemberController {
 		vo.setVipLevel(member.getVipLevel());
 		vo.setPhone(member.getPhone());
 		String vipEndTime = "";
-		if (member.isVip() && member.getVipEndTime() > System.currentTimeMillis()) {
+		if (member.getVipEndTime() > System.currentTimeMillis()) {
 			long endTime = member.getVipEndTime();
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			vipEndTime = format.format(new Date(endTime));
+		} else {
+			member = memberAuthQueryService.updateMemberVip(member.getId(), false);
+			// kafka更新
+			membersMsgService.updateMemberVip(member);
 		}
 		vo.setVipEndTime(vipEndTime);
 		vo.setSuccess(true);
