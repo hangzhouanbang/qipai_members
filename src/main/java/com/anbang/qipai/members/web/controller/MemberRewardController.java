@@ -116,7 +116,7 @@ public class MemberRewardController {
 				scoresMsgService.withdraw(scoredbo);
 			}
 			if (rewardVip != null && rewardVip > 0) {
-				long time = 1000 * 60 * 60 * 24 * rewardVip;
+				long time = 1000L * 60 * 60 * 24 * rewardVip;
 				MemberDbo member = memberAuthQueryService.rechargeVip(memberId, time);
 				membersMsgService.rechargeVip(member);
 			}
