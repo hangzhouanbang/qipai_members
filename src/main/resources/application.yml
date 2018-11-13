@@ -1,8 +1,8 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/qipai_members
-      
+      #uri: mongodb://localhost:27017/qipai_members
+
   cloud:
     stream:
       kafka:
@@ -118,6 +118,14 @@ spring:
             concurrency: 1
             partitioned: false
           contentType: application/json
+          
+        memberGoldsAccounting:
+          destination: memberGoldsAccounting
+          group: qipai-members
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
 
         signInPrize:
           destination: signInPrize
@@ -196,6 +204,9 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://127.0.0.1:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: http://172.16.21.51:82
 
 filepath:
   snapshotFileBasePath: /data/app/qipai_members/snapshot
