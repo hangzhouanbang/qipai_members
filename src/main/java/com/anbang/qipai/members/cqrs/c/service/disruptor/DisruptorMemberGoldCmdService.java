@@ -24,6 +24,7 @@ public class DisruptorMemberGoldCmdService extends DisruptorCmdServiceBase imple
 			throws InsufficientBalanceException, MemberNotFoundException {
 		CommonCommand cmd = new CommonCommand(MemberGoldCmdServiceImpl.class.getName(), "withdraw", memberId, amount,
 				textSummary, currentTime);
+
 		DeferredResult<AccountingRecord> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> {
 			AccountingRecord accountingRecord = memberGoldCmdServiceImpl.withdraw(cmd.getParameter(),
 					cmd.getParameter(), cmd.getParameter(), cmd.getParameter());

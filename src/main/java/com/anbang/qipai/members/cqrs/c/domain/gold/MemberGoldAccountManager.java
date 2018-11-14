@@ -50,8 +50,8 @@ public class MemberGoldAccountManager {
 	public AccountingRecord withdraw(String memberId, int amount, AccountingSummary accountingSummary,
 			long withdrawTime) throws MemberNotFoundException, InsufficientBalanceException {
 		if (!memberIdAccountIdMap.containsKey(memberId)) {
-			throw new MemberNotFoundException();
-		}
+            throw new MemberNotFoundException();
+        }
 		Account account = idAccountMap.get(memberIdAccountIdMap.get(memberId));
 		AccountingRecord record = account.withdraw(amount, accountingSummary, withdrawTime);
 		return record;
