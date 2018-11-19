@@ -27,6 +27,8 @@ public interface MemberDboDao {
 
 	void updateMemberBindAgent(String memberId, String agentId, boolean bindAgent);
 
+	void removeMemberBindAgent(String memberId);
+
 	void updateMemberVipScore(String memberId, double vipScore);
 
 	void updateMemberVipLevel(String memberId, int vipLevel);

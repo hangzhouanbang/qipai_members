@@ -147,6 +147,16 @@ public class MongodbMemberDboDao implements MemberDboDao {
 		Update update = new Update();
 		update.set("bindAgent", bindAgent);
 		update.set("agentId", agentId);
+		update.set("hasBindAgent", true);
+		mongoTemplate.updateFirst(query, update, MemberDbo.class);
+	}
+
+	@Override
+	public void removeMemberBindAgent(String memberId) {
+		Query query = new Query(Criteria.where("id").is(memberId));
+		Update update = new Update();
+		update.set("bindAgent", false);
+		update.unset("agentId");
 		mongoTemplate.updateFirst(query, update, MemberDbo.class);
 	}
 

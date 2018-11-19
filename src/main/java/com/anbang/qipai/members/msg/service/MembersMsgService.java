@@ -62,4 +62,18 @@ public class MembersMsgService {
 		mo.setData(member);
 		membersSource.members().send(MessageBuilder.withPayload(mo).build());
 	}
+
+	public void removeMemberBindAgent(MemberDbo member) {
+		CommonMO mo = new CommonMO();
+		mo.setMsg("remove member bindAgent");
+		mo.setData(member);
+		membersSource.members().send(MessageBuilder.withPayload(mo).build());
+	}
+
+	public void addMemberBindAgent(MemberDbo member) {
+		CommonMO mo = new CommonMO();
+		mo.setMsg("add member bindAgent");
+		mo.setData(member);
+		membersSource.members().send(MessageBuilder.withPayload(mo).build());
+	}
 }

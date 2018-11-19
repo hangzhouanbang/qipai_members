@@ -287,7 +287,7 @@ public class MemberController {
 			member = memberAuthQueryService.updateMemberBindAgent(memberId, (String) map.get("agentId"), true);
 			membersMsgService.updateMemberBindAgent(member);
 		}
-		if (commonRemoteVo.isSuccess()) {
+		if (!member.isHasBindAgent() && commonRemoteVo.isSuccess()) {
 			MemberRights rights = member.getRights();
 			Map data = new HashMap<>();
 			data.put("goldForAgentInvite", rights.getGoldForAgentInvite());
@@ -307,6 +307,24 @@ public class MemberController {
 		}
 		vo.setSuccess(commonRemoteVo.isSuccess());
 		vo.setMsg(commonRemoteVo.getMsg());
+		return vo;
+	}
+
+	@RequestMapping("/removeagent")
+	public CommonVO removeagent(String memberId) {
+		CommonVO vo = new CommonVO();
+		MemberDbo member = memberAuthQueryService.removeMemberBindAgent(memberId);
+		membersMsgService.removeMemberBindAgent(member);
+		vo.setSuccess(true);
+		return vo;
+	}
+
+	@RequestMapping("/updateagent")
+	public CommonVO updateagent(String memberId, String agentId) {
+		CommonVO vo = new CommonVO();
+		MemberDbo member = memberAuthQueryService.updateMemberBindAgent(memberId, agentId, true);
+		membersMsgService.addMemberBindAgent(member);
+		vo.setSuccess(true);
 		return vo;
 	}
 
