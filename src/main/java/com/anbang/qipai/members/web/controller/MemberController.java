@@ -287,6 +287,7 @@ public class MemberController {
 			member = memberAuthQueryService.updateMemberBindAgent(memberId, (String) map.get("agentId"), true);
 			membersMsgService.updateMemberBindAgent(member);
 		}
+		//如果用户绑定过推广员,就不发奖了
 		if (!member.isHasBindAgent() && commonRemoteVo.isSuccess()) {
 			MemberRights rights = member.getRights();
 			Map data = new HashMap<>();
