@@ -204,9 +204,9 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://127.0.0.1:8761/eureka/
-  instance:
-    prefer-ip-address: true
-    instance-id: http://172.16.21.51:82
+  #instance:
+    #prefer-ip-address: true
+    #instance-id: http://172.16.21.51:82
 
 filepath:
   snapshotFileBasePath: /data/app/qipai_members/snapshot
