@@ -323,7 +323,19 @@ public class MemberController {
 	@RequestMapping("/updateagent")
 	public CommonVO updateagent(String memberId, String agentId) {
 		CommonVO vo = new CommonVO();
-		MemberDbo member = memberAuthQueryService.updateMemberBindAgent(memberId, agentId, true);
+
+        //查询MemberDbo的hasBindAgent是否为true(该用户是否绑定过)
+		MemberDbo initialMemberDbo=memberAuthQueryService.findMemberById(memberId);
+        //假设没绑定过,设置为false
+        boolean hasBindAgent=false;
+        if(initialMemberDbo.isHasBindAgent()==true){
+            //绑定过,设置为true
+            hasBindAgent=true;
+        }
+
+        //修改hasBindAgent并设置bindAgent为true
+        MemberDbo member=memberAuthQueryService.updateMemberHasBindAgent(memberId, agentId,hasBindAgent);
+
 		membersMsgService.addMemberBindAgent(member);
 		vo.setSuccess(true);
 		return vo;

@@ -215,4 +215,17 @@ public class MemberAuthQueryService {
 		}
 		this.prolongVipTime(memberId, time);
 	}
+
+    /**
+     * 修改hasBindAgent(是否绑定过推广员)
+     * 设置bindAgent为true
+     * @param memberId
+     * @param agentId
+     * @param hasBindAgent
+     * @return
+     */
+    public MemberDbo updateMemberHasBindAgent(String memberId, String agentId, boolean hasBindAgent) {
+        memberDboDao.updateMemberHasBindAgent(memberId, agentId, hasBindAgent);
+        return memberDboDao.findMemberById(memberId);
+    }
 }
