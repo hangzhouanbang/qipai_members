@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.anbang.qipai.members.config.PhoneVerifyConfig;
 import com.anbang.qipai.members.config.RealNameVerifyConfig;
 import com.anbang.qipai.members.cqrs.c.domain.MemberNotFoundException;
 import com.anbang.qipai.members.cqrs.c.service.MemberAuthService;
@@ -32,10 +33,13 @@ import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
 import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.plan.bean.MemberLoginLimitRecord;
+import com.anbang.qipai.members.plan.bean.MemberVerifyPhone;
 import com.anbang.qipai.members.plan.service.MemberLoginLimitRecordService;
+import com.anbang.qipai.members.plan.service.MemberVerifyPhoneService;
 import com.anbang.qipai.members.remote.service.QiPaiAgentsRemoteService;
 import com.anbang.qipai.members.remote.vo.CommonRemoteVO;
 import com.anbang.qipai.members.util.HttpUtil;
+import com.anbang.qipai.members.util.VerifyPhoneCodeUtil;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.anbang.qipai.members.web.vo.DetailsVo;
 import com.anbang.qipai.members.web.vo.MemberVO;
@@ -63,6 +67,9 @@ public class MemberController {
 
 	@Autowired
 	private MemberScoreQueryService memberScoreQueryService;
+
+	@Autowired
+	private MemberVerifyPhoneService memberVerifyPhoneService;
 
 	@Autowired
 	private MemberGoldCmdService memberGoldCmdService;
@@ -246,14 +253,89 @@ public class MemberController {
 			vo.setMsg("invalid token");
 			return vo;
 		}
+		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
+		if (member.getPhone() != null && !"".equals(member.getPhone())) {
+			vo.setSuccess(false);
+			vo.setMsg("already registe phone");
+			return vo;
+		}
 		if (!Pattern.matches("[0-9]{11}", phone)) {
 			vo.setSuccess(false);
 			vo.setMsg("invalid phone");
 			return vo;
 		}
-		MemberDbo member = memberAuthQueryService.registerPhone(memberId, phone);
+		try {
+			String param = VerifyPhoneCodeUtil.generateVerifyCode();
+			String host = "https://feginesms.market.alicloudapi.com";
+			String path = "/codeNotice";
+			String method = "GET";
+			String appcode = PhoneVerifyConfig.APPCODE;
+			Map<String, String> headers = new HashMap<String, String>();
+			// 最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
+			headers.put("Authorization", "APPCODE " + appcode);
+			Map<String, String> querys = new HashMap<String, String>();
+			querys.put("param", param);
+			querys.put("phone", phone);
+			querys.put("sign", "1");
+			querys.put("skin", "1");
+
+			HttpResponse response = HttpUtil.doGet(host, path, method, headers, querys);
+			Map map = gson.fromJson(EntityUtils.toString(response.getEntity()), Map.class);
+			String message = (String) map.get("Message");
+			String code = (String) map.get("Code");
+			MemberVerifyPhone memberVerifyPhone = new MemberVerifyPhone();
+			memberVerifyPhone.setId(memberId);
+			memberVerifyPhone.setPhone(phone);
+			memberVerifyPhone.setParam(param);
+			memberVerifyPhone.setMessage(message);
+			memberVerifyPhone.setCode(code);
+			if (message.equals("OK") && code.equals("OK")) {
+				String requestId = (String) map.get("RequestId");
+				String bizId = (String) map.get("BizId");
+				memberVerifyPhone.setRequestId(requestId);
+				memberVerifyPhone.setBizId(bizId);
+				vo.setSuccess(true);
+			} else {
+				vo.setSuccess(false);
+				vo.setMsg(message);
+			}
+			memberVerifyPhoneService.save(memberVerifyPhone);
+			return vo;
+		} catch (Exception e) {
+			vo.setSuccess(false);
+			vo.setMsg(e.getClass().getName());
+			return vo;
+		}
+	}
+
+	@RequestMapping("/verifyphone")
+	public CommonVO verifyPhone(String phone, String param, String token) {
+		CommonVO vo = new CommonVO();
+		String memberId = memberAuthService.getMemberIdBySessionId(token);
+		if (memberId == null) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid token");
+			return vo;
+		}
+		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
+		if (member.getPhone() != null && !"".equals(member.getPhone())) {
+			vo.setSuccess(true);
+			return vo;
+		}
+		MemberVerifyPhone memberVerifyPhone = memberVerifyPhoneService.findById(memberId);
+		if (memberVerifyPhone == null || !memberVerifyPhone.getParam().equals(param)) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid param");
+			return vo;
+		}
+		if (!phone.equals(memberVerifyPhone.getPhone())) {
+			vo.setSuccess(false);
+			vo.setMsg("invalid phone");
+			return vo;
+		}
+		member = memberAuthQueryService.registerPhone(memberId, phone);
 		membersMsgService.updateMemberPhone(member);
-		member = memberAuthQueryService.rechargeVip(memberId, 24 * 60 * 60 * 1000);
+		member = memberAuthQueryService.rechargeVip(memberId, 24L * 60 * 60 * 1000);
 		membersMsgService.rechargeVip(member);
 		Map data = new HashMap<>();
 		data.put("phone", phone);
@@ -287,7 +369,7 @@ public class MemberController {
 			member = memberAuthQueryService.updateMemberBindAgent(memberId, (String) map.get("agentId"), true);
 			membersMsgService.updateMemberBindAgent(member);
 		}
-		//如果用户绑定过推广员,就不发奖了
+		// 如果用户绑定过推广员,就不发奖了
 		if (!member.isHasBindAgent() && commonRemoteVo.isSuccess()) {
 			MemberRights rights = member.getRights();
 			Map data = new HashMap<>();
@@ -324,17 +406,17 @@ public class MemberController {
 	public CommonVO updateagent(String memberId, String agentId) {
 		CommonVO vo = new CommonVO();
 
-        //查询MemberDbo的hasBindAgent是否为true(该用户是否绑定过)
-		MemberDbo initialMemberDbo=memberAuthQueryService.findMemberById(memberId);
-        //假设没绑定过,设置为false
-        boolean hasBindAgent=false;
-        if(initialMemberDbo.isHasBindAgent()==true){
-            //绑定过,设置为true
-            hasBindAgent=true;
-        }
+		// 查询MemberDbo的hasBindAgent是否为true(该用户是否绑定过)
+		MemberDbo initialMemberDbo = memberAuthQueryService.findMemberById(memberId);
+		// 假设没绑定过,设置为false
+		boolean hasBindAgent = false;
+		if (initialMemberDbo.isHasBindAgent() == true) {
+			// 绑定过,设置为true
+			hasBindAgent = true;
+		}
 
-        //修改hasBindAgent并设置bindAgent为true
-        MemberDbo member=memberAuthQueryService.updateMemberHasBindAgent(memberId, agentId,hasBindAgent);
+		// 修改hasBindAgent并设置bindAgent为true
+		MemberDbo member = memberAuthQueryService.updateMemberHasBindAgent(memberId, agentId, hasBindAgent);
 
 		membersMsgService.addMemberBindAgent(member);
 		vo.setSuccess(true);
