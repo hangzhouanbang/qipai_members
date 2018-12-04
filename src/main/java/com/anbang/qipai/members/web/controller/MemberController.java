@@ -371,7 +371,7 @@ public class MemberController {
 		}
 		// 如果用户绑定过推广员,就不发奖了
 		if (!member.isHasBindAgent() && commonRemoteVo.isSuccess()) {
-			MemberRights rights = member.getRights();
+                MemberRights rights = member.getRights();
 			Map data = new HashMap<>();
 			data.put("goldForAgentInvite", rights.getGoldForAgentInvite());
 			vo.setData(data);
@@ -405,19 +405,25 @@ public class MemberController {
 	@RequestMapping("/updateagent")
 	public CommonVO updateagent(String memberId, String agentId) {
 		CommonVO vo = new CommonVO();
-
 		// 查询MemberDbo的hasBindAgent是否为true(该用户是否绑定过)
 		MemberDbo initialMemberDbo = memberAuthQueryService.findMemberById(memberId);
-		// 假设没绑定过,设置为false
-		boolean hasBindAgent = false;
-		if (initialMemberDbo.isHasBindAgent() == true) {
-			// 绑定过,设置为true
-			hasBindAgent = true;
-		}
 
-		// 修改hasBindAgent并设置bindAgent为true
-		MemberDbo member = memberAuthQueryService.updateMemberHasBindAgent(memberId, agentId, hasBindAgent);
+		//如果hasBindAgent为false,赠送金币,
+		if(!initialMemberDbo.isHasBindAgent()){
+            MemberRights rights = initialMemberDbo.getRights();
+            try {
+                AccountingRecord rcd = memberGoldCmdService.giveGoldToMember(memberId, rights.getGoldForAgentInvite(),
+                        "bind invitioncode", System.currentTimeMillis());
+                MemberGoldRecordDbo dbo = memberGoldQueryService.withdraw(memberId, rcd);
+                // rcd发kafka
+                goldsMsgService.withdraw(dbo);
+            } catch (MemberNotFoundException e) {
 
+            }
+        }
+        // 设置hasBindAgent为true并设置bindAgent为true
+        boolean hasBindAgent = true;
+        MemberDbo member = memberAuthQueryService.updateMemberHasBindAgent(memberId, agentId, hasBindAgent);
 		membersMsgService.addMemberBindAgent(member);
 		vo.setSuccess(true);
 		return vo;
