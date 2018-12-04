@@ -46,6 +46,7 @@ public class MemberAuthController {
 		} else {
 			vo.setSuccess(false);
 		}
+
 		return vo;
 	}
 
