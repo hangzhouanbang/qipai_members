@@ -118,6 +118,13 @@ spring:
             concurrency: 1
             partitioned: false
           contentType: application/json
+        memberslogin:
+          destination: memberslogin
+          group: qipai-members
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
           
         memberGoldsAccounting:
           destination: memberGoldsAccounting
