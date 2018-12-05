@@ -78,7 +78,7 @@ public class MembersMsgReceiver {
 		String json = gson.toJson(mo.getData());
 		if ("new member".equals(msg)) {
 			Map data = gson.fromJson(json, Map.class);
-			String state = (String) data.get("state");
+			String invitationCode = (String) data.get("invitationCode");
 			String unionid = (String) data.get("unionid");
 			String openid = (String) data.get("openid");
 			String nickname = (String) data.get("nickname");
@@ -133,7 +133,7 @@ public class MembersMsgReceiver {
 					// 发送积分记账消息
 					scoresMsgService.withdraw(scoreDbo);
 					CommonRemoteVO commonRemoteVo = qiPaiAgentsRemoteService.agent_invitemember(memberDbo.getId(),
-							memberDbo.getNickname(), state);
+							memberDbo.getNickname(), invitationCode);
 					if ("invitation already exist".equals(commonRemoteVo.getMsg())) {
 						Map map = (Map) commonRemoteVo.getData();
 						memberDbo = memberAuthQueryService.updateMemberBindAgent(memberDbo.getId(),
