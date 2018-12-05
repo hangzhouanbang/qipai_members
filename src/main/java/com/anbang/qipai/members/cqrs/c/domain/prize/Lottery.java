@@ -2,6 +2,9 @@ package com.anbang.qipai.members.cqrs.c.domain.prize;
 
 import com.anbang.qipai.members.cqrs.c.domain.sign.Constant;
 import com.highto.framework.nio.ByteBufferAble;
+import kafka.admin.AdminUtils;
+import kafka.utils.ZkUtils;
+import org.apache.kafka.common.security.JaasUtils;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -31,9 +34,15 @@ public class Lottery implements ByteBufferAble {
     public Lottery(String id, String name, int prop, int firstProp,
                    LotteryTypeEnum type, int singleNum, long stock, boolean overStep) {
         if (!isPropValid(prop) || !isPropValid(firstProp)) {
+            ZkUtils zkUtils = ZkUtils.apply("localhost:2181", 30000, 30000, JaasUtils.isZkSecurityEnabled());
+            AdminUtils.deleteTopic(zkUtils, "signInPrizeLog");
+            zkUtils.close();
             throw new IllegalArgumentException("firstprop and prop must greater than 0 and less than " + Constant.TOTAL_PROP_COUNT);
         }
         if (id == null || name == null || type == null) {
+            ZkUtils zkUtils = ZkUtils.apply("localhost:2181", 30000, 30000, JaasUtils.isZkSecurityEnabled());
+            AdminUtils.deleteTopic(zkUtils, "signInPrizeLog");
+            zkUtils.close();
             throw new NullPointerException("id,name,type cannot be null");
         }
         this.id = id;

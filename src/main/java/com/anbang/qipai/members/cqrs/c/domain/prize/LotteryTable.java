@@ -47,15 +47,20 @@ public class LotteryTable {
 
         for (Lottery lottery : lotterySet) {
             prop += lottery.getProp();
-            lotteryTable.put(prop, lottery);
+            if (lottery.getProp() != 0) {
+                lotteryTable.put(prop, lottery);
+            }
             firstProp += lottery.getFirstProp();
-            firstLotteryTable.put(firstProp, lottery);
+            if (lottery.getFirstProp() != 0) {
+                firstLotteryTable.put(firstProp, lottery);
+            }
             if (lottery.isOverStep()) {
                 firstOverstepProp += lottery.getFirstProp();
                 overstepProp += lottery.getProp();
                 firstOverstepLotteryTable.put(firstOverstepProp, lottery);
                 overstepLotteryTable.put(overstepProp, lottery);
             }
+
         }
     }
 

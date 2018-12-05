@@ -112,7 +112,7 @@ public class SignController {
                 day.add(20);
             signVo.addData("day", day);
             try {
-                this.raffle(memberId);
+                final RaffleHistoryVO raffle = this.raffle(memberId);
             } catch (Exception e) {
                 return new SignVo(false, e.getMessage());
             }
