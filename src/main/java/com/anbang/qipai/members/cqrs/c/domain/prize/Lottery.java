@@ -1,6 +1,9 @@
 package com.anbang.qipai.members.cqrs.c.domain.prize;
 
 import com.anbang.qipai.members.cqrs.c.domain.sign.Constant;
+import com.anbang.qipai.members.msg.receiver.SignPrizeReceiver;
+import com.anbang.qipai.members.util.KafkaUtil;
+import com.anbang.qipai.members.web.controller.SignController;
 import com.highto.framework.nio.ByteBufferAble;
 import kafka.admin.AdminUtils;
 import kafka.utils.ZkUtils;
@@ -8,8 +11,11 @@ import org.apache.kafka.common.security.JaasUtils;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.List;
 
 public class Lottery implements ByteBufferAble {
+    private static String topicName = "signInPrize";
+
     private String id;
     private String name;
     private int prop;
@@ -34,15 +40,17 @@ public class Lottery implements ByteBufferAble {
     public Lottery(String id, String name, int prop, int firstProp,
                    LotteryTypeEnum type, int singleNum, long stock, boolean overStep) {
         if (!isPropValid(prop) || !isPropValid(firstProp)) {
-            ZkUtils zkUtils = ZkUtils.apply("localhost:2181", 30000, 30000, JaasUtils.isZkSecurityEnabled());
-            AdminUtils.deleteTopic(zkUtils, "signInPrizeLog");
-            zkUtils.close();
+            if(KafkaUtil.topicExists(topicName)){
+                KafkaUtil.deleteTopic(topicName);
+                KafkaUtil.createTopic(topicName,1,1);
+            }
             throw new IllegalArgumentException("firstprop and prop must greater than 0 and less than " + Constant.TOTAL_PROP_COUNT);
         }
         if (id == null || name == null || type == null) {
-            ZkUtils zkUtils = ZkUtils.apply("localhost:2181", 30000, 30000, JaasUtils.isZkSecurityEnabled());
-            AdminUtils.deleteTopic(zkUtils, "signInPrizeLog");
-            zkUtils.close();
+            if(KafkaUtil.topicExists(topicName)){
+                KafkaUtil.deleteTopic(topicName);
+                KafkaUtil.createTopic(topicName,1,1);
+            }
             throw new NullPointerException("id,name,type cannot be null");
         }
         this.id = id;

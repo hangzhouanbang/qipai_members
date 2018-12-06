@@ -9,6 +9,8 @@ public class RaffleHistoryVO {
     private long time;
     private boolean isFirst;
 
+    public RaffleHistoryVO(){}
+
     public RaffleHistoryVO(String id, String memberId, String lotteryId, String lotteryName, String type, long time, boolean isFirst) {
         this.id = id;
         this.memberId = memberId;

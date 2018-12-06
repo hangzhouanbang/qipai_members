@@ -1,5 +1,6 @@
 package com.anbang.qipai.members.cqrs.q.dbo;
 
+import com.anbang.qipai.members.enums.ExtraRaffle;
 import com.anbang.qipai.members.plan.bean.Address;
 
 public class MemberRaffleHistoryDbo {
@@ -9,6 +10,7 @@ public class MemberRaffleHistoryDbo {
     private Address address;
     private long time;
     private boolean firstTime;
+    private String extraRaffle;
 
     public MemberRaffleHistoryDbo() {
     }
@@ -19,6 +21,7 @@ public class MemberRaffleHistoryDbo {
         this.lottery = lottery;
         this.time = time;
         this.firstTime = firstTime;
+        this.extraRaffle = "NO";
     }
 
     public String getId() {
@@ -61,12 +64,16 @@ public class MemberRaffleHistoryDbo {
         this.firstTime = firstTime;
     }
 
-    public Address getAddress() {
-        return address;
+    public String getExtraRaffle() {
+        return extraRaffle;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setExtraRaffle(String extraRaffle) {
+        this.extraRaffle = extraRaffle;
+    }
+
+    public Address getAddress() {
+        return address;
     }
 
     @Override
@@ -78,7 +85,12 @@ public class MemberRaffleHistoryDbo {
                 ", address=" + address +
                 ", time=" + time +
                 ", firstTime=" + firstTime +
+                ", extraRaffle='" + extraRaffle + '\'' +
                 '}';
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
 }

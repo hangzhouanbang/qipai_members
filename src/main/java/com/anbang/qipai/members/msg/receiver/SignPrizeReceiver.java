@@ -11,12 +11,17 @@ import com.anbang.qipai.members.msg.msjobj.AdminLotteryMo;
 import com.anbang.qipai.members.msg.msjobj.CommonMO;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Headers;
+import org.springframework.messaging.handler.annotation.Payload;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @EnableBinding(SignInPrizeSink.class)
 public class SignPrizeReceiver {
@@ -24,6 +29,8 @@ public class SignPrizeReceiver {
     private static final String SIGNING_PRIZE = "SIGNING_PRIZE";
 
     private static final String PUBLISH_LOTTERY = "releaseSignInPrize";
+
+    private static final Logger logger = Logger.getLogger(SignPrizeReceiver.class);
 
     @Autowired
     private MemberPrizeCmdService memberPrizeCmdService;
@@ -102,5 +109,11 @@ public class SignPrizeReceiver {
         }
     }
 
+//    @StreamListener(SignInPrizeSink.CHANNEL)
+//    public void consumer(@Payload CommonMO commonMO, @Headers Map headers) {
+//        logger.info("已消费");
+//
+//    }
+//
 
 }
