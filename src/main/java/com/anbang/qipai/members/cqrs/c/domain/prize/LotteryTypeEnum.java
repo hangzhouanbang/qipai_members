@@ -32,7 +32,10 @@ public enum LotteryTypeEnum {
     /**
      * 玉石
      */
-    GOLD;
+    GOLD,
+
+    NONE;
+    ;
 
     public static boolean isMemberCard(LotteryTypeEnum type) {
         return type == MEMBER_CARD_DAY || type == MEMBER_CARD_WEAK || type == MEMBER_CARD_MONTH || type == MEMBER_CARD_SEASON;

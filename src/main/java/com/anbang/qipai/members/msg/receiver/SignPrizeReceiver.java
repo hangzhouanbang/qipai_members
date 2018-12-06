@@ -104,6 +104,8 @@ public class SignPrizeReceiver {
                 return LotteryTypeEnum.ENTIRY;
             case "话费":
                 return LotteryTypeEnum.PHONE_FEE;
+            case "谢谢惠顾":
+                return LotteryTypeEnum.NONE;
             default:
                 return null;
         }

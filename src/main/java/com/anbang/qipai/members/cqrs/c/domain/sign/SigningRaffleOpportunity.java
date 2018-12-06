@@ -27,10 +27,11 @@ public class SigningRaffleOpportunity {
         if (isExpired()) {
             throw new OpportunityInvalidUsedException("奖励已过期");
         }
-        if (this.used) {
-            throw new OpportunityInvalidUsedException("您今天已经抽奖过");
-        }
-        this.used = true;
+        //现在在最外面进行限制
+//        if (this.used) {
+//            throw new OpportunityInvalidUsedException("您今天已经抽奖过");
+//        }
+//        this.used = true;
     }
 
     private boolean isExpired() {

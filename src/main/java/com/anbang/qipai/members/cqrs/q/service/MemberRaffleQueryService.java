@@ -31,6 +31,11 @@ public class MemberRaffleQueryService {
     }
 
 
+    public MemberRaffleHistoryDbo findByMemberId(String memberId) {
+        return this.raffleHistoryDboDao.findByMemberId(memberId);
+    }
+
+
     public MemberRaffleHistoryDbo setRaffleAddress(String id, String memberId, Address address) {
         MemberRaffleHistoryDbo memberRaffleHistoryDbo = this.find(id);
         if (memberRaffleHistoryDbo != null && memberRaffleHistoryDbo.getAddress() == null && memberRaffleHistoryDbo.getMemberId().equals(memberId)) {

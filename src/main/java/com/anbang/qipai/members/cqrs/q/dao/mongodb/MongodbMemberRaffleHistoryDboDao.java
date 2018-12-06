@@ -3,6 +3,7 @@ package com.anbang.qipai.members.cqrs.q.dao.mongodb;
 import com.anbang.qipai.members.cqrs.q.dao.MemberRaffleHistoryDboDao;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberRaffleHistoryDbo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -33,6 +34,14 @@ public class MongodbMemberRaffleHistoryDboDao implements MemberRaffleHistoryDboD
     public MemberRaffleHistoryDbo findById(String id) {
         Query query = new Query(Criteria.where("id").is(id));
         return this.mongoTemplate.findOne(query, MemberRaffleHistoryDbo.class);
+    }
+
+
+    @Override
+    public MemberRaffleHistoryDbo findByMemberId(String memberId) {
+        Query query = new Query(Criteria.where("memberId").is(memberId));
+        query.with(new Sort(Sort.Direction.DESC,"time"));
+        return this.mongoTemplate.findOne(query,MemberRaffleHistoryDbo.class);
     }
 
 }
