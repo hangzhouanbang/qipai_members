@@ -42,6 +42,13 @@ public class MembersMsgService {
 		membersSource.members().send(MessageBuilder.withPayload(mo).build());
 	}
 
+	public void rechargeGold(MemberDbo member) {
+		CommonMO mo = new CommonMO();
+		mo.setMsg("recharge Gold");
+		mo.setData(member);
+		membersSource.members().send(MessageBuilder.withPayload(mo).build());
+	}
+
 	public void updateMemberVip(MemberDbo member) {
 		CommonMO mo = new CommonMO();
 		mo.setMsg("update member vip");

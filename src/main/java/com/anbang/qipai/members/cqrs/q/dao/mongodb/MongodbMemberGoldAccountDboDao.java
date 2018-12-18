@@ -32,6 +32,12 @@ public class MongodbMemberGoldAccountDboDao implements MemberGoldAccountDboDao {
 	}
 
 	@Override
+	public void updateByMemberId(String memberId, int balance) {
+		mongoTemplate.updateFirst(new Query(Criteria.where("memberId").is(memberId)), new Update().set("balance", balance),
+				MemberGoldAccountDbo.class);
+	}
+
+	@Override
 	public MemberGoldAccountDbo findByMemberId(String memberId) {
 		return repository.findOneByMemberId(memberId);
 	}

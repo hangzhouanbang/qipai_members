@@ -6,6 +6,8 @@ import static com.anbang.qipai.members.cqrs.c.domain.prize.PrizeEnum.TWO_DAY_MEM
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.anbang.qipai.members.cqrs.q.dao.MemberGoldAccountDboDao;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +35,8 @@ public class MemberAuthQueryService {
 
     @Autowired
     private MemberGradeDao memberGradeDao;
+    @Autowired
+    private MemberGoldAccountDboDao memberGoldAccountDboDao;
 
     public AuthorizationDbo findThirdAuthorizationDbo(String publisher, String uuid) {
         return authorizationDboDao.find(true, publisher, uuid);
@@ -98,6 +102,14 @@ public class MemberAuthQueryService {
 
     public MemberDbo registerPhone(String memberId, String phone) {
         memberDboDao.updateMemberPhone(memberId, phone);
+        return memberDboDao.findMemberById(memberId);
+    }
+
+    public MemberDbo rechargeGold(String memberId, int amount) {
+        MemberDbo member = memberDboDao.findMemberById(memberId);
+        MemberGoldAccountDbo memberGoldAccount = memberGoldAccountDboDao.findByMemberId(memberId);
+        memberDboDao.updateMemberGold(memberId,amount+memberGoldAccount.getBalance());
+        memberGoldAccountDboDao.updateByMemberId(memberId,amount+memberGoldAccount.getBalance());
         return memberDboDao.findMemberById(memberId);
     }
 

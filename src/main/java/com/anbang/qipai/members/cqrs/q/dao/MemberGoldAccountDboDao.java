@@ -10,4 +10,6 @@ public interface MemberGoldAccountDboDao {
 
 	MemberGoldAccountDbo findByMemberId(String memberId);
 
+	void updateByMemberId(String memberId, int balance);
+
 }
