@@ -24,6 +24,9 @@ public class XMLObjectConvertUtil {
 		try {
 			map = new TreeMap<String, String>();
 			SAXReader reader = new SAXReader();
+			reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			reader.setFeature("http://xml.org/sax/features/external-general-entities", true);
+			reader.setFeature("http://xml.org/sax/features/external-parameter-entities", true);
 			InputStream inputStream = new ByteArrayInputStream(xml.getBytes("utf-8"));
 			Document document = reader.read(inputStream);
 			// 获得所有的节点
