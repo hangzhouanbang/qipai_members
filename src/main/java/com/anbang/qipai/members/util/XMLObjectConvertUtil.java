@@ -38,7 +38,6 @@ public class XMLObjectConvertUtil {
 			}
 			return map;
 		} catch (Exception e) {
-			e.printStackTrace();
 			return map;
 		}
 	}
