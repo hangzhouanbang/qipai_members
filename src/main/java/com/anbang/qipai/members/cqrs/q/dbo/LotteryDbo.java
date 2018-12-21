@@ -9,6 +9,7 @@ public class LotteryDbo {
     private int firstProp;
     private String icon;
     private LotteryTypeEnum type;
+    private String cardType;
     private int singleNum;
     private long stock;
     private boolean overStep;
@@ -85,6 +86,14 @@ public class LotteryDbo {
         this.overStep = overStep;
     }
 
+    public String getCardType() {
+        return cardType;
+    }
+
+    public void setCardType(String cardType) {
+        this.cardType = cardType;
+    }
+
     @Override
     public String toString() {
         return "LotteryDbo{" +
@@ -94,6 +103,7 @@ public class LotteryDbo {
                 ", firstProp=" + firstProp +
                 ", icon='" + icon + '\'' +
                 ", type=" + type +
+                ", cardType='" + cardType + '\'' +
                 ", singleNum=" + singleNum +
                 ", stock=" + stock +
                 ", overStep=" + overStep +

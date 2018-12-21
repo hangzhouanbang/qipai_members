@@ -14,32 +14,39 @@ import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
 @Component
 public class MongodbMemberGoldAccountDboDao implements MemberGoldAccountDboDao {
 
-	@Autowired
-	private MongoTemplate mongoTemplate;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
-	@Autowired
-	private MemberGoldAccountDboRepository repository;
+    @Autowired
+    private MemberGoldAccountDboRepository repository;
 
-	@Override
-	public void save(MemberGoldAccountDbo accountDbo) {
-		repository.save(accountDbo);
-	}
+    @Override
+    public void save(MemberGoldAccountDbo accountDbo) {
+        repository.save(accountDbo);
+    }
 
-	@Override
-	public void update(String id, int balance) {
-		mongoTemplate.updateFirst(new Query(Criteria.where("id").is(id)), new Update().set("balance", balance),
-				MemberGoldAccountDbo.class);
-	}
+    @Override
+    public void update(String id, int balance) {
+        mongoTemplate.updateFirst(new Query(Criteria.where("id").is(id)), new Update().set("balance", balance),
+                MemberGoldAccountDbo.class);
+    }
 
-	@Override
-	public void updateByMemberId(String memberId, int balance) {
-		mongoTemplate.updateFirst(new Query(Criteria.where("memberId").is(memberId)), new Update().set("balance", balance),
-				MemberGoldAccountDbo.class);
-	}
+    @Override
+    public void updateByMemberId(String memberId, int balance) {
+        mongoTemplate.updateFirst(new Query(Criteria.where("memberId").is(memberId)), new Update().set("balance", balance),
+                MemberGoldAccountDbo.class);
+    }
 
-	@Override
-	public MemberGoldAccountDbo findByMemberId(String memberId) {
-		return repository.findOneByMemberId(memberId);
-	}
+    @Override
+    public MemberGoldAccountDbo findGoldByMemberId(String memberId) {
+        Query query = new Query(Criteria.where("memberId").is(memberId));
+        return mongoTemplate.findOne(query, MemberGoldAccountDbo.class);
+    }
+
+
+    @Override
+    public MemberGoldAccountDbo findByMemberId(String memberId) {
+        return repository.findOneByMemberId(memberId);
+    }
 
 }

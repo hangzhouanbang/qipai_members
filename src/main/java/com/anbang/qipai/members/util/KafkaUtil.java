@@ -22,6 +22,7 @@ public class KafkaUtil {
 
     private static final Logger logger = Logger.getLogger(KafkaUtil.class);
 
+    //TODO： 怎么看zKUtils的地址
     static {
         zkUtils = ZkUtils.apply("localhost:2181", 30000, 30000, JaasUtils.isZkSecurityEnabled());
     }

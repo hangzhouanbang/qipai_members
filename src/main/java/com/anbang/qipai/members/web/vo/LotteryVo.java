@@ -8,10 +8,16 @@ public class LotteryVo {
 
     private String name;
 
-    public LotteryVo(String id, String icon, String name) {
+    private String type;
+
+    private String cardType;
+
+    public LotteryVo(String id, String icon, String name, String type, String cardType) {
         this.id = id;
         this.icon = icon;
         this.name = name;
+        this.type = type;
+        this.cardType = cardType;
     }
 
     public String getId() {
@@ -38,4 +44,19 @@ public class LotteryVo {
         this.name = name;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getCardType() {
+        return cardType;
+    }
+
+    public void setCardType(String cardType) {
+        this.cardType = cardType;
+    }
 }

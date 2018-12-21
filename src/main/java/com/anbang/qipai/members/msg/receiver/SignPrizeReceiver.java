@@ -1,6 +1,7 @@
 package com.anbang.qipai.members.msg.receiver;
 
 
+import com.alibaba.fastjson.JSON;
 import com.anbang.qipai.members.cqrs.c.domain.prize.Lottery;
 import com.anbang.qipai.members.cqrs.c.domain.prize.LotteryTypeEnum;
 import com.anbang.qipai.members.cqrs.c.service.MemberPrizeCmdService;
@@ -46,8 +47,8 @@ public class SignPrizeReceiver {
         String msg = mo.getMsg();
         if (msg.equals(PUBLISH_LOTTERY)) {
             String json = gson.toJson(mo.getData());
-            List<AdminLotteryMo> list = gson.fromJson(json, new TypeToken<List<AdminLotteryMo>>() {
-            }.getType());
+
+            List<AdminLotteryMo> list = JSON.parseArray(json, AdminLotteryMo.class);
 
             List<Lottery> lotteryList = new ArrayList<>();
             for (AdminLotteryMo lotteryMo : list) {
@@ -55,7 +56,7 @@ public class SignPrizeReceiver {
                         lotteryMo.getName(),
                         lotteryMo.getPrizeProb(),
                         lotteryMo.getFirstPrizeProb(),
-                        this.of(lotteryMo.getType()),
+                        this.ofAdvice(lotteryMo),
                         lotteryMo.getSingleNum(),
                         lotteryMo.getStoreNum(),
                         lotteryMo.getOverstep().equals("是"));
@@ -78,13 +79,55 @@ public class SignPrizeReceiver {
                 lotteryDbo.setStock(lotteryMo.getStoreNum());
                 boolean overstep = lotteryMo.getOverstep().equals("是");
                 lotteryDbo.setOverStep(overstep);
-                LotteryTypeEnum type = this.of(lotteryMo.getType());
+                LotteryTypeEnum type = this.ofAdvice(lotteryMo);
                 lotteryDbo.setType(type);
+                if(lotteryMo.getType().equals("会员卡")){
+                 lotteryDbo.setCardType(lotteryMo.getCardType());
+                }
                 lotteryDboList.add(lotteryDbo);
             }
             this.lotteryQueryService.discardBeforeAndSaveAll(lotteryDboList);
         }
     }
+
+    private LotteryTypeEnum ofAdvice(AdminLotteryMo lotteryMo) {
+        if (lotteryMo.getType().equals("红包")) {
+            return LotteryTypeEnum.HONGBAO;
+        }
+        if (lotteryMo.getType().equals("玉石")) {
+            return LotteryTypeEnum.GOLD;
+        }
+        if (lotteryMo.getType().equals("实物")) {
+            return LotteryTypeEnum.ENTIRY;
+        }
+        if (lotteryMo.getType().equals("话费")) {
+            return LotteryTypeEnum.PHONE_FEE;
+        }
+        if (lotteryMo.getType().equals("谢谢惠顾")) {
+            return LotteryTypeEnum.NONE;
+        }
+
+        if (lotteryMo.getType().equals("会员卡")) {
+
+            if (lotteryMo.getCardType().equals("日卡")) {
+                return LotteryTypeEnum.MEMBER_CARD_DAY;
+            }
+
+            if (lotteryMo.getCardType().equals("周卡")) {
+                return LotteryTypeEnum.MEMBER_CARD_WEAK;
+            }
+
+            if (lotteryMo.getCardType().equals("月卡")) {
+                return LotteryTypeEnum.MEMBER_CARD_MONTH;
+            }
+
+            if (lotteryMo.getCardType().equals("季卡")) {
+                return LotteryTypeEnum.MEMBER_CARD_SEASON;
+            }
+        }
+        return null;
+    }
+
 
     private LotteryTypeEnum of(String type) {
         switch (type) {

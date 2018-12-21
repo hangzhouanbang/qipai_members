@@ -139,7 +139,7 @@ public class MemberController {
             vo.setMsg("login limited");
             return vo;
         }
-        MemberGoldAccountDbo memberGoldAccountDbo = memberGoldQueryService.findMemberGoldAccount(memberId);
+        MemberGoldAccountDbo memberGoldAccountDbo = memberGoldQueryService.findMemberGoldByMemberId(memberId);
         if (memberGoldAccountDbo != null) {
             int gold = memberGoldAccountDbo.getBalance();
             if (gold > 999999) {

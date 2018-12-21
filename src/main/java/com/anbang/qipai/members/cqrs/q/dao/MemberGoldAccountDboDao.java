@@ -4,12 +4,14 @@ import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
 
 public interface MemberGoldAccountDboDao {
 
-	void save(MemberGoldAccountDbo accountDbo);
+    void save(MemberGoldAccountDbo accountDbo);
 
-	void update(String id, int balance);
+    void update(String id, int balance);
 
-	MemberGoldAccountDbo findByMemberId(String memberId);
+    MemberGoldAccountDbo findByMemberId(String memberId);
 
-	void updateByMemberId(String memberId, int balance);
+    void updateByMemberId(String memberId, int balance);
+
+    MemberGoldAccountDbo findGoldByMemberId(String memberId);
 
 }

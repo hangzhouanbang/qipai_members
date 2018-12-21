@@ -5,6 +5,7 @@ public class AdminLotteryMo {
     private String id;
     private String name;
     private String type;//奖品类型
+    private String cardType;
     private int singleNum;//单奖数量
     private int lotteryNum;//已抽取数量
     private int storeNum;//库存数量
@@ -104,5 +105,13 @@ public class AdminLotteryMo {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public String getCardType() {
+        return cardType;
+    }
+
+    public void setCardType(String cardType) {
+        this.cardType = cardType;
     }
 }

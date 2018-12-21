@@ -101,31 +101,24 @@ public class SignController {
             signVo.addData("signHistory", signHistory);
             MemberSignCountDbo memberSignCountDbo = this.memberSignQueryService.find(memberId);
             int days = memberSignCountDbo.getDays();
-            List<Integer> day = new ArrayList<>();
-            if (days >= 3)
-                day.add(3);
-            if (days >= 5)
-                day.add(5);
-            if (days >= 7)
-                day.add(7);
-            if (days >= 15)
-                day.add(15);
-            if (days >= 20)
-                day.add(20);
-            signVo.addData("day", day);
+
+
+            //签到不抽奖
             RaffleHistoryVO raffleResult = new RaffleHistoryVO();
-            try {
-                final RaffleHistoryVO raffle = this.raffle(memberId);
-                raffleResult = raffle;
-            } catch (Exception e) {
-                return new SignVo(false, e.getMessage());
-            }
+//            try {
+//                final RaffleHistoryVO raffle = this.raffle(memberId);
+//                raffleResult = raffle;
+//            } catch (Exception e) {
+//                return new SignVo(false, e.getMessage());
+//            }
             MemberDbo memberDbo = memberAuthQueryService.findMemberById(memberId);
             int level = memberDbo.getVipLevel();
             signVo.addData("vipLevel", level);
-            signVo.addData("LotteryID", raffleResult.getLotteryId());
-            signVo.addData("LotteryName", raffleResult.getLotteryName());
-            signVo.addData("LotteryType", raffleResult.getType());
+            signVo.addData("signCount", days);
+            signVo.addData("MSG", "签到成功");
+//            signVo.addData("LotteryID", raffleResult.getLotteryId());
+//            signVo.addData("LotteryName", raffleResult.getLotteryName());
+//            signVo.addData("LotteryType", raffleResult.getType());
             return signVo;
         }
     }
@@ -149,6 +142,17 @@ public class SignController {
         return signHistory;
     }
 
+    @RequestMapping("/findlotterylist")
+    @ResponseBody
+    public CommonVO findLotteryList() {
+        CommonVO vo = new CommonVO();
+        List<LotteryVo> lotteryList = list();
+        vo.setSuccess(true);
+        vo.setData(lotteryList);
+        return vo;
+    }
+
+
     /**
      * 获取转盘上十个物品
      *
@@ -158,7 +162,8 @@ public class SignController {
         final List<LotteryDbo> lotteryDboList = this.lotteryQueryService.findAll();
         List<LotteryVo> lotteryVoList = new ArrayList<>();
         for (LotteryDbo lotteryDbo : lotteryDboList) {
-            LotteryVo lotteryVo = new LotteryVo(lotteryDbo.getId(), lotteryDbo.getIcon(), lotteryDbo.getName());
+            LotteryVo lotteryVo = new LotteryVo(lotteryDbo.getId(), lotteryDbo.getIcon(),
+                    lotteryDbo.getName(), lotteryDbo.getType().toString(), lotteryDbo.getCardType());
             lotteryVoList.add(lotteryVo);
         }
         return lotteryVoList;
@@ -167,7 +172,8 @@ public class SignController {
     /**
      * 抽奖
      */
-    private RaffleHistoryVO raffle(String memberId) throws Exception {
+    private CommonVO raffle(String memberId) throws Exception {
+        CommonVO commonVO = new CommonVO();
         if (!memberPrizeCmdService.isRaffleTableInitalized()) {
             throw new Exception("抽奖暂时未开放");
         }
@@ -187,13 +193,13 @@ public class SignController {
             if (lotteryType == LotteryTypeEnum.HONGBAO) {
                 AccountingRecord record = this.memberHongBaoCmdService.giveHongBaoToMember(memberId,
                         lottery.getSingleNum(),
-                        "每日签到抽奖，红包*" + lottery.getSingleNum(),
+                        "抽奖，红包*" + lottery.getSingleNum(),
                         raffleHistoryValueObject.getTime());
                 this.hongBaoQueryService.withdraw(memberId, record);
             } else if (lotteryType == LotteryTypeEnum.GOLD) {
                 AccountingRecord record = this.memberGoldCmdService.giveGoldToMember(memberId,
                         lottery.getSingleNum(),
-                        "每日签到抽奖，玉石*" + lottery.getSingleNum(),
+                        "抽奖，玉石*" + lottery.getSingleNum(),
                         System.currentTimeMillis());
                 this.memberGoldQueryService.withdraw(memberId, record);
             } else if (LotteryTypeEnum.isMemberCard(lotteryType)) {
@@ -203,7 +209,7 @@ public class SignController {
             } else if (lotteryType == LotteryTypeEnum.PHONE_FEE) {
                 AccountingRecord record = this.memberPhoneFeeCmdService.givePhoneFeeToMember(memberId,
                         lottery.getSingleNum(),
-                        "每日签到抽奖，话费*" + lottery.getSingleNum(),
+                        "抽奖，话费*" + lottery.getSingleNum(),
                         System.currentTimeMillis());
                 this.phoneFeeQueryService.withdraw(memberId, record);
             } else if (lotteryType == LotteryTypeEnum.ENTIRY) {
@@ -230,7 +236,9 @@ public class SignController {
                     memberRaffleHistoryDbo.getLottery().getType().name(),
                     raffleHistoryValueObject.getTime(),
                     raffleHistoryValueObject.isFirstTime());
-            return raffleHistoryVO;
+            commonVO.setMsg("抽奖成功");
+            commonVO.setData(raffleHistoryVO);
+            return commonVO;
         } catch (Exception e) {
             throw e;
         }
@@ -248,18 +256,18 @@ public class SignController {
         signVo.addData("lotteryTable", list);
         MemberSignCountDbo memberSignCountDbo = this.memberSignQueryService.find(memberId);
         int days = memberSignCountDbo.getDays();
-        List<Integer> day = new ArrayList<>();
-        if (days <= 3)
-            day.add(3);
-        if (days <= 5)
-            day.add(5);
-        if (days <= 7)
-            day.add(7);
-        if (days <= 15)
-            day.add(15);
-        if (days <= 20)
-            day.add(20);
-        signVo.addData("days", day);
+//        List<Integer> day = new ArrayList<>();
+//        if (days <= 3)
+//            day.add(3);
+//        if (days <= 5)
+//            day.add(5);
+//        if (days <= 7)
+//            day.add(7);
+//        if (days <= 15)
+//            day.add(15);
+//        if (days <= 20)
+//            day.add(20);
+//        signVo.addData("days", day);
         double phoneFee = this.phoneFeeQueryService.find(memberId);
         signVo.addData("phoneFee", phoneFee);
         double hongbao = this.hongBaoQueryService.find(memberId);
@@ -307,7 +315,7 @@ public class SignController {
         if (historyDbo == null) {
             //防止直接请求接口的风险
             MemberDbo member = memberAuthQueryService.findMemberById(memberID);
-            if(member == null){
+            if (member == null) {
                 throw new AnBangException("用户不存在，请先注册");
             }
 
@@ -339,10 +347,6 @@ public class SignController {
         }
 
         MemberRaffleHistoryDbo raffleHistoryDbo = memberRaffleQueryService.findByMemberId(memberId);
-        //防止用户 没抽第一次奖就分享来领取奖励
-        if (raffleHistoryDbo == null) {
-            throw new AnBangException("您还有一次抽奖机会未使用，请使用后再来");
-        }
 
         //在签到时已经会更新一次 当日可分享领取
         // 为防止用户 不签到就分享  在这里再更新一次
@@ -365,20 +369,49 @@ public class SignController {
     }
 
 
-    //第二次抽奖的入口   条件的限制在Raffle抽奖的接口里面  一天最多两次
-    @RequestMapping("/secondRaffle")
+    //抽奖的接口
+    @RequestMapping(value = {"/raffle"})
     @ResponseBody
-    public CommonVO secondRaffle(String token) {
+    public CommonVO tryRaffle(String token) {
         final String memberId = memberAuthService.getMemberIdBySessionId(token);
         if (memberId == null) {
             return new CommonVO(false, "用户未登陆", null);
         }
 
         try {
-            RaffleHistoryVO raffleHistoryVO = raffle(memberId);
-            return new CommonVO(true, "奖励抽奖成功", raffleHistoryVO);
+            return raffle(memberId);
         } catch (Exception e) {
             throw new AnBangException(e.getMessage(), e);
         }
+    }
+
+    @RequestMapping(value = {"queryraffle"})
+    @ResponseBody
+    public CommonVO queryRaffle(String token) {
+
+        final String memberId = memberAuthService.getMemberIdBySessionId(token);
+        if (memberId == null) {
+            return new CommonVO(false, "用户未登陆", null);
+        }
+
+        HasRaffle hasRaffle = isRaffleToday(memberId);
+        int count = 0;
+        if (hasRaffle.isRaffleToday()) {
+
+        } else {
+            count++;
+        }
+
+        if ((!StringUtils.isEmpty(hasRaffle.getExtraRaffle()))) {
+
+            if (hasRaffle.getExtraRaffle().equals(ExtraRaffle.NO.name())) {
+                count++;
+            }
+        }
+
+        CommonVO commonVO = new CommonVO();
+        commonVO.setSuccess(true);
+        commonVO.setMsg(String.valueOf(count));
+        return commonVO;
     }
 }
