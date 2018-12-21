@@ -76,7 +76,8 @@ public class RaffleController {
         final List<LotteryDbo> lotteryDboList = this.lotteryQueryService.findAll();
         List<LotteryVo> lotteryVoList = new ArrayList<>();
         for (LotteryDbo lotteryDbo : lotteryDboList) {
-            LotteryVo lotteryVo = new LotteryVo(lotteryDbo.getId(), lotteryDbo.getIcon(), lotteryDbo.getName());
+            LotteryVo lotteryVo = new LotteryVo(lotteryDbo.getId(), lotteryDbo.getIcon(), lotteryDbo.getName()
+            ,lotteryDbo.getType().toString(),lotteryDbo.getCardType());
             lotteryVoList.add(lotteryVo);
         }
         return new CommonVO(true, null, lotteryVoList);

@@ -175,14 +175,18 @@ public class SignController {
     private CommonVO raffle(String memberId) throws Exception {
         CommonVO commonVO = new CommonVO();
         if (!memberPrizeCmdService.isRaffleTableInitalized()) {
-            throw new Exception("抽奖暂时未开放");
+            commonVO.setSuccess(false);
+            commonVO.setMsg("抽奖暂时未开放");
+            return commonVO;
         }
         HasRaffle hasRaffle = isRaffleToday(memberId);
 
         //短路与  如果为空直接返回false
         if (hasRaffle.isRaffleToday() && (!StringUtils.isEmpty(hasRaffle.getExtraRaffle()))
                 & (!hasRaffle.getExtraRaffle().equals(ExtraRaffle.YES.name()))) {
-            throw new AnBangException("您今天的抽奖次数已经用完");
+            commonVO.setSuccess(false);
+            commonVO.setMsg("您今天的抽奖次数已经用完");
+            return commonVO;
         }
         boolean isFirst = this.memberRaffleQueryService.isFirstRaffle(memberId);
         try {
@@ -394,12 +398,19 @@ public class SignController {
             return new CommonVO(false, "用户未登陆", null);
         }
 
+        //签到记录
+        MemberSignCountDbo signCountDbo = memberSignQueryService.find(memberId);
+        final long lastSignTime = signCountDbo.getLastSignTime() / Constant.ONE_DAY_MS;
+        final long currentSignTime = System.currentTimeMillis() / Constant.ONE_DAY_MS;
+
+
         HasRaffle hasRaffle = isRaffleToday(memberId);
         int count = 0;
-        if (hasRaffle.isRaffleToday()) {
-
-        } else {
+        //如果今天已经签到  并且 没有抽奖的话
+        if ((!hasRaffle.isRaffleToday()) && (lastSignTime == currentSignTime)) {
             count++;
+        } else {
+
         }
 
         if ((!StringUtils.isEmpty(hasRaffle.getExtraRaffle()))) {
