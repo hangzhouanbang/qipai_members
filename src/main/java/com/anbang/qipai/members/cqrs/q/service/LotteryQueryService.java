@@ -26,4 +26,8 @@ public class LotteryQueryService {
         this.lotteryDboDao.saveAll(lotteryDboList);
     }
 
+    public LotteryDbo findLotteryByID(String id) {
+        return lotteryDboDao.findLotteryById(id);
+    }
+
 }

@@ -26,7 +26,7 @@ public class DisruptorMemberPrizeCmdService extends DisruptorCmdServiceBase impl
     private MemberPrizeCmdServiceImpl prizeCmdServiceImpl;
 
     @Override
-    public SignPrizeOpportunityValueObject addSignPrizeOpportunity(String memberId, int continuousSignDays, long signTime, VIPEnum vipLevel) {
+    public SignPrizeOpportunityValueObject addSignPrizeOpportunity(String memberId, Integer continuousSignDays, Long signTime, VIPEnum vipLevel) {
         CommonCommand cmd = new CommonCommand(MemberPrizeCmdServiceImpl.class.getName(), "addSignPrizeOpportunity", memberId, continuousSignDays, signTime);
         DeferredResult<SignPrizeOpportunityValueObject> result = publishEvent(this.disruptorFactory.getCoreCmdDisruptor(), cmd, new Callable<SignPrizeOpportunityValueObject>() {
             @Override
@@ -42,7 +42,7 @@ public class DisruptorMemberPrizeCmdService extends DisruptorCmdServiceBase impl
     }
 
     @Override
-    public SigningRaffleOpportunity addSignRaffleOpportunity(String memberId, int continuousSignDays, long signTime) {
+    public SigningRaffleOpportunity addSignRaffleOpportunity(String memberId, Integer continuousSignDays, Long signTime) {
         CommonCommand cmd = new CommonCommand(MemberPrizeCmdServiceImpl.class.getName(), "addSignRaffleOpportunity", memberId, continuousSignDays, signTime);
         DeferredResult<SigningRaffleOpportunity> deferredResult = publishEvent(this.disruptorFactory.getCoreCmdDisruptor(), cmd, new Callable<SigningRaffleOpportunity>() {
             @Override
@@ -58,7 +58,7 @@ public class DisruptorMemberPrizeCmdService extends DisruptorCmdServiceBase impl
     }
 
     @Override
-    public RaffleHistoryValueObject raffle(String memberId, boolean first) throws Exception {
+    public RaffleHistoryValueObject raffle(String memberId, Boolean first) throws Exception {
         CommonCommand cmd = new CommonCommand(MemberPrizeCmdServiceImpl.class.getName(), "raffle", memberId, first);
         DeferredResult<RaffleHistoryValueObject> deferredResult = publishEvent(this.disruptorFactory.getCoreCmdDisruptor(), cmd, new Callable<RaffleHistoryValueObject>() {
             @Override

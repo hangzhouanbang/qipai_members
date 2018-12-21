@@ -10,11 +10,11 @@ import java.util.List;
 
 public interface MemberPrizeCmdService {
 
-    SignPrizeOpportunityValueObject addSignPrizeOpportunity(String memberId, int continuousSignDays, long signTime, VIPEnum vipLevel);
+    SignPrizeOpportunityValueObject addSignPrizeOpportunity(String memberId, Integer continuousSignDays, Long signTime, VIPEnum vipLevel);
 
-    SigningRaffleOpportunity addSignRaffleOpportunity(String memberId, int continuousSignDays, long signTime);
+    SigningRaffleOpportunity addSignRaffleOpportunity(String memberId, Integer continuousSignDays, Long signTime);
 
-    RaffleHistoryValueObject raffle(String memberId, boolean first) throws Exception;
+    RaffleHistoryValueObject raffle(String memberId, Boolean first) throws Exception;
 
     boolean isRaffleTableInitalized();
 

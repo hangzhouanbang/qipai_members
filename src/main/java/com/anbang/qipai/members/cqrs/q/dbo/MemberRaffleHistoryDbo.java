@@ -11,6 +11,7 @@ public class MemberRaffleHistoryDbo {
     private long time;
     private boolean firstTime;
     private String extraRaffle;
+    private long shareTime;
 
     public MemberRaffleHistoryDbo() {
     }
@@ -93,4 +94,12 @@ public class MemberRaffleHistoryDbo {
         this.address = address;
     }
 
+
+    public long getShareTime() {
+        return shareTime;
+    }
+
+    public void setShareTime(long shareTime) {
+        this.shareTime = shareTime;
+    }
 }

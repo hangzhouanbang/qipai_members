@@ -36,6 +36,14 @@ public class MongodbMemberRaffleHistoryDboDao implements MemberRaffleHistoryDboD
         return this.mongoTemplate.findOne(query, MemberRaffleHistoryDbo.class);
     }
 
+    @Override
+    public MemberRaffleHistoryDbo shareTimeByMemberId(String memberId) {
+        Query query = new Query(Criteria.where("memberId").is(memberId));
+        query.with(new Sort(Sort.Direction.DESC,"shareTime"));
+        return this.mongoTemplate.findOne(query,MemberRaffleHistoryDbo.class);
+    }
+
+
 
     @Override
     public MemberRaffleHistoryDbo findByMemberId(String memberId) {

@@ -15,20 +15,20 @@ import java.util.List;
 public class MemberPrizeCmdServiceImpl extends CmdServiceBase implements MemberPrizeCmdService {
 
     @Override
-    public SignPrizeOpportunityValueObject addSignPrizeOpportunity(String memberId, int continuousSignDays, long signTime, VIPEnum vipLevel) {
+    public SignPrizeOpportunityValueObject addSignPrizeOpportunity(String memberId, Integer continuousSignDays, Long signTime, VIPEnum vipLevel) {
         SigningPrizeOpportunityManager signingPrizeOpportunityManager = this.singletonEntityRepository.getEntity(SigningPrizeOpportunityManager.class);
         ObtainSignPrizeOpportunity opportunity = signingPrizeOpportunityManager.addMemberOpportunity(memberId, continuousSignDays, signTime, vipLevel);
         return opportunity == null ? null : new SignPrizeOpportunityValueObject(opportunity);
     }
 
     @Override
-    public SigningRaffleOpportunity addSignRaffleOpportunity(String memberId, int continuousSignDays, long signTime) {
+    public SigningRaffleOpportunity addSignRaffleOpportunity(String memberId, Integer continuousSignDays, Long signTime) {
         SigningRaffleOpportunityManager signingRaffleOpportunityManager = this.singletonEntityRepository.getEntity(SigningRaffleOpportunityManager.class);
         return signingRaffleOpportunityManager.addMemberOpportunity(memberId);
     }
 
     @Override
-    public RaffleHistoryValueObject raffle(String memberId, boolean first) throws Exception {
+    public RaffleHistoryValueObject raffle(String memberId, Boolean first) throws Exception {
         SigningRaffleOpportunityManager signingRaffleOpportunityManager = this.singletonEntityRepository.getEntity(SigningRaffleOpportunityManager.class);
         signingRaffleOpportunityManager.useOpportunity(memberId);
         LotteryTable lotteryTable = this.singletonEntityRepository.getEntity(LotteryTable.class);

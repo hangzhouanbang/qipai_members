@@ -11,4 +11,6 @@ public interface LotteryDboDao {
     void saveAll(List<LotteryDbo> list);
 
     void discardAll();
+
+    LotteryDbo findLotteryById(String id);
 }

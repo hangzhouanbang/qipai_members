@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class SignCmdServiceImpl extends CmdServiceBase implements SignCmdService {
 
     @Override
-    public SignHistoryValueObject sign(String memberId, int vipLevel) {
+    public SignHistoryValueObject sign(String memberId, Integer vipLevel) {
         final SignCountManager signCountManager = singletonEntityRepository.getEntity(SignCountManager.class);
         //如果 今天已经签到过了  不执行
         if (signCountManager.isSignedToday(memberId)) {

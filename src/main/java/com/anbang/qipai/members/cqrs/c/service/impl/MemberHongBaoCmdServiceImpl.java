@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class MemberHongBaoCmdServiceImpl extends CmdServiceBase implements MemberHongBaoCmdService {
 
     @Override
-    public AccountingRecord giveHongBaoToMember(String memberId, Integer amount, String textSummary, long currentTime)
+    public AccountingRecord giveHongBaoToMember(String memberId, Integer amount, String textSummary, Long currentTime)
             throws MemberNotFoundException {
         MemberHongBaoAccountManager hongBaoAccountManager = this.singletonEntityRepository.getEntity(MemberHongBaoAccountManager.class);
         return hongBaoAccountManager.giveHongBaoToMember(memberId, amount, new TextAccountingSummary(textSummary), currentTime);

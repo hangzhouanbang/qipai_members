@@ -35,6 +35,10 @@ public class MemberRaffleQueryService {
         return this.raffleHistoryDboDao.findByMemberId(memberId);
     }
 
+    public MemberRaffleHistoryDbo findshareTimeByMemberId(String memberId) {
+        return this.raffleHistoryDboDao.shareTimeByMemberId(memberId);
+    }
+
 
     public MemberRaffleHistoryDbo setRaffleAddress(String id, String memberId, Address address) {
         MemberRaffleHistoryDbo memberRaffleHistoryDbo = this.find(id);

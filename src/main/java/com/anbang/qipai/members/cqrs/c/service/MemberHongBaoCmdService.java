@@ -8,7 +8,7 @@ import com.dml.accounting.InsufficientBalanceException;
 
 public interface MemberHongBaoCmdService {
 
-    AccountingRecord giveHongBaoToMember(String memberId, Integer amount, String textSummary, long currentTime) throws MemberNotFoundException;
+    AccountingRecord giveHongBaoToMember(String memberId, Integer amount, String textSummary, Long currentTime) throws MemberNotFoundException;
 
     ExchangeRecord exchange(String memberId, Integer amount, String textSummary, Long currentTime) throws InsufficientBalanceException, MemberNotFoundException, ExchangeException;
 

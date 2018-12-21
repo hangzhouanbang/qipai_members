@@ -14,4 +14,6 @@ public interface MemberRaffleHistoryDboDao {
     MemberRaffleHistoryDbo findById(String id);
 
     MemberRaffleHistoryDbo findByMemberId(String memberId);
+
+    MemberRaffleHistoryDbo shareTimeByMemberId(String memberId);
 }

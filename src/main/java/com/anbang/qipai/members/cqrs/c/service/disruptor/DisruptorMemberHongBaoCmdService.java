@@ -22,7 +22,7 @@ public class DisruptorMemberHongBaoCmdService extends DisruptorCmdServiceBase im
 
 
     @Override
-    public AccountingRecord giveHongBaoToMember(String memberId, Integer amount, String textSummary, long currentTime) throws MemberNotFoundException {
+    public AccountingRecord giveHongBaoToMember(String memberId, Integer amount, String textSummary, Long currentTime) throws MemberNotFoundException {
         CommonCommand cmd = new CommonCommand(MemberHongBaoCmdServiceImpl.class.getName(), "giveHongBaoToMember", memberId, amount, textSummary, currentTime);
         DeferredResult<AccountingRecord> deferredResult = publishEvent(this.disruptorFactory.getCoreCmdDisruptor(), cmd, new Callable<AccountingRecord>() {
             @Override
