@@ -1,23 +1,24 @@
 package com.anbang.qipai.members.cqrs.c.service;
 
+import java.util.List;
+
 import com.anbang.qipai.members.cqrs.c.domain.prize.Lottery;
 import com.anbang.qipai.members.cqrs.c.domain.prize.RaffleHistoryValueObject;
 import com.anbang.qipai.members.cqrs.c.domain.sign.SignPrizeOpportunityValueObject;
 import com.anbang.qipai.members.cqrs.c.domain.sign.SigningRaffleOpportunity;
 import com.anbang.qipai.members.cqrs.c.domain.vip.VIPEnum;
 
-import java.util.List;
-
 public interface MemberPrizeCmdService {
 
-    SignPrizeOpportunityValueObject addSignPrizeOpportunity(String memberId, Integer continuousSignDays, Long signTime, VIPEnum vipLevel);
+	SignPrizeOpportunityValueObject addSignPrizeOpportunity(String memberId, Integer continuousSignDays, Long signTime,
+			VIPEnum vipLevel);
 
-    SigningRaffleOpportunity addSignRaffleOpportunity(String memberId, Integer continuousSignDays, Long signTime);
+	SigningRaffleOpportunity addSignRaffleOpportunity(String memberId, Integer continuousSignDays, Long signTime);
 
-    RaffleHistoryValueObject raffle(String memberId, Boolean first) throws Exception;
+	RaffleHistoryValueObject raffle(String memberId, Boolean first) throws Exception;
 
-    boolean isRaffleTableInitalized();
+	Boolean isRaffleTableInitalized();
 
-    void inializeRaffleTable(List<Lottery> lotterySet);
+	void inializeRaffleTable(List<Lottery> lotterySet);
 
 }
