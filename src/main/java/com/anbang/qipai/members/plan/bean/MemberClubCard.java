@@ -1,12 +1,11 @@
 package com.anbang.qipai.members.plan.bean;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@Document(collection = "clubcard")
 public class MemberClubCard {
 	private String id;// 会员卡id
 	private String name;// 会员卡名称
 	private double price;// 会员卡价格
+	private double firstDiscount;// 首次折扣
+	private double firstDiscountPrice;// 首次折扣后价格
 	private int gold;// 买会员卡赠送金币
 	private int score;// 买会员卡赠送积分
 	private long time;// 会员延长时间
@@ -57,6 +56,22 @@ public class MemberClubCard {
 
 	public void setTime(long time) {
 		this.time = time;
+	}
+
+	public double getFirstDiscount() {
+		return firstDiscount;
+	}
+
+	public void setFirstDiscount(double firstDiscount) {
+		this.firstDiscount = firstDiscount;
+	}
+
+	public double getFirstDiscountPrice() {
+		return firstDiscountPrice;
+	}
+
+	public void setFirstDiscountPrice(double firstDiscountPrice) {
+		this.firstDiscountPrice = firstDiscountPrice;
 	}
 
 }

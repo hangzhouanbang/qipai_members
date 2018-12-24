@@ -18,13 +18,6 @@ public class MemberOrderService {
 	public MemberOrder addMemberOrder(String payerId, String payerName, String receiverId, String receiverName,
 			String productId, String productName, double productPrice, int gold, int score, long time, int number,
 			String payType, String reqIp) {
-
-		if (productName.equals("日卡")
-				&& memberOrderDao.findMemberOrderByPayerIdAndProductName(payerId, productName) == null) {
-			BigDecimal oldPrice = new BigDecimal(Double.toString(productPrice));
-			BigDecimal discount = new BigDecimal(Double.toString(0.1));
-			productPrice = oldPrice.multiply(discount).doubleValue();
-		}
 		String id = UUID.randomUUID().toString().replace("-", "");
 		MemberOrder order = new MemberOrder();
 		order.setId(id);
@@ -56,5 +49,9 @@ public class MemberOrderService {
 
 	public MemberOrder findMemberOrderById(String id) {
 		return memberOrderDao.findMemberOrderById(id);
+	}
+
+	public MemberOrder findMemberOrderByPayerIdAndProductName(String payerId, String productName) {
+		return memberOrderDao.findMemberOrderByPayerIdAndProductName(payerId, productName);
 	}
 }

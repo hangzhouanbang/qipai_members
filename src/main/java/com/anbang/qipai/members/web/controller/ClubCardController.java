@@ -177,9 +177,14 @@ public class ClubCardController {
 		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
 		// 获取真实ip
 		String reqIP = IPUtil.getRealIp(request);
+		double productPrice = card.getPrice();
+		// 是否首次购买
+		if (memberOrderService.findMemberOrderByPayerIdAndProductName(member.getId(), card.getName()) == null) {
+			productPrice = card.getFirstDiscountPrice();
+		}
 		// 保存订单
 		MemberOrder order = memberOrderService.addMemberOrder(member.getId(), member.getNickname(), member.getId(),
-				member.getNickname(), card.getId(), card.getName(), card.getPrice(), card.getGold(), card.getScore(),
+				member.getNickname(), card.getId(), card.getName(), productPrice, card.getGold(), card.getScore(),
 				card.getTime(), 1, "alipay", reqIP);
 		ordersMsgService.createOrder(order);
 		String orderString = null;
@@ -319,10 +324,15 @@ public class ClubCardController {
 		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
 
 		String reqIP = IPUtil.getRealIp(request);
-
+		double productPrice = card.getPrice();
+		// 是否首次购买
+		if (memberOrderService.findMemberOrderByPayerIdAndProductName(member.getId(), card.getName()) == null) {
+			productPrice = card.getFirstDiscountPrice();
+		}
+		// 保存订单
 		MemberOrder order = memberOrderService.addMemberOrder(member.getId(), member.getNickname(), member.getId(),
-				member.getNickname(), card.getId(), card.getName(), card.getPrice(), card.getGold(), card.getScore(),
-				card.getTime(), 1, "wxpay", reqIP);
+				member.getNickname(), card.getId(), card.getName(), productPrice, card.getGold(), card.getScore(),
+				card.getTime(), 1, "alipay", reqIP);
 		ordersMsgService.createOrder(order);
 		try {
 			Map<String, String> resultMap = wxpayService.createOrder_APP(order);
@@ -365,10 +375,15 @@ public class ClubCardController {
 		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
 
 		String reqIP = IPUtil.getRealIp(request);
-
+		double productPrice = card.getPrice();
+		// 是否首次购买
+		if (memberOrderService.findMemberOrderByPayerIdAndProductName(member.getId(), card.getName()) == null) {
+			productPrice = card.getFirstDiscountPrice();
+		}
+		// 保存订单
 		MemberOrder order = memberOrderService.addMemberOrder(member.getId(), member.getNickname(), member.getId(),
-				member.getNickname(), card.getId(), card.getName(), card.getPrice(), card.getGold(), card.getScore(),
-				card.getTime(), 1, "微信支付", reqIP);
+				member.getNickname(), card.getId(), card.getName(), productPrice, card.getGold(), card.getScore(),
+				card.getTime(), 1, "alipay", reqIP);
 		ordersMsgService.createOrder(order);
 		try {
 			String mweb_url = wxpayService.createOrder_H5(order);

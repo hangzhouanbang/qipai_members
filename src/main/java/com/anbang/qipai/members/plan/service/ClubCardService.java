@@ -1,6 +1,5 @@
 package com.anbang.qipai.members.plan.service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,23 +23,23 @@ public class ClubCardService {
 	public List<MemberClubCardVO> showClubCard(String payerId) {
 		List<MemberClubCardVO> volist = new ArrayList<>();
 		List<MemberClubCard> cardList = clubCardDao.findAllClubCard();
-		cardList.forEach((card) -> {
+		for (MemberClubCard card : cardList) {
 			MemberClubCardVO vo = new MemberClubCardVO();
 			vo.setId(card.getId());
 			vo.setName(card.getName());
 			vo.setGold(card.getGold());
 			vo.setScore(card.getScore());
-			vo.setTime(card.getTime());
+			String time = card.getTime() / (24 * 60 * 60 * 1000) + "";
+			vo.setTime(time);
 			vo.setPrice(card.getPrice());
-			if (card.getName().equals("日卡")
-					&& memberOrderDao.findMemberOrderByPayerIdAndProductName(payerId, card.getName()) == null) {
-				BigDecimal oldPrice = new BigDecimal(Double.toString(card.getPrice()));
-				BigDecimal discount = new BigDecimal(Double.toString(0.1));
-				vo.setDistCountPrice(oldPrice.multiply(discount).doubleValue());
+			vo.setOriginalPrice(card.getPrice());
+			if (memberOrderDao.findMemberOrderByPayerIdAndProductName(payerId, card.getName()) == null) {
+				vo.setDiscount(card.getFirstDiscount());
+				vo.setPrice(card.getFirstDiscountPrice());
 				vo.setHasNotBuy(true);
 			}
 			volist.add(vo);
-		});
+		}
 		return volist;
 	}
 
