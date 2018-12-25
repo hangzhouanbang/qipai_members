@@ -99,6 +99,7 @@ public class MembersMsgReceiver {
 								unionidAuthDbo.getMemberId());
 					}
 					memberDbo = memberAuthQueryService.findMemberById(unionidAuthDbo.getMemberId());
+					return;
 				} else {
 					int goldForNewMember = 0;
 					int scoreForNewMember = 0;
@@ -137,12 +138,6 @@ public class MembersMsgReceiver {
 				}
 				CommonRemoteVO commonRemoteVo = qiPaiAgentsRemoteService.agent_invitemember(memberDbo.getId(),
 						memberDbo.getNickname(), invitationCode);
-				if ("invitation already exist".equals(commonRemoteVo.getMsg())) {
-					Map map = (Map) commonRemoteVo.getData();
-					memberDbo = memberAuthQueryService.updateMemberBindAgent(memberDbo.getId(),
-							(String) map.get("agentId"), true);
-					membersMsgService.updateMemberBindAgent(memberDbo);
-				}
 				// 如果用户绑定过推广员,就不发奖了
 				if (!memberDbo.isHasBindAgent() && commonRemoteVo.isSuccess()) {
 					MemberRights rights = memberDbo.getRights();
