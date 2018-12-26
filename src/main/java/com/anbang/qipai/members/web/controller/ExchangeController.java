@@ -266,4 +266,22 @@ public class ExchangeController {
     }
 
 
+    @RequestMapping(value = {"/queryreceiverinfo"})
+    @ResponseBody
+    public CommonVO queryReceiverInfo(String token) {
+        final String memberId = this.memberAuthService.getMemberIdBySessionId(token);
+        if (memberId == null) {
+            return new CommonVO(false, "用户未登陆", null);
+        }
+        ReceiverInfoDbo receiver = receiverInfoQueryService.findReceiverByMemberId(memberId);
+        if(receiver == null){
+            return new CommonVO(false,"请先填写收货人信息",null);
+        }
+        CommonVO vo = new CommonVO();
+        vo.setSuccess(true);
+        vo.setData(receiver);
+        return vo;
+    }
+
+
 }

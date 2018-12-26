@@ -468,23 +468,6 @@ public class MemberController {
 		return vo;
 	}
 
-	@RequestMapping("/rechargecoins")
-	public CommonVO rechargeCoins(String memberId, String amount) {
-		CommonVO vo = new CommonVO();
-		if (StringUtils.isEmpty(memberId)) {
-			vo.setMsg("玩家ID不得为空");
-			vo.setSuccess(false);
-		}
-		if (Integer.parseInt(amount) <= 0) {
-			vo.setSuccess(false);
-			vo.setMsg("充值数必须大于0");
-		}
-		giveGoldToMember(memberId, Integer.parseInt(amount), "推广员赠送玉石");
-		MemberDbo memberDbo = memberAuthQueryService.rechargeGold(memberId, Integer.parseInt(amount));
-		vo.setSuccess(true);
-		vo.setMsg("success");
-		return vo;
-	}
 
 	@RequestMapping("/update_viptime")
 	public CommonVO update_viptime(@RequestBody String[] ids, Long vipEndTime) {
@@ -536,19 +519,4 @@ public class MemberController {
 		}
 	}
 
-	private CommonVO giveGoldToMember(String memberId, int amount, String textSummary) {
-		CommonVO vo = new CommonVO();
-		try {
-			AccountingRecord rcd = memberGoldCmdService.giveGoldToMember(memberId, amount, textSummary,
-					System.currentTimeMillis());
-			MemberGoldRecordDbo dbo = memberGoldQueryService.withdraw(memberId, rcd);
-			// rcd发kafka
-			goldsMsgService.withdraw(dbo);
-			return vo;
-		} catch (MemberNotFoundException e) {
-			vo.setSuccess(false);
-			vo.setMsg("MemberNotFoundException");
-			return vo;
-		}
-	}
 }
