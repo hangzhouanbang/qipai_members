@@ -14,6 +14,17 @@ public class MemberRaffleQueryService {
     @Autowired
     private MemberRaffleHistoryDboDao raffleHistoryDboDao;
 
+    public List<MemberRaffleHistoryDbo> findHistoriesWithoutPage(String memberId) {
+        List<MemberRaffleHistoryDbo> histories = raffleHistoryDboDao.findHistoriesWithoutPage(memberId);
+        return histories;
+    }
+
+
+    public List<MemberRaffleHistoryDbo> findHistories(String memberId, int page, int size) {
+        List<MemberRaffleHistoryDbo> histories = raffleHistoryDboDao.findHistories(memberId, page, size);
+        return histories;
+    }
+
     public boolean isFirstRaffle(String memberId) {
         List<MemberRaffleHistoryDbo> list = this.raffleHistoryDboDao.findHistories(memberId, 1, 5);
         if (list == null || list.isEmpty()) {

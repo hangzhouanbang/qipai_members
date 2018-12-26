@@ -16,4 +16,6 @@ public interface MemberRaffleHistoryDboDao {
     MemberRaffleHistoryDbo findByMemberId(String memberId);
 
     MemberRaffleHistoryDbo shareTimeByMemberId(String memberId);
+
+    List<MemberRaffleHistoryDbo> findHistoriesWithoutPage(String memberId);
 }

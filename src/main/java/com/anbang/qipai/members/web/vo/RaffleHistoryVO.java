@@ -6,8 +6,10 @@ public class RaffleHistoryVO {
     private String lotteryId;
     private String lotteryName;
     private String type;
+    private String singleNum;
     private long time;
     private boolean isFirst;
+    private String hasExchange;
 
     public RaffleHistoryVO(){}
 
@@ -75,5 +77,21 @@ public class RaffleHistoryVO {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getHasExchange() {
+        return hasExchange;
+    }
+
+    public void setHasExchange(String hasExchange) {
+        this.hasExchange = hasExchange;
+    }
+
+    public String getSingleNum() {
+        return singleNum;
+    }
+
+    public void setSingleNum(String singleNum) {
+        this.singleNum = singleNum;
     }
 }

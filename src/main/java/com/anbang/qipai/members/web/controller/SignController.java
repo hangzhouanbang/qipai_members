@@ -1,8 +1,10 @@
 package com.anbang.qipai.members.web.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+import com.anbang.qipai.members.cqrs.q.dbo.*;
+import com.anbang.qipai.members.web.enums.ExtraRewardDay;
+import com.anbang.qipai.members.web.vo.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,11 +22,6 @@ import com.anbang.qipai.members.cqrs.c.service.MemberHongBaoCmdService;
 import com.anbang.qipai.members.cqrs.c.service.MemberPhoneFeeCmdService;
 import com.anbang.qipai.members.cqrs.c.service.MemberPrizeCmdService;
 import com.anbang.qipai.members.cqrs.c.service.SignCmdService;
-import com.anbang.qipai.members.cqrs.q.dbo.Lottery;
-import com.anbang.qipai.members.cqrs.q.dbo.LotteryDbo;
-import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
-import com.anbang.qipai.members.cqrs.q.dbo.MemberRaffleHistoryDbo;
-import com.anbang.qipai.members.cqrs.q.dbo.MemberSignCountDbo;
 import com.anbang.qipai.members.cqrs.q.service.HongBaoQueryService;
 import com.anbang.qipai.members.cqrs.q.service.LotteryQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
@@ -37,10 +34,6 @@ import com.anbang.qipai.members.exception.AnBangException;
 import com.anbang.qipai.members.msg.service.PrizeLogMsgService;
 import com.anbang.qipai.members.plan.bean.HasRaffle;
 import com.anbang.qipai.members.plan.service.MemberGradeInFoService;
-import com.anbang.qipai.members.web.vo.CommonVO;
-import com.anbang.qipai.members.web.vo.GradeVo;
-import com.anbang.qipai.members.web.vo.LotteryAdviceVO;
-import com.anbang.qipai.members.web.vo.SignVo;
 import com.dml.accounting.AccountingRecord;
 
 @RestController
@@ -92,6 +85,7 @@ public class SignController {
     @Autowired
     private MemberGradeInFoService memberGradeInFoService;
 
+
     @ResponseBody
     @RequestMapping("/today")
     public SignVo sign(String token) {
@@ -117,7 +111,7 @@ public class SignController {
             int level = memberDbo.getVipLevel();
             signVo.addData("vipLevel", level);
             signVo.addData("signCount", days);
-            signVo.addData("MSG", "签到成功");
+            signVo.addData("MSG", "");
             // signVo.addData("LotteryID", raffleResult.getLotteryId());
             // signVo.addData("LotteryName", raffleResult.getLotteryName());
             // signVo.addData("LotteryType", raffleResult.getType());
@@ -171,19 +165,22 @@ public class SignController {
     }
 
     private String changeSingleNum(LotteryDbo dbo) {
-        if (dbo.getName().equals("红包")) {
+        if (dbo.getType().name().equals("HONGBAO")) {
             return (dbo.getSingleNum() + "元");
         }
-        if (dbo.getName().equals("话费")) {
+        if (dbo.getType().name().equals("PHONE_FEE")) {
             return (dbo.getSingleNum() + "元");
         }
-        if (dbo.getName().equals("会员卡")) {
+        if (dbo.getType().name().equals("MEMBER_CARD_DAY") ||
+                dbo.getType().name().equals("MEMBER_CARD_WEAK") ||
+                dbo.getType().name().equals("MEMBER_CARD_MONTH") ||
+                dbo.getType().name().equals("MEMBER_CARD_SEASON")) {
             return (dbo.getSingleNum() + "张");
         }
-        if (dbo.getName().equals("实物")) {
+        if (dbo.getType().name().equals("ENTIRY")) {
             return (dbo.getSingleNum() + "个");
         }
-        if (dbo.getName().equals("玉石")) {
+        if (dbo.getType().name().equals("GOLD")) {
             return (dbo.getSingleNum() + "个");
         }
         return null;
@@ -211,13 +208,13 @@ public class SignController {
         }
         HasRaffle hasRaffle = isRaffleToday(memberId);
 
-        // 短路与 如果为空直接返回false
-        if (hasRaffle.isRaffleToday() && (!StringUtils.isEmpty(hasRaffle.getExtraRaffle()))
-                & (!hasRaffle.getExtraRaffle().equals(ExtraRaffle.YES.name()))) {
-            commonVO.setSuccess(false);
-            commonVO.setMsg("您今天的抽奖次数已经用完");
-            return commonVO;
-        }
+        // 短路与 如果为空直接返回false  //TODO:把它注释回来 否则无限次抽奖
+//        if (hasRaffle.isRaffleToday() && (!StringUtils.isEmpty(hasRaffle.getExtraRaffle()))
+//                & (!hasRaffle.getExtraRaffle().equals(ExtraRaffle.YES.name()))) {
+//            commonVO.setSuccess(false);
+//            commonVO.setMsg("您今天的抽奖次数已经用完");
+//            return commonVO;
+//        }
         boolean isFirst = this.memberRaffleQueryService.isFirstRaffle(memberId);
         try {
             RaffleHistoryValueObject raffleHistoryValueObject = null;
@@ -244,7 +241,8 @@ public class SignController {
             }
             Lottery lotDbo = new Lottery(lottery.getId(), lottery.getName(), lottery.getProp(), lottery.getFirstProp(),
                     lotteryType, lottery.getSingleNum());
-            MemberRaffleHistoryDbo memberRaffleHistoryDbo = new MemberRaffleHistoryDbo(null, memberId, lotDbo, null,
+            String uuid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
+            MemberRaffleHistoryDbo memberRaffleHistoryDbo = new MemberRaffleHistoryDbo(uuid, memberId, lotDbo, null,
                     raffleHistoryValueObject.getTime(), raffleHistoryValueObject.isFirstTime());
 
             MemberRaffleHistoryDbo lastRaffleHistory = memberRaffleQueryService.findByMemberId(memberId);
@@ -261,9 +259,16 @@ public class SignController {
                 // 改完后再保存这一次的抽奖 也为Used
                 memberRaffleHistoryDbo.setExtraRaffle(ExtraRaffle.USED.name());
             }
+
             if (lastRaffleHistory != null) {
                 memberRaffleHistoryDbo.setShareTime(lastRaffleHistory.getShareTime());
+
+                //新用户刚注册
+                if (lastRaffleHistory.getLottery() == null) {
+                    memberRaffleHistoryDbo.setId(lastRaffleHistory.getId());
+                }
             }
+
             // 新增记录
             memberRaffleQueryService.save(memberRaffleHistoryDbo);
             this.prizeLogMsgService.sendRaffleRecord(memberRaffleHistoryDbo);
@@ -291,6 +296,20 @@ public class SignController {
             List<LotteryAdviceVO> resultList = new ArrayList<>();
             resultList.add(raffleAdviceVO);
             commonVO.setMsg("抽奖成功");
+
+            LotteryDbo extraLottery = lotteryQueryService.addCumulativeDay(memberId);
+            if (extraLottery != null) {
+                LotteryAdviceVO extraraffle = new LotteryAdviceVO();
+                extraraffle.setExtra(true);
+                extraraffle.setSingleNum(String.valueOf(extraLottery.getSingleNum()));
+                extraraffle.setIcon(extraLottery.getIcon());
+                extraraffle.setName(extraLottery.getName());
+                extraraffle.setType(extraLottery.getType().name());
+                extraraffle.setCardType(extraLottery.getCardType());
+                extraraffle.setId(extraLottery.getId());
+                resultList.add(extraraffle);
+
+            }
             commonVO.setData(resultList);
             return commonVO;
         } catch (Exception e) {
@@ -352,11 +371,12 @@ public class SignController {
         if (memberId == null) {
             return new CommonVO(false, "用户未登陆", null);
         }
-        final MemberSignCountDbo memberSignCountDbo = this.memberSignQueryService.find(memberId);
-        if (memberSignCountDbo == null) {
+//        final MemberSignCountDbo memberSignCountDbo = this.memberSignQueryService.find(memberId);
+        CumulativeRaffleDbo raffleDbo = lotteryQueryService.findOneRecord(memberId);
+        if (raffleDbo == null) {
             return new CommonVO(true, "", 0);
         }
-        return new CommonVO(true, "", memberSignCountDbo.getDays());
+        return new CommonVO(true, "", raffleDbo.getCumulativeDay());
     }
 
     // 判断今天是否抽过奖
@@ -413,6 +433,8 @@ public class SignController {
         // 用户从未有过任何抽奖记录  会给他先生成一条抽奖记录
         if (raffleHistoryDbo == null) {
             raffleHistoryDbo = new MemberRaffleHistoryDbo();
+            String uuid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
+            raffleHistoryDbo.setId(uuid);
             raffleHistoryDbo.setMemberId(memberId);
             raffleHistoryDbo.setExtraRaffle(ExtraRaffle.YES.name());
             raffleHistoryDbo.setFirstTime(true);
@@ -493,6 +515,7 @@ public class SignController {
         if (signCountDbo == null) {
             commonVO.setSuccess(false);
             commonVO.setMsg("请先登陆");
+            return commonVO;
         }
 
         final long lastSignTime = signCountDbo.getLastSignTime() / Constant.ONE_DAY_MS;
@@ -515,6 +538,52 @@ public class SignController {
         }
         commonVO.setSuccess(true);
         commonVO.setMsg(String.valueOf(count));
+        return commonVO;
+    }
+
+    @RequestMapping(value = {"/queryextralist"})
+    @ResponseBody
+    public CommonVO queryExtraMethod() {
+        CommonVO vo = new CommonVO();
+        vo.setSuccess(true);
+        vo.setData(lotteryQueryService.findExtra());
+        return vo;
+    }
+
+    @RequestMapping(value = {"/queryextrahistory"})
+    @ResponseBody
+    public CommonVO queryExtraHistory(String token) {
+        CommonVO commonVO = new CommonVO();
+        final String memberId = memberAuthService.getMemberIdBySessionId(token);
+        if (memberId == null) {
+            return new CommonVO(false, "用户未登陆", null);
+        }
+        List<ExtraRewardVO> resultList = new ArrayList<>();
+
+        for (ExtraRewardDay day : ExtraRewardDay.values()) {
+            ExtraRewardVO extraRewardVO = new ExtraRewardVO();
+            extraRewardVO.setDay(day.getDate());
+            extraRewardVO.setHasreward(false);
+            resultList.add(extraRewardVO);
+        }
+
+        CumulativeRaffleDbo record = lotteryQueryService.findOneRecord(memberId);
+        if (record == null) {
+            commonVO.setData(resultList);
+            return commonVO;
+        }
+
+        List<Integer> rewardedDayList = record.getHasRewarded();
+
+        for (int i = 0; i < rewardedDayList.size(); i++) {
+            ExtraRewardVO rewardVO = resultList.get(i);
+            rewardVO.setHasreward(true);
+            resultList.set(i, rewardVO);
+        }
+
+        commonVO.setSuccess(true);
+
+        commonVO.setData(resultList);
         return commonVO;
     }
 }

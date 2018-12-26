@@ -12,6 +12,7 @@ public class MemberRaffleHistoryDbo {
     private boolean firstTime;
     private String extraRaffle;
     private long shareTime;
+    private String hasExchange;
 
     public MemberRaffleHistoryDbo() {
     }
@@ -88,6 +89,14 @@ public class MemberRaffleHistoryDbo {
                 ", firstTime=" + firstTime +
                 ", extraRaffle='" + extraRaffle + '\'' +
                 '}';
+    }
+
+    public String getHasExchange() {
+        return hasExchange;
+    }
+
+    public void setHasExchange(String hasExchange) {
+        this.hasExchange = hasExchange;
     }
 
     public void setAddress(Address address) {

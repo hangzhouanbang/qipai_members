@@ -3,7 +3,7 @@ package com.anbang.qipai.members.cqrs.c.domain.sign;
 public class SignHistoryValueObject {
     private final String memberId;
     private final long time;
-    private final int continuousSignDays;
+    private int continuousSignDays;
     private final int vipLevel;
 
     public SignHistoryValueObject(SignHistory signHistory) {
@@ -27,5 +27,9 @@ public class SignHistoryValueObject {
 
     public int getVipLevel() {
         return vipLevel;
+    }
+
+    public void setContinuousSignDays(int continuousSignDays) {
+        this.continuousSignDays = continuousSignDays;
     }
 }

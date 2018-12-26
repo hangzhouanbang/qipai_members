@@ -23,6 +23,12 @@ public class MongodbLotteryDboDao implements LotteryDboDao {
     }
 
     @Override
+    public List<LotteryDbo> findExtraLottey() {
+        Query query = new Query(Criteria.where("overStep").is(true));
+        return this.mongoTemplate.find(query, LotteryDbo.class);
+    }
+
+    @Override
     public void saveAll(List<LotteryDbo> list) {
         this.mongoTemplate.insertAll(list);
     }

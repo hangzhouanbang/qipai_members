@@ -18,8 +18,16 @@ public class MongodbMemberRaffleHistoryDboDao implements MemberRaffleHistoryDboD
     private MongoTemplate mongoTemplate;
 
     @Override
+    public List<MemberRaffleHistoryDbo> findHistoriesWithoutPage(String memberId) {
+        Query query = new Query(Criteria.where("memberId").is(memberId));
+        query.with(new Sort(Sort.Direction.DESC, "time"));
+        return this.mongoTemplate.find(query, MemberRaffleHistoryDbo.class);
+    }
+
+    @Override
     public List<MemberRaffleHistoryDbo> findHistories(String memberId, int page, int size) {
         Query query = new Query(Criteria.where("memberId").is(memberId));
+        query.with(new Sort(Sort.Direction.DESC, "time"));
         query.skip((page - 1) * size);
         query.limit(size);
         return this.mongoTemplate.find(query, MemberRaffleHistoryDbo.class);
@@ -39,17 +47,16 @@ public class MongodbMemberRaffleHistoryDboDao implements MemberRaffleHistoryDboD
     @Override
     public MemberRaffleHistoryDbo shareTimeByMemberId(String memberId) {
         Query query = new Query(Criteria.where("memberId").is(memberId));
-        query.with(new Sort(Sort.Direction.DESC,"shareTime"));
-        return this.mongoTemplate.findOne(query,MemberRaffleHistoryDbo.class);
+        query.with(new Sort(Sort.Direction.DESC, "shareTime"));
+        return this.mongoTemplate.findOne(query, MemberRaffleHistoryDbo.class);
     }
-
 
 
     @Override
     public MemberRaffleHistoryDbo findByMemberId(String memberId) {
         Query query = new Query(Criteria.where("memberId").is(memberId));
-        query.with(new Sort(Sort.Direction.DESC,"time"));
-        return this.mongoTemplate.findOne(query,MemberRaffleHistoryDbo.class);
+        query.with(new Sort(Sort.Direction.DESC, "time"));
+        return this.mongoTemplate.findOne(query, MemberRaffleHistoryDbo.class);
     }
 
 }

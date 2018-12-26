@@ -13,4 +13,6 @@ public interface LotteryDboDao {
     void discardAll();
 
     LotteryDbo findLotteryById(String id);
+
+    List<LotteryDbo> findExtraLottey();
 }

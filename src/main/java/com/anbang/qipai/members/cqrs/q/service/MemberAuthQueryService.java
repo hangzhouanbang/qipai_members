@@ -108,8 +108,8 @@ public class MemberAuthQueryService {
     public MemberDbo rechargeGold(String memberId, int amount) {
         MemberDbo member = memberDboDao.findMemberById(memberId);
         MemberGoldAccountDbo memberGoldAccount = memberGoldAccountDboDao.findByMemberId(memberId);
-        memberDboDao.updateMemberGold(memberId,amount+memberGoldAccount.getBalance());
-        memberGoldAccountDboDao.updateByMemberId(memberId,amount+memberGoldAccount.getBalance());
+        memberDboDao.updateMemberGold(memberId, amount + memberGoldAccount.getBalance());
+        memberGoldAccountDboDao.updateByMemberId(memberId, amount + memberGoldAccount.getBalance());
         return memberDboDao.findMemberById(memberId);
     }
 
@@ -240,5 +240,11 @@ public class MemberAuthQueryService {
     public MemberDbo updateMemberHasBindAgent(String memberId, String agentId, boolean hasBindAgent) {
         memberDboDao.updateMemberHasBindAgent(memberId, agentId, hasBindAgent);
         return memberDboDao.findMemberById(memberId);
+    }
+
+
+    public String findNameByMemberID(String memberId) {
+        MemberDbo member = memberDboDao.findMemberById(memberId);
+        return member.getNickname();
     }
 }
