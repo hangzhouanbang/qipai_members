@@ -269,7 +269,7 @@ public class MemberController {
 			return vo;
 		}
 		MemberVerifyPhone memberVerify = memberVerifyPhoneService.findById(memberId);
-		if (System.currentTimeMillis() - memberVerify.getCreateTime() < 30000) {
+		if (memberVerify != null && System.currentTimeMillis() - memberVerify.getCreateTime() < 30000) {
 			vo.setSuccess(false);
 			vo.setMsg("too frequently");
 			return vo;
