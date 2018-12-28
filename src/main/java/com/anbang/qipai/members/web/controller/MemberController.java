@@ -11,7 +11,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -187,6 +186,11 @@ public class MemberController {
 		if (memberId == null) {
 			vo.setSuccess(false);
 			vo.setMsg("无效的凭证");
+			return vo;
+		}
+		if (memberAuthQueryService.findMemberById(memberId).isVerifyUser()) {
+			vo.setSuccess(false);
+			vo.setMsg("已经认证通过");
 			return vo;
 		}
 		if (IDcard.length() != 18 || !Pattern.matches("[0-9]{14}\\S{4}", IDcard)) {
@@ -467,7 +471,6 @@ public class MemberController {
 		vo.setMsg("success");
 		return vo;
 	}
-
 
 	@RequestMapping("/update_viptime")
 	public CommonVO update_viptime(@RequestBody String[] ids, Long vipEndTime) {
