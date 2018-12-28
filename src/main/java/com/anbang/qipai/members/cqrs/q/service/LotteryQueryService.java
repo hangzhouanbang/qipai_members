@@ -1,12 +1,18 @@
 package com.anbang.qipai.members.cqrs.q.service;
 
+import com.anbang.qipai.members.cqrs.c.domain.prize.LotteryTypeEnum;
 import com.anbang.qipai.members.cqrs.c.domain.sign.Constant;
+import com.anbang.qipai.members.cqrs.c.service.MemberGoldCmdService;
+import com.anbang.qipai.members.cqrs.c.service.MemberHongBaoCmdService;
+import com.anbang.qipai.members.cqrs.c.service.MemberPhoneFeeCmdService;
+import com.anbang.qipai.members.cqrs.c.service.MemberPrizeCmdService;
 import com.anbang.qipai.members.cqrs.q.dao.CumulativeRaffleDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.LotteryDboDao;
 import com.anbang.qipai.members.cqrs.q.dbo.CumulativeRaffleDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.Lottery;
 import com.anbang.qipai.members.cqrs.q.dbo.LotteryDbo;
 import com.anbang.qipai.members.web.vo.CommonVO;
+import com.dml.accounting.AccountingRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +29,27 @@ public class LotteryQueryService {
     private LotteryDboDao lotteryDboDao;
 
     @Autowired
+    private MemberGoldCmdService memberGoldCmdService;
+
+    @Autowired
+    private MemberHongBaoCmdService memberHongBaoCmdService;
+
+    @Autowired
+    private HongBaoQueryService hongBaoQueryService;
+
+    @Autowired
+    private MemberGoldQueryService memberGoldQueryService;
+
+    @Autowired
+    private MemberPhoneFeeCmdService memberPhoneFeeCmdService;
+
+    @Autowired
+    private MemberAuthQueryService memberAuthQueryService;
+
+    @Autowired
+    private PhoneFeeQueryService phoneFeeQueryService;
+
+    @Autowired
     private CumulativeRaffleDboDao cumulativeRaffleDboDao;
 
     public List<LotteryDbo> findAll() {
@@ -35,6 +62,11 @@ public class LotteryQueryService {
 
     public void discardAll() {
         this.lotteryDboDao.discardAll();
+    }
+
+
+    public String findIconByLotteryId(String id) {
+        return lotteryDboDao.findLotteryById(id).getIcon();
     }
 
     public void discardBeforeAndSaveAll(List<LotteryDbo> lotteryDboList) {
@@ -78,7 +110,7 @@ public class LotteryQueryService {
             cumulativeRaffleDbo.setCumulativeDay(2);
             cumulativeRaffleDbo.setMemberId(memberId);
             cumulativeRaffleDbo.setTime(formatTime);
-            cumulativeRaffleDbo.setId(memberId+"_"+formatTime+"_extraReward");
+            cumulativeRaffleDbo.setId(memberId + "_" + formatTime + "_extraReward");
             Calendar c = Calendar.getInstance();
             c.setTime(new Date());
             c.add(Calendar.DAY_OF_WEEK, -1);
@@ -115,6 +147,7 @@ public class LotteryQueryService {
                     extraRecordList = new ArrayList<>();
                 }
 
+                //TODO:
                 if (cumulativeDay == 3) {
                     hasRewarded.add(3);
                     extraRecordList.add(extraLottey.get(0));
@@ -138,6 +171,33 @@ public class LotteryQueryService {
                 } else {
                     return null;
                 }
+
+                if (lotteryDbo != null) {
+                    try {
+                        final LotteryTypeEnum lotteryType = lotteryDbo.getType();
+                        if (lotteryType == LotteryTypeEnum.HONGBAO) {
+                            AccountingRecord record = this.memberHongBaoCmdService.giveHongBaoToMember(memberId,
+                                    lotteryDbo.getSingleNum(), "抽奖，红包*" + lotteryDbo.getSingleNum(), currentTime);
+                            this.hongBaoQueryService.withdraw(memberId, record);
+                        } else if (lotteryType == LotteryTypeEnum.GOLD) {
+                            AccountingRecord record = this.memberGoldCmdService.giveGoldToMember(memberId, lotteryDbo.getSingleNum(),
+                                    "抽奖，玉石*" + lotteryDbo.getSingleNum(), System.currentTimeMillis());
+                            this.memberGoldQueryService.withdraw(memberId, record);
+                        } else if (LotteryTypeEnum.isMemberCard(lotteryType)) {
+                            this.memberAuthQueryService.prolongVipTimeByRaffle(memberId, lotteryType, lotteryDbo.getSingleNum());
+                        } else if (lotteryType == LotteryTypeEnum.PHONE_FEE) {
+                            AccountingRecord record = this.memberPhoneFeeCmdService.givePhoneFeeToMember(memberId,
+                                    lotteryDbo.getSingleNum(), "抽奖，话费*" + lotteryDbo.getSingleNum(), System.currentTimeMillis());
+                            this.phoneFeeQueryService.withdraw(memberId, record);
+                        } else if (lotteryType == LotteryTypeEnum.ENTIRY) {
+                            // 领取的实物,本地微服务什么都不做
+                            // 抽到谢谢惠顾也什么都不做
+                        }
+                    }catch (Exception e){
+                        return null;             //一旦写内存失败 直接返回
+                    }
+                }
+
                 cumulativeRaffleDbo.setHasRewarded(hasRewarded);
                 cumulativeRaffleDbo.setExtraRecordList(extraRecordList);
             }

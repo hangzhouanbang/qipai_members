@@ -19,6 +19,7 @@ public class LotteryAdviceVO {
     private boolean overStep;
     private boolean isExtra;
     private String memberId;
+    private String index;
 
     public String getId() {
         return id;
@@ -98,5 +99,13 @@ public class LotteryAdviceVO {
 
     public void setMemberId(String memberId) {
         this.memberId = memberId;
+    }
+
+    public String getIndex() {
+        return index;
+    }
+
+    public void setIndex(String index) {
+        this.index = index;
     }
 }

@@ -14,6 +14,10 @@ public class MemberRaffleQueryService {
     @Autowired
     private MemberRaffleHistoryDboDao raffleHistoryDboDao;
 
+    public MemberRaffleHistoryDbo findById(String id) {
+        return raffleHistoryDboDao.findById(id);
+    }
+
     public List<MemberRaffleHistoryDbo> findHistoriesWithoutPage(String memberId) {
         List<MemberRaffleHistoryDbo> histories = raffleHistoryDboDao.findHistoriesWithoutPage(memberId);
         return histories;

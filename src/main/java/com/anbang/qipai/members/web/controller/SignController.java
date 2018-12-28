@@ -156,6 +156,7 @@ public class SignController {
             adviceVO.setOverStep(dbo.isOverStep());
             adviceVO.setType(dbo.getType().name());
             adviceVO.setCardType(dbo.getCardType());
+            adviceVO.setIndex(dbo.getIndex());
             adviceVO.setSingleNum(changeSingleNum(dbo));
             resultList.add(adviceVO);
         }
@@ -208,7 +209,7 @@ public class SignController {
         }
         HasRaffle hasRaffle = isRaffleToday(memberId);
 
-        // 短路与 如果为空直接返回false  //TODO:把它注释回来 否则无限次抽奖
+        // 短路与 如果为空直接返回false
 //        if (hasRaffle.isRaffleToday() && (!StringUtils.isEmpty(hasRaffle.getExtraRaffle()))
 //                & (!hasRaffle.getExtraRaffle().equals(ExtraRaffle.YES.name()))) {
 //            commonVO.setSuccess(false);
@@ -230,7 +231,7 @@ public class SignController {
                         "抽奖，玉石*" + lottery.getSingleNum(), System.currentTimeMillis());
                 this.memberGoldQueryService.withdraw(memberId, record);
             } else if (LotteryTypeEnum.isMemberCard(lotteryType)) {
-                this.memberAuthQueryService.prolongVipTimeByRaffle(memberId, lotteryType, lottery.getSingleNum());
+                this.memberAuthQueryService.prolongVipTimeAdvice(memberId, lotteryType, lottery.getSingleNum());
             } else if (lotteryType == LotteryTypeEnum.PHONE_FEE) {
                 AccountingRecord record = this.memberPhoneFeeCmdService.givePhoneFeeToMember(memberId,
                         lottery.getSingleNum(), "抽奖，话费*" + lottery.getSingleNum(), System.currentTimeMillis());
@@ -292,6 +293,7 @@ public class SignController {
             raffleAdviceVO.setSingleNum(changeSingleNum(lotteryDbo));
             raffleAdviceVO.setMemberId(raffleHistoryValueObject.getMemberId());
             raffleAdviceVO.setExtra(false);
+            raffleAdviceVO.setIndex(lotteryDbo.getIndex());
 
             List<LotteryAdviceVO> resultList = new ArrayList<>();
             resultList.add(raffleAdviceVO);

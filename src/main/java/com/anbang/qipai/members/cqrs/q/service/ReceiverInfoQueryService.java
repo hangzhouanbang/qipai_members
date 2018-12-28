@@ -23,4 +23,8 @@ public class ReceiverInfoQueryService {
     public void addReceiverInfo(ReceiverInfoDbo dbo) {
         receiverInfoDboDao.add(dbo);
     }
+
+    public void save(ReceiverInfoDbo dbo) {
+        receiverInfoDboDao.save(dbo);
+    }
 }

@@ -6,10 +6,13 @@ import com.anbang.qipai.members.cqrs.c.domain.prize.Lottery;
 import com.anbang.qipai.members.cqrs.c.domain.prize.LotteryTypeEnum;
 import com.anbang.qipai.members.cqrs.c.service.MemberPrizeCmdService;
 import com.anbang.qipai.members.cqrs.q.dbo.LotteryDbo;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberRaffleHistoryDbo;
 import com.anbang.qipai.members.cqrs.q.service.LotteryQueryService;
+import com.anbang.qipai.members.cqrs.q.service.MemberRaffleQueryService;
 import com.anbang.qipai.members.msg.channel.sink.SignInPrizeSink;
 import com.anbang.qipai.members.msg.msjobj.AdminLotteryMo;
 import com.anbang.qipai.members.msg.msjobj.CommonMO;
+import com.anbang.qipai.members.msg.msjobj.SendOutGoodsMO;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.log4j.Logger;
@@ -27,6 +30,7 @@ import java.util.Map;
 @EnableBinding(SignInPrizeSink.class)
 public class SignPrizeReceiver {
 
+    private static final String SEND_OUT_GOODS = "sendOutGoods";
     private static final String SIGNING_PRIZE = "SIGNING_PRIZE";
 
     private static final String PUBLISH_LOTTERY = "releaseSignInPrize";
@@ -38,6 +42,9 @@ public class SignPrizeReceiver {
 
     @Autowired
     private LotteryQueryService lotteryQueryService;
+
+    @Autowired
+    private MemberRaffleQueryService raffleQueryService;
 
     private Gson gson = new Gson();
 
@@ -51,16 +58,18 @@ public class SignPrizeReceiver {
             List<AdminLotteryMo> list = JSON.parseArray(json, AdminLotteryMo.class);
 
             List<Lottery> lotteryList = new ArrayList<>();
-            for (AdminLotteryMo lotteryMo : list) {
-                Lottery lottery = new Lottery(lotteryMo.getId(),
-                        lotteryMo.getName(),
-                        lotteryMo.getPrizeProb(),
-                        lotteryMo.getFirstPrizeProb(),
-                        this.ofAdvice(lotteryMo),
-                        lotteryMo.getSingleNum(),
-                        lotteryMo.getStoreNum(),
-                        lotteryMo.getOverstep().equals("是"));
-                lotteryList.add(lottery);
+            for (int index = 0; index <10 ;index++) {
+                AdminLotteryMo lotteryMo = list.get(index);
+                    Lottery lottery = new Lottery(lotteryMo.getId(),
+                            lotteryMo.getName(),
+                            lotteryMo.getPrizeProb(),
+                            lotteryMo.getFirstPrizeProb(),
+                            this.ofAdvice(lotteryMo),
+                            lotteryMo.getSingleNum(),
+                            lotteryMo.getStoreNum(),
+                            lotteryMo.getOverstep().equals("是"));
+
+                    lotteryList.add(lottery);
             }
 
             //更新转盘
@@ -71,6 +80,7 @@ public class SignPrizeReceiver {
             for (AdminLotteryMo lotteryMo : list) {
                 LotteryDbo lotteryDbo = new LotteryDbo();
                 lotteryDbo.setId(lotteryMo.getId());
+                lotteryDbo.setIndex(lotteryMo.getIndex());
                 lotteryDbo.setName(lotteryMo.getName());
                 lotteryDbo.setIcon(lotteryMo.getIconUrl());
                 lotteryDbo.setProp(lotteryMo.getPrizeProb());
@@ -81,12 +91,26 @@ public class SignPrizeReceiver {
                 lotteryDbo.setOverStep(overstep);
                 LotteryTypeEnum type = this.ofAdvice(lotteryMo);
                 lotteryDbo.setType(type);
-                if(lotteryMo.getType().equals("会员卡")){
-                 lotteryDbo.setCardType(lotteryMo.getCardType());
+                if (lotteryMo.getType().equals("会员卡")) {
+                    lotteryDbo.setCardType(lotteryMo.getCardType());
                 }
                 lotteryDboList.add(lotteryDbo);
             }
             this.lotteryQueryService.discardBeforeAndSaveAll(lotteryDboList);
+        }
+
+        if (msg.equals(SEND_OUT_GOODS)) {
+            String json = gson.toJson(mo.getData());
+            SendOutGoodsMO goodsMO = JSON.parseObject(json, SendOutGoodsMO.class);
+            MemberRaffleHistoryDbo historyDbo = raffleQueryService.findById(goodsMO.getRaffleRecordId());
+            if (historyDbo != null
+                    && historyDbo.getMemberId().equals(goodsMO.getMemberId())
+                    && goodsMO.getHasSent().equals("YES")) {
+
+                historyDbo.setHasExchange("YES");
+                raffleQueryService.save(historyDbo);
+
+            }
         }
     }
 

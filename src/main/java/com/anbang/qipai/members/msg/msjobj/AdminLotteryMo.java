@@ -14,6 +14,7 @@ public class AdminLotteryMo {
     private Integer firstPrizeProb;//首次中奖概率
     private String overstep;//超出奖池
     private String state;
+    private String index;
 
     public String getId() {
         return id;
@@ -113,5 +114,13 @@ public class AdminLotteryMo {
 
     public void setCardType(String cardType) {
         this.cardType = cardType;
+    }
+
+    public String getIndex() {
+        return index;
+    }
+
+    public void setIndex(String index) {
+        this.index = index;
     }
 }

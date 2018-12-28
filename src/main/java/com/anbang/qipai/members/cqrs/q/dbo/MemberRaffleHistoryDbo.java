@@ -4,7 +4,7 @@ import com.anbang.qipai.members.enums.ExtraRaffle;
 import com.anbang.qipai.members.plan.bean.Address;
 
 public class MemberRaffleHistoryDbo {
-    private String id;
+    private String id;  //中奖记录的ID
     private String memberId;
     private Lottery lottery;
     private Address address;

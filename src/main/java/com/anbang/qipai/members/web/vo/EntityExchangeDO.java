@@ -7,6 +7,7 @@ package com.anbang.qipai.members.web.vo;
  */
 public class EntityExchangeDO {
 
+    String raffleRecordId;
     String memberId;
     String nickName;
     String lotteryName;
@@ -14,9 +15,11 @@ public class EntityExchangeDO {
     String singleNum;
     String telephone;
     String address;
+    String icon;
     Long exchangeTime;
     Long distributeTime;
     String behavior;
+    String rest;
 
     public String getMemberId() {
         return memberId;
@@ -96,6 +99,30 @@ public class EntityExchangeDO {
 
     public void setBehavior(String behavior) {
         this.behavior = behavior;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public String getRaffleRecordId() {
+        return raffleRecordId;
+    }
+
+    public void setRaffleRecordId(String raffleRecordId) {
+        this.raffleRecordId = raffleRecordId;
+    }
+
+    public String getRest() {
+        return rest;
+    }
+
+    public void setRest(String rest) {
+        this.rest = rest;
     }
 
     @Override

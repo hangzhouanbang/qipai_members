@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MemberPhoneFeeCmdServiceImpl extends CmdServiceBase implements MemberPhoneFeeCmdService {
     @Override
-    public AccountingRecord givePhoneFeeToMember(String memberId, Integer amount, String textSummary, long currentTime) throws MemberNotFoundException {
+    public AccountingRecord givePhoneFeeToMember(String memberId, Integer amount, String textSummary, Long currentTime) throws MemberNotFoundException {
         MemberPhoneFeeAccountManager memberPhoneFeeAccountManager = this.singletonEntityRepository.getEntity(MemberPhoneFeeAccountManager.class);
         return memberPhoneFeeAccountManager.givePhoneFeeToMember(memberId, amount, new TextAccountingSummary(textSummary), currentTime);
     }

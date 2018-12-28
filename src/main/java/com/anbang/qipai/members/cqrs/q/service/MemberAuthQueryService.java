@@ -4,6 +4,8 @@ import static com.anbang.qipai.members.cqrs.c.domain.prize.PrizeEnum.ONE_DAY_MEM
 import static com.anbang.qipai.members.cqrs.c.domain.prize.PrizeEnum.TWO_DAY_MEMBER_CARD;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import com.anbang.qipai.members.cqrs.q.dao.MemberGoldAccountDboDao;
@@ -172,6 +174,43 @@ public class MemberAuthQueryService {
         }
         return this.prolongVipTime(memberId, time);
     }
+
+
+    public MemberDbo prolongVipTimeAdvice(String memberId, LotteryTypeEnum lotteryType, int singleNum) {
+        memberDboDao.updateMemberVIP(memberId, true);
+        MemberDbo member = this.memberDboDao.findMemberById(memberId);
+        long vipEndTime = member.getVipEndTime();
+        Calendar c = Calendar.getInstance();
+        long time = 0;
+
+        if (vipEndTime > System.currentTimeMillis()) {
+            time = vipEndTime;
+        } else {
+            time = System.currentTimeMillis();
+        }
+
+        c.setTime(new Date(time));
+
+        //日卡
+        if (lotteryType.name().equals("MEMBER_CARD_DAY")) {
+            c.add(Calendar.DAY_OF_WEEK, +singleNum);
+        }
+        if (lotteryType.name().equals("MEMBER_CARD_WEAK")) {
+            c.add(Calendar.WEEK_OF_MONTH, +singleNum);
+        }
+        if (lotteryType.name().equals("MEMBER_CARD_MONTH")) {
+            c.add(Calendar.MONTH, +singleNum);
+        }
+        if (lotteryType.name().equals("MEMBER_CARD_SEASON")) {
+            c.add(Calendar.MONTH, +(3 * singleNum));
+        }
+        vipEndTime = c.getTime().getTime();
+
+        member.setVipEndTime(vipEndTime);
+        memberDboDao.updateMemberVipEndTime(memberId, vipEndTime);
+        return member;
+    }
+
 
     public MemberDbo prolongVipTime(String memberId, long time) {
         memberDboDao.updateMemberVIP(memberId, true);

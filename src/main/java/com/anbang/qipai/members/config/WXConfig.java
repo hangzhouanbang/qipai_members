@@ -2,15 +2,12 @@ package com.anbang.qipai.members.config;
 
 public class WXConfig {
 
+	public static final String APPID = "wxb841e562b0100c95";
+	public static final String MCH_ID = "1507283991";
+	public static final String KEY = "lW43jdfOP05467835mbJdsdfg985ppqw";
+	public static final String NOTIFY_URL = "http://47.96.20.47:82/clubcard/wxnotify";
 	public static final String APP_TRADE_TYPE = "APP";
 	public static final String H5_TRADE_TYPE = "MWEB";
-	public static final String SIGN_TYPE = "MD5";
+	public static final String SIGN_TYPE = "/*/**/*/MD5";
 	public static final String CHARSET = "utf-8";
-
-
-	//	TODO
-	public static final String NOTIFY_URL = " ";
-	public static final String APPID = " ";
-	public static final String MCH_ID = " ";
-	public static final String KEY = " ";
 }

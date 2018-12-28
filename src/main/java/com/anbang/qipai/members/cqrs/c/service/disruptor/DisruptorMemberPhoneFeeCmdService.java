@@ -21,7 +21,7 @@ public class DisruptorMemberPhoneFeeCmdService extends DisruptorCmdServiceBase i
     private MemberPhoneFeeCmdServiceImpl memberPhoneFeeCmdService;
 
     @Override
-    public AccountingRecord givePhoneFeeToMember(String memberId, Integer amount, String textSummary, long currentTime) throws MemberNotFoundException {
+    public AccountingRecord givePhoneFeeToMember(String memberId, Integer amount, String textSummary, Long currentTime) throws MemberNotFoundException {
         CommonCommand cmd = new CommonCommand(MemberPhoneFeeCmdServiceImpl.class.getName(), "givePhoneFeeToMember", memberId, amount, textSummary, currentTime);
         DeferredResult<AccountingRecord> deferredResult = publishEvent(this.disruptorFactory.getCoreCmdDisruptor(), cmd, new Callable<AccountingRecord>() {
             @Override

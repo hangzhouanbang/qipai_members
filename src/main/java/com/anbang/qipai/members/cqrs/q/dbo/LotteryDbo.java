@@ -13,6 +13,7 @@ public class LotteryDbo {
     private int singleNum;
     private long stock;
     private boolean overStep;
+    private String index;
 
     public String getId() {
         return id;
@@ -108,5 +109,13 @@ public class LotteryDbo {
                 ", stock=" + stock +
                 ", overStep=" + overStep +
                 '}';
+    }
+
+    public String getIndex() {
+        return index;
+    }
+
+    public void setIndex(String index) {
+        this.index = index;
     }
 }

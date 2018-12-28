@@ -14,10 +14,12 @@ import com.anbang.qipai.members.enums.ExchangeType;
 import com.anbang.qipai.members.msg.service.PrizeLogMsgService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.anbang.qipai.members.web.vo.EntityExchangeDO;
+import com.anbang.qipai.members.web.vo.ExchangeFeeVO;
 import com.anbang.qipai.members.web.vo.RaffleHistoryVO;
 import com.dml.accounting.AccountingRecord;
 import com.dml.accounting.InsufficientBalanceException;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -72,19 +74,43 @@ public class ExchangeController {
             ExchangeRecord exchangeRecord = this.memberHongBaoCmdService.exchange(memberId, score, "红包兑换 * " + score, System.currentTimeMillis());
             AccountingRecord accountingRecord = exchangeRecord.getRecord();
             MemberHongBaoRecordDbo hongBaoRecordDbo = this.hongBaoQueryService.withdraw(memberId, accountingRecord);
-            ScoreExchangeRecordDbo scoreExchangeRecordDbo = new ScoreExchangeRecordDbo(hongBaoRecordDbo.getId(),
-                    memberId,
-                    phone,
-                    hongBaoRecordDbo.getTime(),
-                    (int) hongBaoRecordDbo.getAccountingAmount(),
-                    exchangeRecord.getConcurrency(),
-                    ExchangeType.HONG_BAO,
-                    (int) hongBaoRecordDbo.getBalanceAfter(),
-                    accountingRecord);
-            this.prizeLogMsgService.sendExchangeLog(scoreExchangeRecordDbo);
-            return new CommonVO(true, null, scoreExchangeRecordDbo);
+
+
+//            ScoreExchangeRecordDbo scoreExchangeRecordDbo = new ScoreExchangeRecordDbo(hongBaoRecordDbo.getId(),
+//                    memberId,
+//                    null,
+//                    hongBaoRecordDbo.getTime(),
+//                    (int) hongBaoRecordDbo.getAccountingAmount(),
+//                    exchangeRecord.getConcurrency(),
+//                    ExchangeType.HONG_BAO,
+//                    (int) hongBaoRecordDbo.getBalanceAfter(),
+//                    accountingRecord);
+//
+            EntityExchangeDO entityExchangeDO = new EntityExchangeDO();
+            entityExchangeDO.setMemberId(memberId);
+            entityExchangeDO.setNickName(memberAuthQueryService.findNameByMemberID(memberId));
+            entityExchangeDO.setLotteryName("红包");
+            entityExchangeDO.setLotteryType(ExchangeType.HONG_BAO.name());
+            entityExchangeDO.setSingleNum(String.valueOf(exchangeRecord.getConcurrency()));
+            entityExchangeDO.setTelephone(phone);
+            entityExchangeDO.setRest(String.valueOf(hongBaoRecordDbo.getBalanceAfter()));
+            entityExchangeDO.setExchangeTime(hongBaoRecordDbo.getTime());
+
+            prizeLogMsgService.sendEntityExchangeLog(entityExchangeDO);
+
+//            this.prizeLogMsgService.sendExchangeLog(scoreExchangeRecordDbo);
+
+
+            //给U3D看的
+            ExchangeFeeVO exchangeFeeVO = new ExchangeFeeVO();
+            exchangeFeeVO.setPhone(phone);
+            exchangeFeeVO.setCurrency(exchangeRecord.getConcurrency());
+            exchangeFeeVO.setMemberId(memberId);
+            exchangeFeeVO.setExchange(ExchangeType.HONG_BAO.name());
+
+            return new CommonVO(true, "成功兑换红包 " + exchangeFeeVO.getCurrency() + " 元  \n 询问详情请联系客服微信ankf01", exchangeFeeVO);
         } catch (InsufficientBalanceException e) {
-            return new CommonVO(false, "积分不足", null);
+            return new CommonVO(false, "红包积分不足", null);
         } catch (MemberNotFoundException e) {
             return new CommonVO(false, "账户不存在", null);
         } catch (ExchangeException e) {
@@ -99,22 +125,52 @@ public class ExchangeController {
         if (memberId == null) {
             return new CommonVO(false, "用户未登陆", null);
         }
+        if (StringUtils.isEmpty(phone)) {
+            return new CommonVO(false, "手机号不得为空", null);
+        }
+        //手机号11位
+        if (phone.length() != 11) {
+            return new CommonVO(false, "手机号格式不正确", null);
+        }
         try {
             ExchangeRecord exchangeRecord = this.memberPhoneFeeCmdService.exchange(memberId, score, "用户话费兑换 *" + score, System.currentTimeMillis());
             AccountingRecord accountingRecord = exchangeRecord.getRecord();
             PhoneFeeRecordDbo phoneFeeRecordDbo = phoneFeeQueryService.withdraw(memberId, accountingRecord);
-            ScoreExchangeRecordDbo scoreExchangeRecordDbo = new ScoreExchangeRecordDbo(phoneFeeRecordDbo.getId(),
-                    memberId,
-                    phone,
-                    phoneFeeRecordDbo.getTime(),
-                    (int) phoneFeeRecordDbo.getAccountingAmount(),
-                    exchangeRecord.getConcurrency(),
-                    ExchangeType.PHONE_FEE,
-                    (int) phoneFeeRecordDbo.getBalanceAfter(), accountingRecord);
-            this.prizeLogMsgService.sendExchangeLog(scoreExchangeRecordDbo);
-            return new CommonVO(true, null, scoreExchangeRecordDbo);
+
+
+//            ScoreExchangeRecordDbo scoreExchangeRecordDbo = new ScoreExchangeRecordDbo(phoneFeeRecordDbo.getId(),
+//                    memberId,
+//                    phone,
+//                    phoneFeeRecordDbo.getTime(),
+//                    (int) phoneFeeRecordDbo.getAccountingAmount(),
+//                    exchangeRecord.getConcurrency(),
+//                    ExchangeType.PHONE_FEE,
+//                    (int) phoneFeeRecordDbo.getBalanceAfter(), accountingRecord);
+
+            EntityExchangeDO entityExchangeDO = new EntityExchangeDO();
+            entityExchangeDO.setMemberId(memberId);
+            entityExchangeDO.setNickName(memberAuthQueryService.findNameByMemberID(memberId));
+            entityExchangeDO.setLotteryName("话费");
+            entityExchangeDO.setLotteryType(ExchangeType.PHONE_FEE.name());
+            entityExchangeDO.setSingleNum(String.valueOf(exchangeRecord.getConcurrency()));
+            entityExchangeDO.setTelephone(phone);
+            entityExchangeDO.setExchangeTime(phoneFeeRecordDbo.getTime());
+            entityExchangeDO.setRest(String.valueOf(phoneFeeRecordDbo.getBalanceAfter()));
+
+            prizeLogMsgService.sendEntityExchangeLog(entityExchangeDO);
+//            this.prizeLogMsgService.sendExchangeLog(scoreExchangeRecordDbo);
+
+
+            //展示给U3D的
+            ExchangeFeeVO exchangeFeeVO = new ExchangeFeeVO();
+            exchangeFeeVO.setCurrency(exchangeRecord.getConcurrency());
+            exchangeFeeVO.setMemberId(memberId);
+            exchangeFeeVO.setPhone(phone);
+            exchangeFeeVO.setExchange(ExchangeType.PHONE_FEE.name());
+
+            return new CommonVO(true, "成功兑换话费 " + exchangeFeeVO.getCurrency() + " 元   \n 询问详情请联系客服微信ankf01", exchangeFeeVO);
         } catch (InsufficientBalanceException e) {
-            return new CommonVO(false, "积分不足", null);
+            return new CommonVO(false, "话费余额不足", null);
         } catch (MemberNotFoundException e) {
             return new CommonVO(false, "账户不存在", null);
         } catch (ExchangeException e) {
@@ -176,25 +232,45 @@ public class ExchangeController {
             return vo;
         }
 
-        if (StringUtils.isEmpty(receiverInfoDbo.getName()) ||
-                StringUtils.isEmpty(receiverInfoDbo.getAddress()) ||
-                StringUtils.isEmpty(receiverInfoDbo.getTelephone())) {
-            vo.setSuccess(false);
-            vo.setMsg("手机号、收件地址、收货人不得为空");
-            return vo;
+        ReceiverInfoDbo receiverInfo = receiverInfoQueryService.findReceiverByMemberId(memberId);
+        if (receiverInfo == null) {
+            if (StringUtils.isEmpty(receiverInfoDbo.getName()) ||
+                    StringUtils.isEmpty(receiverInfoDbo.getAddress()) ||
+                    StringUtils.isEmpty(receiverInfoDbo.getTelephone())) {
+                vo.setSuccess(false);
+                vo.setMsg("手机号、收件地址、收货人不得为空");
+                return vo;
+            }
+
+            //手机号11位
+            if (receiverInfoDbo.getTelephone().length() != 11) {
+                vo.setSuccess(false);
+                vo.setMsg("手机号格式不正确");
+            }
+
+            receiverInfo = new ReceiverInfoDbo();
+            receiverInfo.setId(memberId + "_receiverInfo");
+            receiverInfo.setAddress(receiverInfoDbo.getAddress());
+            receiverInfo.setGender(receiverInfoDbo.getGender());
+            receiverInfo.setName(receiverInfoDbo.getName());
+            receiverInfo.setTelephone(receiverInfoDbo.getTelephone());
+            receiverInfo.setMemberId(memberId);
+            receiverInfoQueryService.addReceiverInfo(receiverInfo);
+        } else {
+            if (!StringUtils.isEmpty(receiverInfoDbo.getTelephone())) {
+                //手机号11位
+                if (receiverInfoDbo.getTelephone().length() != 11) {
+                    vo.setSuccess(false);
+                    vo.setMsg("手机号格式不正确");
+                }
+
+                receiverInfo.setTelephone(receiverInfoDbo.getTelephone());
+            }
+            receiverInfo.setName(receiverInfoDbo.getName());
+            receiverInfo.setGender(receiverInfoDbo.getGender());
+            receiverInfo.setAddress(receiverInfoDbo.getAddress());
+            receiverInfoQueryService.save(receiverInfo);
         }
-        //手机号11位
-        if (receiverInfoDbo.getTelephone().length() != 11) {
-            vo.setSuccess(false);
-            vo.setMsg("手机号格式不正确");
-        }
-        receiverInfoDbo.setId(memberId + "_receiverInfo");
-        receiverInfoDbo.setAddress(receiverInfoDbo.getAddress());
-        receiverInfoDbo.setGender(receiverInfoDbo.getGender());
-        receiverInfoDbo.setName(receiverInfoDbo.getName());
-        receiverInfoDbo.setTelephone(receiverInfoDbo.getTelephone());
-        receiverInfoDbo.setMemberId(memberId);
-        receiverInfoQueryService.addReceiverInfo(receiverInfoDbo);
         vo.setSuccess(true);
         vo.setMsg("添加收件人信息成功");
         return vo;
@@ -220,24 +296,32 @@ public class ExchangeController {
         if (raffleHistoryDbo == null) {
             return new CommonVO(false, "无该条中奖记录", null);
         }
-        EntityExchangeDO entityExchangeDO = new EntityExchangeDO();
-        String nickName = memberAuthQueryService.findNameByMemberID(memberId);
 
+        if (!StringUtils.isEmpty(raffleHistoryDbo.getHasExchange())) {
+            if (!raffleHistoryDbo.getHasExchange().equals("NO")) {
+                return new CommonVO(false, "您已经兑换过了", null);
+            }
+        }
+        EntityExchangeDO entityExchangeDO = new EntityExchangeDO();
+//        String nickName = memberAuthQueryService.findNameByMemberID(memberId);
+
+        //entityId为中奖记录的ID
+        entityExchangeDO.setRaffleRecordId(entityId);
         entityExchangeDO.setMemberId(memberId);
-        entityExchangeDO.setNickName(nickName);
+        entityExchangeDO.setNickName(receiverInfo.getName());
         entityExchangeDO.setTelephone(receiverInfo.getTelephone());
         entityExchangeDO.setAddress(receiverInfo.getAddress());
         entityExchangeDO.setExchangeTime(System.currentTimeMillis());
         entityExchangeDO.setLotteryName(raffleHistoryDbo.getLottery().getName());
         entityExchangeDO.setLotteryType(raffleHistoryDbo.getLottery().getType().name());
-        entityExchangeDO.setSingleNum(String.valueOf(raffleHistoryDbo.getLottery().getSingleNum()));
+        entityExchangeDO.setSingleNum(String.valueOf(raffleHistoryDbo.getLottery().getSingleNum()) + "个");
 
         raffleHistoryDbo.setHasExchange("WAIT");
         memberRaffleQueryService.save(raffleHistoryDbo);
         //TODO:发送消息
         this.prizeLogMsgService.sendEntityExchangeLog(entityExchangeDO);
 
-        return new CommonVO(true, null, entityExchangeDO);
+        return new CommonVO(true, "成功兑换 \n 询问详情请联系客服微信ankf01 " + entityExchangeDO.getLotteryName(), entityExchangeDO);
     }
 
     @RequestMapping(value = {"/queryphonefeeAndHongbao"})
@@ -274,8 +358,8 @@ public class ExchangeController {
             return new CommonVO(false, "用户未登陆", null);
         }
         ReceiverInfoDbo receiver = receiverInfoQueryService.findReceiverByMemberId(memberId);
-        if(receiver == null){
-            return new CommonVO(false,"请先填写收货人信息",null);
+        if (receiver == null) {
+            return new CommonVO(false, "请先填写收货人信息", null);
         }
         CommonVO vo = new CommonVO();
         vo.setSuccess(true);
@@ -284,4 +368,49 @@ public class ExchangeController {
     }
 
 
+    @RequestMapping(value = {"/updatetelephone"})
+    @ResponseBody
+    public CommonVO updateTelephone(String token, String telephone) {
+        final String memberId = this.memberAuthService.getMemberIdBySessionId(token);
+        if (memberId == null) {
+            return new CommonVO(false, "用户未登陆", null);
+        }
+
+        //手机号11位
+        if (telephone.length() != 11) {
+            return new CommonVO(false, "手机号格式不正确", null);
+        }
+
+        ReceiverInfoDbo receiverInfo = receiverInfoQueryService.findReceiverByMemberId(memberId);
+        if (receiverInfo == null) {
+            receiverInfo = new ReceiverInfoDbo();
+            receiverInfo.setId(memberId + "_receiverInfo");
+            receiverInfo.setTelephone(telephone);
+            receiverInfo.setMemberId(memberId);
+            receiverInfoQueryService.addReceiverInfo(receiverInfo);
+        } else {
+            receiverInfo.setTelephone(telephone);
+            receiverInfoQueryService.save(receiverInfo);
+        }
+        return new CommonVO(true, "修改手机号成功", null);
+    }
+
+    @RequestMapping(value = {"/querytelephone"})
+    @ResponseBody
+    public CommonVO queryTelephone(String token) {
+        final String memberId = this.memberAuthService.getMemberIdBySessionId(token);
+        if (memberId == null) {
+            return new CommonVO(false, "用户未登陆", null);
+        }
+        CommonVO vo = new CommonVO();
+        vo.setSuccess(true);
+        ReceiverInfoDbo receiver = receiverInfoQueryService.findReceiverByMemberId(memberId);
+
+        if (receiver == null) {
+            return vo;
+        } else {
+            vo.setData(receiver.getTelephone());
+            return vo;
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package com.anbang.qipai.members.cqrs.c.domain.prize;
 
+import io.swagger.models.auth.In;
+
 import java.util.*;
 
 import static com.anbang.qipai.members.cqrs.c.domain.sign.Constant.TOTAL_PROP_COUNT;
@@ -88,7 +90,7 @@ public class LotteryTable {
         return raffleHistory;
     }
 
-    private Lottery raffleInternal(int random, TreeMap<Integer, Lottery> table) throws StockInsufficientException {
+    private Lottery raffleInternal(Integer random, TreeMap<Integer, Lottery> table) throws StockInsufficientException {
         final SortedMap<Integer, Lottery> sortedMap = table.tailMap(random, true);
         Lottery lottery = null;
         if (sortedMap.isEmpty()) {
@@ -101,7 +103,7 @@ public class LotteryTable {
         return lottery;
     }
 
-    private Lottery raffleConsiderofInsufficienStock(int random, TreeMap<Integer, Lottery> table,
+    private Lottery raffleConsiderofInsufficienStock(Integer random, TreeMap<Integer, Lottery> table,
                                                      TreeMap<Integer, Lottery> overstepLotteryTable) throws StockInsufficientException {
         try {
             return this.raffleInternal(random, table);
