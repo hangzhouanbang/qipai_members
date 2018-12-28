@@ -268,6 +268,12 @@ public class MemberController {
 			vo.setMsg("invalid phone");
 			return vo;
 		}
+		MemberVerifyPhone memberVerify = memberVerifyPhoneService.findById(memberId);
+		if (System.currentTimeMillis() - memberVerify.getCreateTime() < 30000) {
+			vo.setSuccess(false);
+			vo.setMsg("too frequently");
+			return vo;
+		}
 		try {
 			String param = VerifyPhoneCodeUtil.generateVerifyCode();
 			String host = "https://feginesms.market.alicloudapi.com";
@@ -293,6 +299,7 @@ public class MemberController {
 			memberVerifyPhone.setParam(param);
 			memberVerifyPhone.setMessage(message);
 			memberVerifyPhone.setCode(code);
+			memberVerifyPhone.setCreateTime(System.currentTimeMillis());
 			if (message.equals("OK") && code.equals("OK")) {
 				String requestId = (String) map.get("RequestId");
 				String bizId = (String) map.get("BizId");

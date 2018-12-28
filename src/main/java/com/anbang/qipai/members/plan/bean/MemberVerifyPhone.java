@@ -8,6 +8,7 @@ public class MemberVerifyPhone {
 	private String code;
 	private String requestId;
 	private String bizId;
+	private long createTime;
 
 	public String getId() {
 		return id;
@@ -63,6 +64,14 @@ public class MemberVerifyPhone {
 
 	public void setBizId(String bizId) {
 		this.bizId = bizId;
+	}
+
+	public long getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(long createTime) {
+		this.createTime = createTime;
 	}
 
 }
