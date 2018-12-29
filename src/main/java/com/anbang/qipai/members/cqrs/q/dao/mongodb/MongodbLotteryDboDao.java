@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -24,7 +25,13 @@ public class MongodbLotteryDboDao implements LotteryDboDao {
 
     @Override
     public List<LotteryDbo> findExtraLottey() {
-        Query query = new Query(Criteria.where("overStep").is(true));
+        List<String> list = new ArrayList<>();
+        list.add("11");
+        list.add("12");
+        list.add("13");
+        list.add("14");
+        list.add("15");
+        Query query = new Query(Criteria.where("index").in(list));
         return this.mongoTemplate.find(query, LotteryDbo.class);
     }
 

@@ -84,6 +84,7 @@ public class LotteryTable {
             lottery = this.raffleConsiderofInsufficienStock(rand, firstLotteryTable, firstOverstepLotteryTable);
             raffleHistory = new RaffleHistory(memberId, lottery, System.currentTimeMillis(), true);
         } else {
+
             lottery = this.raffleConsiderofInsufficienStock(rand, lotteryTable, overstepLotteryTable);
             raffleHistory = new RaffleHistory(memberId, lottery, System.currentTimeMillis(), false);
         }

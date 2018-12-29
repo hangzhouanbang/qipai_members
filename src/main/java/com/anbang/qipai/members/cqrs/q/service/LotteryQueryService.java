@@ -111,10 +111,11 @@ public class LotteryQueryService {
             cumulativeRaffleDbo.setMemberId(memberId);
             cumulativeRaffleDbo.setTime(formatTime);
             cumulativeRaffleDbo.setId(memberId + "_" + formatTime + "_extraReward");
+
 //            Calendar c = Calendar.getInstance();
 //            c.setTime(new Date());
 //            c.add(Calendar.DAY_OF_WEEK, -1);
-
+//            currentTime
             cumulativeRaffleDbo.setLastRaffleDay(currentTime);//currenttimr
 
             cumulativeRaffleDboDao.save(cumulativeRaffleDbo);
@@ -193,7 +194,7 @@ public class LotteryQueryService {
                             // 领取的实物,本地微服务什么都不做
                             // 抽到谢谢惠顾也什么都不做
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         return null;             //一旦写内存失败 直接返回
                     }
                 }
