@@ -503,7 +503,7 @@ public class SignController {
         }
     }
 
-    @RequestMapping(value = {"queryraffle"})
+    @RequestMapping(value = {"/queryraffle"})
     @ResponseBody
     public CommonVO queryRaffle(String token) {
         CommonVO commonVO = new CommonVO();
