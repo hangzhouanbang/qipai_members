@@ -33,7 +33,8 @@ public class ClubCardService {
 			vo.setTime(time);
 			vo.setPrice(card.getPrice());
 			vo.setOriginalPrice(card.getPrice());
-			if (memberOrderDao.findMemberOrderByPayerIdAndProductName(payerId, card.getName()) == null) {
+			if (card.getFirstDiscount() < 1
+					&& memberOrderDao.findMemberOrderByPayerIdAndProductName(payerId, card.getName()) == null) {
 				vo.setDiscount(card.getFirstDiscount());
 				vo.setPrice(card.getFirstDiscountPrice());
 				vo.setHasNotBuy(true);

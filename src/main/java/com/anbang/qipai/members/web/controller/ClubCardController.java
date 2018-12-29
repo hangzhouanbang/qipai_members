@@ -179,7 +179,8 @@ public class ClubCardController {
 		String reqIP = IPUtil.getRealIp(request);
 		double productPrice = card.getPrice();
 		// 是否首次购买
-		if (memberOrderService.findMemberOrderByPayerIdAndProductName(member.getId(), card.getName()) == null) {
+		if (card.getFirstDiscount() < 1
+				&& memberOrderService.findMemberOrderByPayerIdAndProductName(member.getId(), card.getName()) == null) {
 			productPrice = card.getFirstDiscountPrice();
 		}
 		// 保存订单
@@ -326,7 +327,8 @@ public class ClubCardController {
 		String reqIP = IPUtil.getRealIp(request);
 		double productPrice = card.getPrice();
 		// 是否首次购买
-		if (memberOrderService.findMemberOrderByPayerIdAndProductName(member.getId(), card.getName()) == null) {
+		if (card.getFirstDiscount() < 1
+				&& memberOrderService.findMemberOrderByPayerIdAndProductName(member.getId(), card.getName()) == null) {
 			productPrice = card.getFirstDiscountPrice();
 		}
 		// 保存订单
@@ -377,7 +379,8 @@ public class ClubCardController {
 		String reqIP = IPUtil.getRealIp(request);
 		double productPrice = card.getPrice();
 		// 是否首次购买
-		if (memberOrderService.findMemberOrderByPayerIdAndProductName(member.getId(), card.getName()) == null) {
+		if (card.getFirstDiscount() < 1
+				&& memberOrderService.findMemberOrderByPayerIdAndProductName(member.getId(), card.getName()) == null) {
 			productPrice = card.getFirstDiscountPrice();
 		}
 		// 保存订单

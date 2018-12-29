@@ -47,6 +47,8 @@ public class MongodbClubCardDao implements ClubCardDao {
 		Update update = new Update();
 		update.set("name", clubCard.getName());
 		update.set("price", clubCard.getPrice());
+		update.set("firstDiscount", clubCard.getFirstDiscount());
+		update.set("firstDiscountPrice", clubCard.getFirstDiscountPrice());
 		update.set("gold", clubCard.getGold());
 		update.set("score", clubCard.getScore());
 		update.set("time", clubCard.getTime());
