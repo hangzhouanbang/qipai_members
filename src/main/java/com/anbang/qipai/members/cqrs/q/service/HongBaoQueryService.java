@@ -46,4 +46,8 @@ public class HongBaoQueryService {
         HongBaoAccountDbo hongBaoAccountDbo = this.memberHongBaoAccountDao.find(memberId);
         return hongBaoAccountDbo.getBalance();
     }
+
+    public HongBaoAccountDbo findAccount(String memberId) {
+        return memberHongBaoAccountDao.find(memberId);
+    }
 }

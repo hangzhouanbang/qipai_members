@@ -44,4 +44,8 @@ public class PhoneFeeQueryService {
         return memberPhoneFeeAccountDao.findByMemberId(memberId).getBalance();
     }
 
+    public PhoneFeeAccountDbo findAccount(String memberId) {
+        return memberPhoneFeeAccountDao.findByMemberId(memberId);
+    }
+
 }

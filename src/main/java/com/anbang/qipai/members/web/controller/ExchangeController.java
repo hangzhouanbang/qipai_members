@@ -321,7 +321,7 @@ public class ExchangeController {
         //TODO:发送消息
         this.prizeLogMsgService.sendEntityExchangeLog(entityExchangeDO);
 
-        return new CommonVO(true, "成功兑换 " + entityExchangeDO.getLotteryName()+" \n  \n询问详情请联系客服微信ankf01", entityExchangeDO);
+        return new CommonVO(true, "成功兑换 " + entityExchangeDO.getLotteryName() + " \n  \n询问详情请联系客服微信ankf01", entityExchangeDO);
     }
 
     @RequestMapping(value = {"/queryphonefeeAndHongbao"})
@@ -331,11 +331,21 @@ public class ExchangeController {
         if (memberId == null) {
             return new CommonVO(false, "用户未登陆", null);
         }
-        double phoneFee = phoneFeeQueryService.find(memberId);
+
+        PhoneFeeAccountDbo phoneFeeAccountDbo = phoneFeeQueryService.findAccount(memberId);
+
+        double phoneFee = 0;
+        if (phoneFeeAccountDbo != null) {
+            phoneFee = phoneFeeAccountDbo.getBalance();
+        }
 
 
-        double hongBao = hongBaoQueryService.find(memberId);
-
+        double hongBao = 0;
+        HongBaoAccountDbo hongBaoAccountDbo = hongBaoQueryService.findAccount(memberId);
+        hongBaoQueryService.findAccount(memberId);
+        if (hongBaoAccountDbo != null) {
+            hongBao = hongBaoAccountDbo.getBalance();
+        }
 
         Map<String, String> resultMap = new HashMap<>();
 
