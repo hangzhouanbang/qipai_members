@@ -108,7 +108,7 @@ public class ExchangeController {
             exchangeFeeVO.setMemberId(memberId);
             exchangeFeeVO.setExchange(ExchangeType.HONG_BAO.name());
 
-            return new CommonVO(true, "成功兑换红包 " + exchangeFeeVO.getCurrency() + " 元  \n 询问详情请联系客服微信ankf01", exchangeFeeVO);
+            return new CommonVO(true, "成功兑换红包 " + exchangeFeeVO.getCurrency() + " 元  \n 将在48小时内充值到账", exchangeFeeVO);
         } catch (InsufficientBalanceException e) {
             return new CommonVO(false, "红包积分不足", null);
         } catch (MemberNotFoundException e) {
@@ -168,7 +168,7 @@ public class ExchangeController {
             exchangeFeeVO.setPhone(phone);
             exchangeFeeVO.setExchange(ExchangeType.PHONE_FEE.name());
 
-            return new CommonVO(true, "成功兑换话费 " + exchangeFeeVO.getCurrency() + " 元   \n 询问详情请联系客服微信ankf01", exchangeFeeVO);
+            return new CommonVO(true, "成功兑换话费 " + exchangeFeeVO.getCurrency() + " 元   \n 将在48小时内充值到账", exchangeFeeVO);
         } catch (InsufficientBalanceException e) {
             return new CommonVO(false, "话费余额不足", null);
         } catch (MemberNotFoundException e) {
@@ -321,7 +321,7 @@ public class ExchangeController {
         //TODO:发送消息
         this.prizeLogMsgService.sendEntityExchangeLog(entityExchangeDO);
 
-        return new CommonVO(true, "成功兑换 \n 询问详情请联系客服微信ankf01 " + entityExchangeDO.getLotteryName(), entityExchangeDO);
+        return new CommonVO(true, "成功兑换 " + entityExchangeDO.getLotteryName()+" \n  \n询问详情请联系客服微信ankf01", entityExchangeDO);
     }
 
     @RequestMapping(value = {"/queryphonefeeAndHongbao"})

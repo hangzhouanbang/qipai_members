@@ -107,15 +107,15 @@ public class LotteryQueryService {
 
         if (cumulativeRaffleDbo == null) {
             cumulativeRaffleDbo = new CumulativeRaffleDbo();
-            cumulativeRaffleDbo.setCumulativeDay(2);
+            cumulativeRaffleDbo.setCumulativeDay(1);
             cumulativeRaffleDbo.setMemberId(memberId);
             cumulativeRaffleDbo.setTime(formatTime);
             cumulativeRaffleDbo.setId(memberId + "_" + formatTime + "_extraReward");
-            Calendar c = Calendar.getInstance();
-            c.setTime(new Date());
-            c.add(Calendar.DAY_OF_WEEK, -1);
+//            Calendar c = Calendar.getInstance();
+//            c.setTime(new Date());
+//            c.add(Calendar.DAY_OF_WEEK, -1);
 
-            cumulativeRaffleDbo.setLastRaffleDay(c.getTime().getTime());//currenttimr
+            cumulativeRaffleDbo.setLastRaffleDay(currentTime);//currenttimr
 
             cumulativeRaffleDboDao.save(cumulativeRaffleDbo);
             return null;
