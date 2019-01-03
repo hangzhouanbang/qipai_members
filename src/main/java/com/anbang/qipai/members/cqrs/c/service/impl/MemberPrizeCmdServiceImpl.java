@@ -1,5 +1,6 @@
 package com.anbang.qipai.members.cqrs.c.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -55,7 +56,7 @@ public class MemberPrizeCmdServiceImpl extends CmdServiceBase implements MemberP
 	}
 
 	@Override
-	public void inializeRaffleTable(List<Lottery> lotteryList) {
+	public void inializeRaffleTable(ArrayList<Lottery> lotteryList) {
 		LotteryTable lotteryTable = this.singletonEntityRepository.getEntity(LotteryTable.class);
 		lotteryTable.updateLotterySet(lotteryList);
 	}

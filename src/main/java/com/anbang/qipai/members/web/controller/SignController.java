@@ -3,6 +3,8 @@ package com.anbang.qipai.members.web.controller;
 import java.util.*;
 
 import com.anbang.qipai.members.cqrs.q.dbo.*;
+import com.anbang.qipai.members.msg.service.GoldsMsgService;
+import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.web.enums.ExtraRewardDay;
 import com.anbang.qipai.members.web.vo.*;
 import org.apache.commons.lang.StringUtils;
@@ -84,6 +86,13 @@ public class SignController {
 
     @Autowired
     private MemberGradeInFoService memberGradeInFoService;
+
+    @Autowired
+    private MembersMsgService membersMsgService;
+
+
+    @Autowired
+    private GoldsMsgService goldsMsgService;
 
 
     @ResponseBody
@@ -213,7 +222,7 @@ public class SignController {
         if (hasRaffle.isRaffleToday() && (!StringUtils.isEmpty(hasRaffle.getExtraRaffle()))
                 & (!hasRaffle.getExtraRaffle().equals(ExtraRaffle.YES.name()))) {
             commonVO.setSuccess(false);
-            commonVO.setMsg("您今天的抽奖次数已经用完");
+            commonVO.setMsg("");
             return commonVO;
         }
         boolean isFirst = this.memberRaffleQueryService.isFirstRaffle(memberId);
@@ -229,7 +238,9 @@ public class SignController {
             } else if (lotteryType == LotteryTypeEnum.GOLD) {
                 AccountingRecord record = this.memberGoldCmdService.giveGoldToMember(memberId, lottery.getSingleNum(),
                         "抽奖，玉石*" + lottery.getSingleNum(), System.currentTimeMillis());
-                this.memberGoldQueryService.withdraw(memberId, record);
+                MemberGoldRecordDbo dbo = this.memberGoldQueryService.withdraw(memberId, record);
+                // rcd发kafka
+                goldsMsgService.withdraw(dbo);
             } else if (LotteryTypeEnum.isMemberCard(lotteryType)) {
                 this.memberAuthQueryService.prolongVipTimeAdvice(memberId, lotteryType, lottery.getSingleNum());
             } else if (lotteryType == LotteryTypeEnum.PHONE_FEE) {
@@ -273,6 +284,12 @@ public class SignController {
             // 新增记录
             memberRaffleQueryService.save(memberRaffleHistoryDbo);
             this.prizeLogMsgService.sendRaffleRecord(memberRaffleHistoryDbo);
+            MemberDbo memberDbo = memberAuthQueryService.findMemberById(memberId);
+
+            if ((memberDbo.isVip() == false) && isClubCard(lotDbo.getType().name())) {
+                memberDbo.setVip(true);
+                membersMsgService.rechargeVip(memberDbo);
+            }
 
             // RaffleHistoryVO raffleHistoryVO = new
             // RaffleHistoryVO(memberRaffleHistoryDbo.getId(),
@@ -587,5 +604,17 @@ public class SignController {
 
         commonVO.setData(resultList);
         return commonVO;
+    }
+
+    private boolean isClubCard(String type) {
+
+        if (type.equals("MEMBER_CARD_DAY") ||
+                type.equals("MEMBER_CARD_WEAK") ||
+                type.equals("MEMBER_CARD_MONTH") ||
+                type.equals("MEMBER_CARD_SEASON")) {
+            return true;
+        }
+
+        return false;
     }
 }

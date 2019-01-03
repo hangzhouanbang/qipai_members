@@ -57,7 +57,7 @@ public class SignPrizeReceiver {
 
             List<AdminLotteryMo> list = JSON.parseArray(json, AdminLotteryMo.class);
 
-            List<Lottery> lotteryList = new ArrayList<>();
+            ArrayList<Lottery> lotteryList = new ArrayList<>();
             for (int index = 0; index <10 ;index++) {
                 AdminLotteryMo lotteryMo = list.get(index);
                     Lottery lottery = new Lottery(lotteryMo.getId(),

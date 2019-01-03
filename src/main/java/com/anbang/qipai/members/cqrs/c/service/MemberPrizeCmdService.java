@@ -1,5 +1,6 @@
 package com.anbang.qipai.members.cqrs.c.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.anbang.qipai.members.cqrs.c.domain.prize.Lottery;
@@ -19,6 +20,6 @@ public interface MemberPrizeCmdService {
 
 	Boolean isRaffleTableInitalized();
 
-	void inializeRaffleTable(List<Lottery> lotterySet);
+	void inializeRaffleTable(ArrayList<Lottery> lotterySet);
 
 }

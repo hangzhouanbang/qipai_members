@@ -1,5 +1,6 @@
 package com.anbang.qipai.members.cqrs.c.service.disruptor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -98,7 +99,7 @@ public class DisruptorMemberPrizeCmdService extends DisruptorCmdServiceBase
 	}
 
 	@Override
-	public void inializeRaffleTable(List<Lottery> lotteryList) {
+	public void inializeRaffleTable(ArrayList<Lottery> lotteryList) {
 		CommonCommand cmd = new CommonCommand(MemberPrizeCmdServiceImpl.class.getName(), "inializeRaffleTable",
 				lotteryList);
 		DeferredResult<Object> deferredResult = publishEvent(this.disruptorFactory.getCoreCmdDisruptor(), cmd,
