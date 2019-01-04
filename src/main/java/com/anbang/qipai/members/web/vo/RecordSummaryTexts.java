@@ -23,6 +23,8 @@ public enum RecordSummaryTexts {
 			return 加入房间.name();
 		case "back gold to leave game":
 			return 离开房间.name();
+		case "back gold to leave home":
+			return 离开房间.name();
 		case "bind invitioncode":
 			return 绑定邀请码.name();
 		case "wisecrack":
