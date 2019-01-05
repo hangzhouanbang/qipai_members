@@ -36,7 +36,18 @@ public class PhoneFeeQueryService {
         dbo.setSummary(accountingRecord.getSummary());
         dbo.setTime(accountingRecord.getAccountingTime());
         this.memberPhoneFeeRecordDboDao.save(dbo);
-        this.memberPhoneFeeAccountDao.update(accountingRecord.getAccountId(), accountingRecord.getBalanceAfter());
+
+        PhoneFeeAccountDbo phoneFeeAccountDbo = memberPhoneFeeAccountDao.findByMemberId(memberId);
+        //如果没有账户 创建一个账户
+        if (phoneFeeAccountDbo == null) {
+            phoneFeeAccountDbo = new PhoneFeeAccountDbo();
+            phoneFeeAccountDbo.setId(memberId + "phonefee_wallet");
+            phoneFeeAccountDbo.setBalance(accountingRecord.getBalanceAfter());
+            phoneFeeAccountDbo.setMemberId(memberId);
+            memberPhoneFeeAccountDao.save(phoneFeeAccountDbo);
+        } else {
+            this.memberPhoneFeeAccountDao.update(accountingRecord.getAccountId(), accountingRecord.getBalanceAfter());
+        }
         return dbo;
     }
 

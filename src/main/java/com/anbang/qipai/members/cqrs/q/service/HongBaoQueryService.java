@@ -37,7 +37,18 @@ public class HongBaoQueryService {
         dbo.setTime(accountingRecord.getAccountingTime());
         dbo.setAccountingNo(accountingRecord.getAccountingNo());
         this.memberHongBaoRecordDboDao.save(dbo);
-        this.memberHongBaoAccountDao.update(accountingRecord.getAccountId(), accountingRecord.getBalanceAfter());
+
+//        如果没有账户 就先新建一个账户
+        HongBaoAccountDbo hongBaoAccountDbo = memberHongBaoAccountDao.find(memberId);
+        if (hongBaoAccountDbo == null) {
+            hongBaoAccountDbo = new HongBaoAccountDbo();
+            hongBaoAccountDbo.setMemberId(memberId);
+            hongBaoAccountDbo.setId(memberId + "\uFEFF_hongbao_wallet");
+            hongBaoAccountDbo.setBalance((int) accountingRecord.getBalanceAfter());
+            memberHongBaoAccountDao.save(hongBaoAccountDbo);
+        } else {
+            this.memberHongBaoAccountDao.update(accountingRecord.getAccountId(), accountingRecord.getBalanceAfter());
+        }
         return dbo;
     }
 

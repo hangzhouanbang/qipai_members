@@ -11,16 +11,16 @@ import com.anbang.qipai.members.cqrs.q.dao.LotteryDboDao;
 import com.anbang.qipai.members.cqrs.q.dbo.CumulativeRaffleDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.Lottery;
 import com.anbang.qipai.members.cqrs.q.dbo.LotteryDbo;
+import com.anbang.qipai.members.cqrs.q.dbo.MemberRaffleHistoryDbo;
+import com.anbang.qipai.members.msg.service.PrizeLogMsgService;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.dml.accounting.AccountingRecord;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class LotteryQueryService {
@@ -51,6 +51,9 @@ public class LotteryQueryService {
 
     @Autowired
     private CumulativeRaffleDboDao cumulativeRaffleDboDao;
+
+    @Autowired
+    private PrizeLogMsgService prizeLogMsgService;
 
     public List<LotteryDbo> findAll() {
         return lotteryDboDao.findUndiscard();
@@ -193,6 +196,16 @@ public class LotteryQueryService {
                             // 领取的实物,本地微服务什么都不做
                             // 抽到谢谢惠顾也什么都不做
                         }
+
+                        //发送中奖记录
+                        String uuid = UUID.randomUUID().toString().replace("-", "+").toLowerCase();
+                        Lottery lottery = new Lottery();
+                        BeanUtils.copyProperties(lotteryDbo, lottery);
+                        MemberRaffleHistoryDbo memberRaffleHistoryDbo = new MemberRaffleHistoryDbo(uuid, memberId, lottery, null,
+                                System.currentTimeMillis(), false);
+                        memberRaffleHistoryDbo.setExtraRaffle("额外");
+                        prizeLogMsgService.sendRaffleRecord(memberRaffleHistoryDbo);
+
                     } catch (Exception e) {
                         return null;             //一旦写内存失败 直接返回
                     }
