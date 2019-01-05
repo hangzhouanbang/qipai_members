@@ -170,7 +170,6 @@ public class LotteryQueryService {
                     extraRecordList.add(extraLottey.get(4));
                     lotteryDbo = extraLottey.get(4);
                 } else {
-                    return null;
                 }
 
                 if (lotteryDbo != null) {

@@ -258,6 +258,9 @@ public class SignController {
                     raffleHistoryValueObject.getTime(), raffleHistoryValueObject.isFirstTime());
 
             MemberRaffleHistoryDbo lastRaffleHistory = memberRaffleQueryService.findByMemberId(memberId);
+
+
+            //奖励次数的实现
             if (lastRaffleHistory == null) {
                 memberRaffleHistoryDbo.setExtraRaffle("NO");
             } else {
@@ -281,6 +284,7 @@ public class SignController {
                 }
             }
 
+
             // 新增记录
             memberRaffleQueryService.save(memberRaffleHistoryDbo);
             this.prizeLogMsgService.sendRaffleRecord(memberRaffleHistoryDbo);
@@ -300,6 +304,7 @@ public class SignController {
             // raffleHistoryValueObject.getTime(),
             // raffleHistoryValueObject.isFirstTime());
 
+            //返回给unity3D
             LotteryAdviceVO raffleAdviceVO = new LotteryAdviceVO();
             LotteryDbo lotteryDbo = lotteryQueryService.findLotteryByID(raffleHistoryValueObject.getLottery().getId());
             raffleAdviceVO.setId(raffleHistoryValueObject.getLottery().getId());

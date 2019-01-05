@@ -17,11 +17,11 @@ public class PrizeLogMsgService {
 
     @Autowired
     private SignInPrizeLogSource signInPrizeLogSource;
-
-    Logger logger = LoggerFactory.getLogger(PrizeLogMsgService.class);
+    final private Logger logger = LoggerFactory.getLogger(PrizeLogMsgService.class);
 
     public void sendRaffleRecord(MemberRaffleHistoryDbo memberRaffleHistoryDbo) {
-        System.out.println(">>>发送消息:" + memberRaffleHistoryDbo);
+        logger.info(">>>发送消息:" + memberRaffleHistoryDbo);
+//        System.out.println(">>>发送消息:" + memberRaffleHistoryDbo);
         CommonMO commonMO = new CommonMO();
         commonMO.setMsg(SignInPrizeLogSource.RAFFLE_HISTORY);
         commonMO.setData(memberRaffleHistoryDbo);
@@ -29,7 +29,8 @@ public class PrizeLogMsgService {
     }
 
     public void sendObtainSignPrize(ObatinSigningPrizeRecord obtainSignPrizeRecordDbo) {
-        System.out.println(">>>发送消息:" + obtainSignPrizeRecordDbo);
+        logger.info(">>>发送消息:" + obtainSignPrizeRecordDbo);
+//        System.out.println(">>>发送消息:" + obtainSignPrizeRecordDbo);
         CommonMO commonMO = new CommonMO();
         commonMO.setMsg(SignInPrizeLogSource.OBTAIN_SIGN_PRIZE);
         commonMO.setData(obtainSignPrizeRecordDbo);
@@ -37,7 +38,8 @@ public class PrizeLogMsgService {
     }
 
     public void sendExchangeLog(ScoreExchangeRecordDbo scoreExchangeRecordDbo) {
-        System.out.println(">>>发送消息:" + scoreExchangeRecordDbo);
+        logger.info(">>>发送消息:" + scoreExchangeRecordDbo);
+//        System.out.println(">>>发送消息:" + scoreExchangeRecordDbo);
         CommonMO commonMO = new CommonMO();
         commonMO.setMsg(SignInPrizeLogSource.PRIZE_EXCHANGE);
         commonMO.setData(scoreExchangeRecordDbo);
@@ -45,6 +47,7 @@ public class PrizeLogMsgService {
     }
 
     public void sendEntityExchangeLog(EntityExchangeDO entityExchangeDO) {
+//        logger.info(">>>发送消息:" + entityExchangeDO.toString());
         logger.info(">>>发送消息:" + entityExchangeDO.toString());
         CommonMO commonMO = new CommonMO();
         commonMO.setMsg(SignInPrizeLogSource.RAFFLE_HISTORY_ADDRESS);
