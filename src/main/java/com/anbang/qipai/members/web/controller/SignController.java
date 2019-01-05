@@ -219,12 +219,12 @@ public class SignController {
         HasRaffle hasRaffle = isRaffleToday(memberId);
 
         // 短路与 如果为空直接返回false
-        if (hasRaffle.isRaffleToday() && (!StringUtils.isEmpty(hasRaffle.getExtraRaffle()))
-                & (!hasRaffle.getExtraRaffle().equals(ExtraRaffle.YES.name()))) {
-            commonVO.setSuccess(false);
-            commonVO.setMsg("");
-            return commonVO;
-        }
+//        if (hasRaffle.isRaffleToday() && (!StringUtils.isEmpty(hasRaffle.getExtraRaffle()))
+//                & (!hasRaffle.getExtraRaffle().equals(ExtraRaffle.YES.name()))) {
+//            commonVO.setSuccess(false);
+//            commonVO.setMsg("");
+//            return commonVO;
+//        }
         boolean isFirst = this.memberRaffleQueryService.isFirstRaffle(memberId);
         try {
             RaffleHistoryValueObject raffleHistoryValueObject = null;
@@ -599,10 +599,19 @@ public class SignController {
 
         List<Integer> rewardedDayList = record.getHasRewarded();
 
-        for (int i = 0; i < rewardedDayList.size(); i++) {
+        if (rewardedDayList == null) {
+            commonVO.setSuccess(false);
+            commonVO.setData(resultList);
+            return commonVO;
+        }
+
+
+        int i = 0;
+        for (Integer integer : rewardedDayList) {
             ExtraRewardVO rewardVO = resultList.get(i);
             rewardVO.setHasreward(true);
             resultList.set(i, rewardVO);
+            i++;
         }
 
         commonVO.setSuccess(true);
