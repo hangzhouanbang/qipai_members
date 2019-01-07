@@ -3,6 +3,7 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017/qipai_members
 
+        
   cloud:
     stream:
       kafka:
@@ -67,6 +68,17 @@ spring:
                   ms: 5
                 batch:
                   size: 16384
+          
+          memberLoginLimitRecord:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
                   
           memberrightsconfiguration:
             producer:
@@ -89,16 +101,7 @@ spring:
                   ms: 5
                 batch:
                   size: 16384
-          memberLoginRecord:
-            producer:
-              configuration:
-                request:
-                  timeout:
-                    ms: 30000
-                linger:
-                  ms: 5
-                batch:
-                  size: 16384
+                  
           signInPrizeLog:
             producer:
               configuration:
@@ -113,13 +116,6 @@ spring:
       bindings:
         notice:
           destination: notice
-          group: qipai-members
-          consumer:
-            concurrency: 1
-            partitioned: false
-          contentType: application/json
-        memberslogin:
-          destination: memberslogin
           group: qipai-members
           consumer:
             concurrency: 1
@@ -184,8 +180,8 @@ spring:
           producer:
             partitionCount: 1
         
-        memberLoginRecord:
-          destination: memberLoginRecord
+        memberLoginLimitRecord:
+          destination: memberLoginLimitRecord
           contentType: application/json
           producer:
             partitionCount: 1
@@ -195,12 +191,12 @@ spring:
           contentType: application/json
           producer:
             partitionCount: 1
+            
         signInPrizeLog:
           destinationL: addSignInPrizeLog
           contentType: application/json
           producer:
             partitionCount: 1
-
 
   application:
     name: qipai-members
