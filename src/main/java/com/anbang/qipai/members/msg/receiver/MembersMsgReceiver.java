@@ -80,7 +80,6 @@ public class MembersMsgReceiver {
 			Map data = gson.fromJson(json, Map.class);
 			String invitationCode = (String) data.get("invitationCode");
 			String unionid = (String) data.get("unionid");
-			String openid = (String) data.get("openid");
 			String nickname = (String) data.get("nickname");
 			String headimgurl = (String) data.get("headimgurl");
 			int sex = ((Double) data.get("sex")).intValue();
@@ -89,15 +88,6 @@ public class MembersMsgReceiver {
 						unionid);
 				MemberDbo memberDbo = null;
 				if (unionidAuthDbo != null) {// 已unionid注册
-					AuthorizationDbo openidAuthDbo = memberAuthQueryService
-							.findThirdAuthorizationDbo("open.weixin.app.qipai", openid);
-					if (openidAuthDbo == null) {// openid未注册
-						// 添加openid授权
-						memberAuthCmdService.addThirdAuth("open.weixin.app.qipai", openid,
-								unionidAuthDbo.getMemberId());
-						memberAuthQueryService.addThirdAuth("open.weixin.app.qipai", openid,
-								unionidAuthDbo.getMemberId());
-					}
 					memberDbo = memberAuthQueryService.findMemberById(unionidAuthDbo.getMemberId());
 					return;
 				} else {
