@@ -290,10 +290,6 @@ public class SignController {
             this.prizeLogMsgService.sendRaffleRecord(memberRaffleHistoryDbo);
             MemberDbo memberDbo = memberAuthQueryService.findMemberById(memberId);
 
-            if ((memberDbo.isVip() == false) && isClubCard(lotDbo.getType().name())) {
-                memberDbo.setVip(true);
-                membersMsgService.rechargeVip(memberDbo);
-            }
 
             // RaffleHistoryVO raffleHistoryVO = new
             // RaffleHistoryVO(memberRaffleHistoryDbo.getId(),
