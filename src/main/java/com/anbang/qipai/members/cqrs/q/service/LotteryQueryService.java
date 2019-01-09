@@ -187,7 +187,7 @@ public class LotteryQueryService {
                                     "抽奖，玉石*" + lotteryDbo.getSingleNum(), System.currentTimeMillis());
                             this.memberGoldQueryService.withdraw(memberId, record);
                         } else if (LotteryTypeEnum.isMemberCard(lotteryType)) {
-                            this.memberAuthQueryService.prolongVipTimeByRaffle(memberId, lotteryType, lotteryDbo.getSingleNum());
+//                            this.memberAuthQueryService.prolongVipTimeByRaffle(memberId, lotteryType, lotteryDbo.getSingleNum());
                         } else if (lotteryType == LotteryTypeEnum.PHONE_FEE) {
                             AccountingRecord record = this.memberPhoneFeeCmdService.givePhoneFeeToMember(memberId,
                                     lotteryDbo.getSingleNum(), "抽奖，话费*" + lotteryDbo.getSingleNum(), System.currentTimeMillis());

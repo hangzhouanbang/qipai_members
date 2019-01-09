@@ -242,7 +242,7 @@ public class SignController {
                 // rcd发kafka
                 goldsMsgService.withdraw(dbo);
             } else if (LotteryTypeEnum.isMemberCard(lotteryType)) {
-                this.memberAuthQueryService.prolongVipTimeAdvice(memberId, lotteryType, lottery.getSingleNum());
+//                this.memberAuthQueryService.prolongVipTimeAdvice(memberId, lotteryType, lottery.getSingleNum());
             } else if (lotteryType == LotteryTypeEnum.PHONE_FEE) {
                 AccountingRecord record = this.memberPhoneFeeCmdService.givePhoneFeeToMember(memberId,
                         lottery.getSingleNum(), "抽奖，话费*" + lottery.getSingleNum(), System.currentTimeMillis());
