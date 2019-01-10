@@ -43,12 +43,12 @@ public interface MemberDboDao {
 
 	void updateMemberScore(String memberId, int score);
 
-    /**
-     * 修改hasBindAgent(是否绑定过推广员)
-     * 设置bindAgent为true
-     * @param memberId
-     * @param agentId
-     * @param hasBindAgent
-     */
+	/**
+	 * 修改hasBindAgent(是否绑定过推广员) 设置bindAgent为true
+	 * 
+	 * @param memberId
+	 * @param agentId
+	 * @param hasBindAgent
+	 */
 	void updateMemberHasBindAgent(String memberId, String agentId, boolean hasBindAgent);
 }

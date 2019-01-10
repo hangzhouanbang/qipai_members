@@ -181,4 +181,5 @@ public class MemberDbo {
 	public void setCost(double cost) {
 		this.cost = cost;
 	}
+
 }

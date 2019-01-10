@@ -28,6 +28,7 @@ import com.anbang.qipai.members.cqrs.q.service.MemberAuthQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberGoldQueryService;
 import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
 import com.anbang.qipai.members.cqrs.q.service.PhoneFeeQueryService;
+import com.anbang.qipai.members.msg.service.AuthorizationMsgService;
 import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
@@ -82,6 +83,9 @@ public class MemberThirdAuthController {
 	@Autowired
 	private MemberRightsConfigurationService memberRightsConfigurationService;
 
+	@Autowired
+	private AuthorizationMsgService authorizationMsgService;
+
 	/**
 	 * 客户端已经获取好了openid/unionid和微信用户信息
 	 *
@@ -106,8 +110,16 @@ public class MemberThirdAuthController {
 				if (openidAuthDbo == null) {// openid未注册
 					// 添加openid授权
 					memberAuthCmdService.addThirdAuth("open.weixin.app.qipai", openid, unionidAuthDbo.getMemberId());
-					memberAuthQueryService.addThirdAuth("open.weixin.app.qipai", openid, unionidAuthDbo.getMemberId());
+					AuthorizationDbo authDbo = memberAuthQueryService.addThirdAuth("open.weixin.app.qipai", openid,
+							unionidAuthDbo.getMemberId());
+					authorizationMsgService.newAuthorization(authDbo);
 				}
+				// 更新用户信息
+				memberAuthQueryService.updateMember(unionidAuthDbo.getMemberId(), nickname, headimgurl, sex);
+				// 发送消息
+				MemberDbo memberDbo = memberAuthQueryService.findMemberById(unionidAuthDbo.getMemberId());
+				membersMsgService.updateMemberBaseInfo(memberDbo);
+
 				// openid登录
 				String token = memberAuthService.thirdAuth("open.weixin.app.qipai", openid);
 
@@ -129,9 +141,9 @@ public class MemberThirdAuthController {
 				CreateMemberResult createMemberResult = memberAuthCmdService.createMemberAndAddThirdAuth("union.weixin",
 						unionid, goldForNewMember, scoreForNewMember, System.currentTimeMillis());
 
-				memberAuthQueryService.createMemberAndAddThirdAuth(createMemberResult.getMemberId(), "union.weixin",
-						unionid, memberRightsConfiguration);
-
+				AuthorizationDbo authDbo = memberAuthQueryService.createMemberAndAddThirdAuth(
+						createMemberResult.getMemberId(), "union.weixin", unionid, memberRightsConfiguration);
+				authorizationMsgService.newAuthorization(authDbo);
 				// 填充用户信息
 				memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl, sex);
 				// 发送消息

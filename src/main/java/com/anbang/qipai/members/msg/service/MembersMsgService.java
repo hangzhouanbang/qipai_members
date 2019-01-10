@@ -28,6 +28,13 @@ public class MembersMsgService {
 		membersSource.members().send(MessageBuilder.withPayload(mo).build());
 	}
 
+	public void updateMemberBaseInfo(MemberDbo member) {
+		CommonMO mo = new CommonMO();
+		mo.setMsg("update member info");
+		mo.setData(member);
+		membersSource.members().send(MessageBuilder.withPayload(mo).build());
+	}
+
 	public void memberOrderDelive(MemberDbo member) {
 		CommonMO mo = new CommonMO();
 		mo.setMsg("memberOrder delive");
