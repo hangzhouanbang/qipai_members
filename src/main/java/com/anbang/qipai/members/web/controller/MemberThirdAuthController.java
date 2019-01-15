@@ -97,6 +97,9 @@ public class MemberThirdAuthController {
 	 *            值为1时是男性，值为2时是女性，值为0时是未知
 	 * @return
 	 */
+
+
+	//if 1fail
 	@RequestMapping(value = "/wechatidlogin")
 	@ResponseBody
 	public CommonVO wechatidlogin(HttpServletRequest request, String unionid, String openid, String nickname,

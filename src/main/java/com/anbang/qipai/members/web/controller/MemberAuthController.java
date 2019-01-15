@@ -28,6 +28,7 @@ public class MemberAuthController {
 	@Autowired
 	private MemberLoginLimitRecordMsgService memberLoginLimitRecordMsgService;
 
+//	first
 	@RequestMapping(value = "/trytoken")
 	@ResponseBody
 	public CommonVO trytoken(String token) {

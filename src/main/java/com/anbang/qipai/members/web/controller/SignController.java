@@ -218,13 +218,13 @@ public class SignController {
         }
         HasRaffle hasRaffle = isRaffleToday(memberId);
 
-        // 短路与 如果为空直接返回false
-//        if (hasRaffle.isRaffleToday() && (!StringUtils.isEmpty(hasRaffle.getExtraRaffle()))
-//                & (!hasRaffle.getExtraRaffle().equals(ExtraRaffle.YES.name()))) {
-//            commonVO.setSuccess(false);
-//            commonVO.setMsg("");
-//            return commonVO;
-//        }
+//         短路与 如果为空直接返回false
+        if (hasRaffle.isRaffleToday() && (!StringUtils.isEmpty(hasRaffle.getExtraRaffle()))
+                & (!hasRaffle.getExtraRaffle().equals(ExtraRaffle.YES.name()))) {
+            commonVO.setSuccess(false);
+            commonVO.setMsg("");
+            return commonVO;
+        }
         boolean isFirst = this.memberRaffleQueryService.isFirstRaffle(memberId);
         try {
             RaffleHistoryValueObject raffleHistoryValueObject = null;
