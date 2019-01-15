@@ -16,10 +16,8 @@ import com.anbang.qipai.members.cqrs.c.domain.prize.PrizeEnum;
 import com.anbang.qipai.members.cqrs.c.domain.sign.Constant;
 import com.anbang.qipai.members.cqrs.q.dao.AuthorizationDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.MemberDboDao;
-import com.anbang.qipai.members.cqrs.q.dao.MemberGoldAccountDboDao;
 import com.anbang.qipai.members.cqrs.q.dbo.AuthorizationDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
-import com.anbang.qipai.members.cqrs.q.dbo.MemberGoldAccountDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberRights;
 import com.anbang.qipai.members.plan.bean.MemberGrade;
 import com.anbang.qipai.members.plan.bean.MemberOrder;
@@ -37,8 +35,6 @@ public class MemberAuthQueryService {
 
 	@Autowired
 	private MemberGradeDao memberGradeDao;
-	@Autowired
-	private MemberGoldAccountDboDao memberGoldAccountDboDao;
 
 	public AuthorizationDbo findThirdAuthorizationDbo(String publisher, String uuid) {
 		return authorizationDboDao.find(true, publisher, uuid);
@@ -104,19 +100,17 @@ public class MemberAuthQueryService {
 		return memberDboDao.findMemberByVip(page, size, vip);
 	}
 
+	/**
+	 * 注册手机
+	 */
 	public MemberDbo registerPhone(String memberId, String phone) {
 		memberDboDao.updateMemberPhone(memberId, phone);
 		return memberDboDao.findMemberById(memberId);
 	}
 
-	public MemberDbo rechargeGold(String memberId, int amount) {
-		MemberDbo member = memberDboDao.findMemberById(memberId);
-		MemberGoldAccountDbo memberGoldAccount = memberGoldAccountDboDao.findByMemberId(memberId);
-		memberDboDao.updateMemberGold(memberId, amount + memberGoldAccount.getBalance());
-		memberGoldAccountDboDao.updateByMemberId(memberId, amount + memberGoldAccount.getBalance());
-		return memberDboDao.findMemberById(memberId);
-	}
-
+	/**
+	 * 充值会员时间
+	 */
 	public MemberDbo rechargeVip(String memberId, long vipTime) {
 		memberDboDao.updateMemberVIP(memberId, true);
 		MemberDbo member = memberDboDao.findMemberById(memberId);
