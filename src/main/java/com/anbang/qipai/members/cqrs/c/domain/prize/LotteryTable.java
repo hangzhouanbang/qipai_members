@@ -45,6 +45,9 @@ public class LotteryTable {
     }
 
     public void updateLotterySet(List<Lottery> lotterySet) {
+
+        lotteryTable.put(0, new Lottery("1", "玉石50个", 0, 0, LotteryTypeEnum.GOLD, 1, 1000, false));
+
         this.check(lotterySet);
         this.clearBefore();
         this.lotterySet = lotterySet;
@@ -68,7 +71,6 @@ public class LotteryTable {
                 firstOverstepLotteryTable.put(firstOverstepProp, lottery);
                 overstepLotteryTable.put(overstepProp, lottery);
             }
-
         }
     }
 
@@ -86,7 +88,7 @@ public class LotteryTable {
         int rand = random.nextInt(TOTAL_PROP_COUNT);
         Lottery lottery = null;
         RaffleHistory raffleHistory = null;
-        if (!first) {
+        if (first) {
 //            logger.info(firstLotteryTable.toString());
             lottery = this.raffleConsiderofInsufficienStock(rand, firstLotteryTable, firstOverstepLotteryTable);
             raffleHistory = new RaffleHistory(memberId, lottery, System.currentTimeMillis(), true);
