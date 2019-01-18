@@ -98,8 +98,7 @@ public class MemberThirdAuthController {
 	 * @return
 	 */
 
-
-	//if 1fail
+	// if 1fail
 	@RequestMapping(value = "/wechatidlogin")
 	@ResponseBody
 	public CommonVO wechatidlogin(HttpServletRequest request, String unionid, String openid, String nickname,
@@ -144,9 +143,14 @@ public class MemberThirdAuthController {
 				CreateMemberResult createMemberResult = memberAuthCmdService.createMemberAndAddThirdAuth("union.weixin",
 						unionid, goldForNewMember, scoreForNewMember, System.currentTimeMillis());
 
-				AuthorizationDbo authDbo = memberAuthQueryService.createMemberAndAddThirdAuth(
+				AuthorizationDbo unionAuthDbo = memberAuthQueryService.createMemberAndAddThirdAuth(
 						createMemberResult.getMemberId(), "union.weixin", unionid, memberRightsConfiguration);
-				authorizationMsgService.newAuthorization(authDbo);
+				authorizationMsgService.newAuthorization(unionAuthDbo);
+				// 添加openid授权
+				memberAuthCmdService.addThirdAuth("open.weixin.app.qipai", openid, unionAuthDbo.getMemberId());
+				AuthorizationDbo openAuthDbo = memberAuthQueryService.addThirdAuth("open.weixin.app.qipai", openid,
+						unionAuthDbo.getMemberId());
+				authorizationMsgService.newAuthorization(openAuthDbo);
 				// 填充用户信息
 				memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl, sex);
 				// 发送消息
