@@ -302,10 +302,17 @@ public class ExchangeController {
                 return new CommonVO(false, "您已经兑换过了", null);
             }
         }
-        if (StringUtils.isEmpty(receiverInfo.getTelephone())
-                || StringUtils.isEmpty(receiverInfo.getAddress())
-                || StringUtils.isEmpty(receiverInfo.getName())) {
-            return new CommonVO(false, "收件人信息不得为空", null);
+
+        if (raffleHistoryDbo.getLottery().getType().name().equals("PHONE_FEE")) {
+            if (StringUtils.isEmpty(receiverInfo.getTelephone())) {
+                return new CommonVO(false, "手机号码不得为空", null);
+            }
+        } else {
+            if (StringUtils.isEmpty(receiverInfo.getTelephone())
+                    || StringUtils.isEmpty(receiverInfo.getAddress())
+                    || StringUtils.isEmpty(receiverInfo.getName())) {
+                return new CommonVO(false, "收件人信息不得为空", null);
+            }
         }
 
         EntityExchangeDO entityExchangeDO = new EntityExchangeDO();
