@@ -334,7 +334,7 @@ public class ClubCardController {
 		// 保存订单
 		MemberOrder order = memberOrderService.addMemberOrder(member.getId(), member.getNickname(), member.getId(),
 				member.getNickname(), card.getId(), card.getName(), productPrice, card.getGold(), card.getScore(),
-				card.getTime(), 1, "alipay", reqIP);
+				card.getTime(), 1, "wxpay", reqIP);
 		ordersMsgService.createOrder(order);
 		try {
 			Map<String, String> resultMap = wxpayService.createOrder_APP(order);
@@ -386,7 +386,7 @@ public class ClubCardController {
 		// 保存订单
 		MemberOrder order = memberOrderService.addMemberOrder(member.getId(), member.getNickname(), member.getId(),
 				member.getNickname(), card.getId(), card.getName(), productPrice, card.getGold(), card.getScore(),
-				card.getTime(), 1, "alipay", reqIP);
+				card.getTime(), 1, "wxpay", reqIP);
 		ordersMsgService.createOrder(order);
 		try {
 			String mweb_url = wxpayService.createOrder_H5(order);
