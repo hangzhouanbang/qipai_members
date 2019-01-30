@@ -22,7 +22,7 @@ public class MemberClubCardsMsgReceiver {
 	private Gson gson = new Gson();
 	
 	@StreamListener(MemberClubCardsSink.channel)
-	public void memberClubCard(CommonMO mo) {
+	public void memberClubCaprd(CommonMO mo) {
 		String msg = mo.getMsg();
 		String json = gson.toJson(mo.getData());
 		if (MemberClubCardsSink.addClubCard.equals(msg)) {
