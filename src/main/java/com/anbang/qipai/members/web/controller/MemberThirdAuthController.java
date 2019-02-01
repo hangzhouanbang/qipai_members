@@ -190,6 +190,100 @@ public class MemberThirdAuthController {
 	}
 
 	/**
+	 * 公众号注册
+	 */
+	@RequestMapping(value = "/wechatidlogin_gongzhonghao")
+	@ResponseBody
+	public CommonVO wechatidlogin_gongzhonghao(HttpServletRequest request, String unionid, String openid,
+			String nickname, String headimgurl, Integer sex) {
+		CommonVO vo = new CommonVO();
+		try {
+			AuthorizationDbo unionidAuthDbo = memberAuthQueryService.findThirdAuthorizationDbo("union.weixin", unionid);
+			if (unionidAuthDbo != null) {// 已unionid注册
+				AuthorizationDbo openidAuthDbo = memberAuthQueryService
+						.findThirdAuthorizationDbo("open.weixin.gongzhonghao.qipai", openid);
+				if (openidAuthDbo == null) {// openid未注册
+					// 添加openid授权
+					memberAuthCmdService.addThirdAuth("open.weixin.gongzhonghao.qipai", openid,
+							unionidAuthDbo.getMemberId());
+					AuthorizationDbo authDbo = memberAuthQueryService.addThirdAuth("open.weixin.gongzhonghao.qipai",
+							openid, unionidAuthDbo.getMemberId());
+					authorizationMsgService.newAuthorization(authDbo);
+				}
+				// 更新用户信息
+				memberAuthQueryService.updateMember(unionidAuthDbo.getMemberId(), nickname, headimgurl, sex);
+				// 发送消息
+				MemberDbo memberDbo = memberAuthQueryService.findMemberById(unionidAuthDbo.getMemberId());
+				membersMsgService.updateMemberBaseInfo(memberDbo);
+
+				// openid登录
+				String token = memberAuthService.thirdAuth("open.weixin.gongzhonghao.qipai", openid);
+
+				vo.setSuccess(true);
+				Map data = new HashMap();
+				data.put("token", token);
+				vo.setData(data);
+				return vo;
+			} else {
+				int goldForNewMember = 0;
+				int scoreForNewMember = 0;
+				MemberRightsConfiguration memberRightsConfiguration = memberRightsConfigurationService
+						.findMemberRightsConfiguration();
+				if (memberRightsConfiguration != null) {
+					goldForNewMember = memberRightsConfiguration.getGoldForNewNember();
+					scoreForNewMember = memberRightsConfiguration.getScoreForNewNember();
+				}
+				// 创建会员和unionid授权
+				CreateMemberResult createMemberResult = memberAuthCmdService.createMemberAndAddThirdAuth("union.weixin",
+						unionid, goldForNewMember, scoreForNewMember, System.currentTimeMillis());
+
+				AuthorizationDbo unionAuthDbo = memberAuthQueryService.createMemberAndAddThirdAuth(
+						createMemberResult.getMemberId(), "union.weixin", unionid, memberRightsConfiguration);
+				authorizationMsgService.newAuthorization(unionAuthDbo);
+				// 添加openid授权
+				memberAuthCmdService.addThirdAuth("open.weixin.gongzhonghao.qipai", openid, unionAuthDbo.getMemberId());
+				AuthorizationDbo openAuthDbo = memberAuthQueryService.addThirdAuth("open.weixin.gongzhonghao.qipai",
+						openid, unionAuthDbo.getMemberId());
+				authorizationMsgService.newAuthorization(openAuthDbo);
+				// 填充用户信息
+				memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl, sex);
+				// 发送消息
+				MemberDbo memberDbo = memberAuthQueryService.findMemberById(createMemberResult.getMemberId());
+				membersMsgService.createMember(memberDbo);
+
+				// 创建金币帐户，赠送金币记账
+				MemberGoldRecordDbo goldDbo = memberGoldQueryService.createMember(createMemberResult);
+				// 创建积分账户，赠送金币记账
+				MemberScoreRecordDbo scoreDbo = memberScoreQueryService.createMember(createMemberResult);
+
+				this.hongBaoQueryService.createAccount(createMemberResult);
+
+				this.phoneFeeQueryService.createAccount(createMemberResult);
+
+				// 发送金币记账消息
+				goldsMsgService.withdraw(goldDbo);
+				// 发送积分记账消息
+				scoresMsgService.withdraw(scoreDbo);
+
+				// TODO 发消息
+
+				// unionid登录
+				String token = memberAuthService.thirdAuth("union.weixin", unionid);
+
+				vo.setSuccess(true);
+				Map data = new HashMap();
+				data.put("token", token);
+				vo.setData(data);
+				return vo;
+			}
+		} catch (Exception e) {
+			vo.setSuccess(false);
+			vo.setMsg(e.getClass().toString());
+			return vo;
+		}
+	}
+
+	/**
 	 * 获取网页授权access_token
 	 *
 	 * @param code
