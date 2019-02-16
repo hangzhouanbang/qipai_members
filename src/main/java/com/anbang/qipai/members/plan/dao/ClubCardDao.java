@@ -15,4 +15,6 @@ public interface ClubCardDao {
 	void deleteClubCardByIds(String[] clubCardIds);
 
 	void updateClubCard(MemberClubCard clubCard);
+
+	MemberClubCard getClubCardByTime(long time);
 }

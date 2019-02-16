@@ -55,4 +55,10 @@ public class MongodbClubCardDao implements ClubCardDao {
 		mongoTemplate.updateFirst(query, update, MemberClubCard.class);
 	}
 
+	@Override
+	public MemberClubCard getClubCardByTime(long time) {
+		Query query = new Query(Criteria.where("time").is(time));
+		return mongoTemplate.findOne(query, MemberClubCard.class);
+	}
+
 }

@@ -8,6 +8,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.anbang.qipai.members.msg.service.MemberTypeMsgService;
+import com.anbang.qipai.members.plan.bean.*;
+import com.anbang.qipai.members.plan.dao.ClubCardDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,9 +22,6 @@ import com.anbang.qipai.members.cqrs.q.dao.MemberDboDao;
 import com.anbang.qipai.members.cqrs.q.dbo.AuthorizationDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberRights;
-import com.anbang.qipai.members.plan.bean.MemberGrade;
-import com.anbang.qipai.members.plan.bean.MemberOrder;
-import com.anbang.qipai.members.plan.bean.MemberRightsConfiguration;
 import com.anbang.qipai.members.plan.dao.MemberGradeDao;
 
 @Component
@@ -35,6 +35,12 @@ public class MemberAuthQueryService {
 
 	@Autowired
 	private MemberGradeDao memberGradeDao;
+
+	@Autowired
+	private MemberTypeMsgService memberTypeMsgService;
+
+	@Autowired
+	private ClubCardDao clubCardDao;
 
 	public AuthorizationDbo findThirdAuthorizationDbo(String publisher, String uuid) {
 		return authorizationDboDao.find(true, publisher, uuid);
@@ -109,7 +115,7 @@ public class MemberAuthQueryService {
 	}
 
 	/**
-	 * 充值会员时间
+	 * 其他充值会员时间
 	 */
 	public MemberDbo rechargeVip(String memberId, long vipTime) {
 		memberDboDao.updateMemberVIP(memberId, true);
@@ -121,9 +127,54 @@ public class MemberAuthQueryService {
 			vipEndTime = vipTime + System.currentTimeMillis();
 		}
 		memberDboDao.updateMemberVipEndTime(memberId, vipEndTime);
+
+		//发送会员类型消息
+		String cardType = judgeMemberType(vipTime);
+		if (cardType != null) {
+			MemberType memberType = new MemberType();
+			memberType.setId(memberId);
+			memberType.setCardType(cardType);
+			memberType.setCardSource(CardSouceEnum.OTHER);
+			memberType.setPay(false);
+			memberType.setVipEndTime(vipEndTime);
+			memberTypeMsgService.saveMemberType(memberType);
+		}
+
 		return memberDboDao.findMemberById(memberId);
 	}
 
+	/**
+	 * 代理充值会员时间(原使用rechargeVip)
+	 */
+	public MemberDbo agentRechargeVip(String memberId, long vipTime) {
+		memberDboDao.updateMemberVIP(memberId, true);
+		MemberDbo member = memberDboDao.findMemberById(memberId);
+		long vipEndTime = member.getVipEndTime();
+		if (vipEndTime > System.currentTimeMillis()) {
+			vipEndTime = vipTime + vipEndTime;
+		} else {
+			vipEndTime = vipTime + System.currentTimeMillis();
+		}
+		memberDboDao.updateMemberVipEndTime(memberId, vipEndTime);
+
+		//发送会员类型消息
+		String cardType = judgeMemberType(vipTime);
+		if (cardType != null) {
+			MemberType memberType = new MemberType();
+			memberType.setId(memberId);
+			memberType.setCardType(cardType);
+			memberType.setCardSource(CardSouceEnum.AGENT);
+			memberType.setPay(true);
+			memberType.setVipEndTime(vipEndTime);
+			memberTypeMsgService.saveMemberType(memberType);
+		}
+
+		return memberDboDao.findMemberById(memberId);
+	}
+
+	/**
+	 * 玩家充值会员
+	 */
 	public MemberDbo deliver(MemberOrder order) {
 		MemberDbo member = memberDboDao.findMemberById(order.getReceiverId());
 		if (order.getVipTime() > 0) {
@@ -135,6 +186,15 @@ public class MemberAuthQueryService {
 				vipEndTime = order.getVipTime() + System.currentTimeMillis();
 			}
 			memberDboDao.updateMemberVipEndTime(member.getId(), vipEndTime);
+
+			//发送会员类型消息
+			MemberType memberType = new MemberType();
+			memberType.setId(member.getId());
+			memberType.setCardType(order.getProductName());
+			memberType.setCardSource(CardSouceEnum.PLAYER);
+			memberType.setPay(true);
+			memberType.setVipEndTime(vipEndTime);
+			memberTypeMsgService.saveMemberType(memberType);
 		}
 		BigDecimal b1 = new BigDecimal(Double.toString(order.getTotalamount()));
 		BigDecimal b2 = new BigDecimal(Double.toString(member.getVipScore()));
@@ -277,5 +337,16 @@ public class MemberAuthQueryService {
 	public String findNameByMemberID(String memberId) {
 		MemberDbo member = memberDboDao.findMemberById(memberId);
 		return member.getNickname();
+	}
+
+	/**
+	 * 判断卡的类型
+	 */
+	public String judgeMemberType(long vipTime) {
+		MemberClubCard memberClubCard = clubCardDao.getClubCardByTime(vipTime);
+		if (memberClubCard != null) {
+			return memberClubCard.getName();
+		}
+		return null;
 	}
 }

@@ -135,6 +135,17 @@ spring:
                 batch:
                   size: 16384
 
+          memberType:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+
       bindings:
         notice:
           destination: notice
@@ -244,6 +255,12 @@ spring:
             
         signInPrizeLog:
           destinationL: addSignInPrizeLog
+          contentType: application/json
+          producer:
+            partitionCount: 1
+
+        memberType:
+          destinationL: memberType
           contentType: application/json
           producer:
             partitionCount: 1
