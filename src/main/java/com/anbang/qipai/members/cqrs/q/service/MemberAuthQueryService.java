@@ -8,9 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import com.anbang.qipai.members.msg.service.MemberTypeMsgService;
-import com.anbang.qipai.members.plan.bean.*;
-import com.anbang.qipai.members.plan.dao.ClubCardDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +19,15 @@ import com.anbang.qipai.members.cqrs.q.dao.MemberDboDao;
 import com.anbang.qipai.members.cqrs.q.dbo.AuthorizationDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberRights;
+import com.anbang.qipai.members.msg.service.MemberTypeMsgService;
+import com.anbang.qipai.members.plan.bean.AgentBindWay;
+import com.anbang.qipai.members.plan.bean.CardSouceEnum;
+import com.anbang.qipai.members.plan.bean.MemberClubCard;
+import com.anbang.qipai.members.plan.bean.MemberGrade;
+import com.anbang.qipai.members.plan.bean.MemberOrder;
+import com.anbang.qipai.members.plan.bean.MemberRightsConfiguration;
+import com.anbang.qipai.members.plan.bean.MemberType;
+import com.anbang.qipai.members.plan.dao.ClubCardDao;
 import com.anbang.qipai.members.plan.dao.MemberGradeDao;
 
 @Component
@@ -128,7 +134,7 @@ public class MemberAuthQueryService {
 		}
 		memberDboDao.updateMemberVipEndTime(memberId, vipEndTime);
 
-		//发送会员类型消息
+		// 发送会员类型消息
 		String cardType = judgeMemberType(vipTime);
 		if (cardType != null) {
 			MemberType memberType = new MemberType();
@@ -157,7 +163,7 @@ public class MemberAuthQueryService {
 		}
 		memberDboDao.updateMemberVipEndTime(memberId, vipEndTime);
 
-		//发送会员类型消息
+		// 发送会员类型消息
 		String cardType = judgeMemberType(vipTime);
 		if (cardType != null) {
 			MemberType memberType = new MemberType();
@@ -187,7 +193,7 @@ public class MemberAuthQueryService {
 			}
 			memberDboDao.updateMemberVipEndTime(member.getId(), vipEndTime);
 
-			//发送会员类型消息
+			// 发送会员类型消息
 			MemberType memberType = new MemberType();
 			memberType.setId(member.getId());
 			memberType.setCardType(order.getProductName());
@@ -285,8 +291,9 @@ public class MemberAuthQueryService {
 		return memberDboDao.findMemberById(memberId);
 	}
 
-	public MemberDbo updateMemberBindAgent(String memberId, String agentId, boolean bindAgent) {
-		memberDboDao.updateMemberBindAgent(memberId, agentId, bindAgent);
+	public MemberDbo updateMemberBindAgent(String memberId, String agentId, boolean bindAgent,
+			AgentBindWay agentBindWay) {
+		memberDboDao.updateMemberBindAgent(memberId, agentId, bindAgent, agentBindWay);
 		return memberDboDao.findMemberById(memberId);
 	}
 

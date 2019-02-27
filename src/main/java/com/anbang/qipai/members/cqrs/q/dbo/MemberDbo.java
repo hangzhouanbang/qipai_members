@@ -1,5 +1,7 @@
 package com.anbang.qipai.members.cqrs.q.dbo;
 
+import com.anbang.qipai.members.plan.bean.AgentBindWay;
+
 public class MemberDbo {
 	private String id;// 会员id
 	private String nickname;// 会员昵称
@@ -17,10 +19,19 @@ public class MemberDbo {
 	private boolean verifyUser;// 实名认证，true:通过认证,false:未通过认证
 	private boolean bindAgent;// 绑定推广员，true:绑定,false:未绑定
 	private boolean hasBindAgent;// 绑定过推广员，true:绑定过,false:未绑定过
+	private AgentBindWay bindWay;// 绑定推广员方式
 	private String agentId;// 推广员id
 	private int gold;// 金币
 	private int score;// 积分
 	private double cost;// 累计消费
+
+	public AgentBindWay getBindWay() {
+		return bindWay;
+	}
+
+	public void setBindWay(AgentBindWay bindWay) {
+		this.bindWay = bindWay;
+	}
 
 	public boolean isHasBindAgent() {
 		return hasBindAgent;

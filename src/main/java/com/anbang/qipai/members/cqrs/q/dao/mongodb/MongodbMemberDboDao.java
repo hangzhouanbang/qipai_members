@@ -13,6 +13,7 @@ import com.anbang.qipai.members.cqrs.q.dao.MemberDboDao;
 import com.anbang.qipai.members.cqrs.q.dao.mongodb.repository.MemberDboRepository;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberRights;
+import com.anbang.qipai.members.plan.bean.AgentBindWay;
 
 @Component
 public class MongodbMemberDboDao implements MemberDboDao {
@@ -142,12 +143,13 @@ public class MongodbMemberDboDao implements MemberDboDao {
 	}
 
 	@Override
-	public void updateMemberBindAgent(String memberId, String agentId, boolean bindAgent) {
+	public void updateMemberBindAgent(String memberId, String agentId, boolean bindAgent, AgentBindWay agentBindWay) {
 		Query query = new Query(Criteria.where("id").is(memberId));
 		Update update = new Update();
 		update.set("bindAgent", bindAgent);
 		update.set("agentId", agentId);
 		update.set("hasBindAgent", true);
+		update.set("agentBindWay", agentBindWay);
 		mongoTemplate.updateFirst(query, update, MemberDbo.class);
 	}
 

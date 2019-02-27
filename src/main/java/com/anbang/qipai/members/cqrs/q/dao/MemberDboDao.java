@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.anbang.qipai.members.cqrs.q.dbo.MemberDbo;
 import com.anbang.qipai.members.cqrs.q.dbo.MemberRights;
+import com.anbang.qipai.members.plan.bean.AgentBindWay;
 
 public interface MemberDboDao {
 
@@ -25,7 +26,7 @@ public interface MemberDboDao {
 
 	void updateMemberVIP(String memberId, boolean vip);
 
-	void updateMemberBindAgent(String memberId, String agentId, boolean bindAgent);
+	void updateMemberBindAgent(String memberId, String agentId, boolean bindAgent, AgentBindWay agentBindWay);
 
 	void removeMemberBindAgent(String memberId);
 

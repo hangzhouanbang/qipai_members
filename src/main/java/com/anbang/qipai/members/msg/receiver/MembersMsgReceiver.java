@@ -24,6 +24,7 @@ import com.anbang.qipai.members.msg.msjobj.CommonMO;
 import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
+import com.anbang.qipai.members.plan.bean.AgentBindWay;
 import com.anbang.qipai.members.plan.bean.MemberRightsConfiguration;
 import com.anbang.qipai.members.plan.service.MemberRightsConfigurationService;
 import com.anbang.qipai.members.remote.service.QiPaiAgentsRemoteService;
@@ -133,7 +134,7 @@ public class MembersMsgReceiver {
 					MemberRights rights = memberDbo.getRights();
 					Map map = (Map) commonRemoteVo.getData();
 					memberDbo = memberAuthQueryService.updateMemberBindAgent(memberDbo.getId(),
-							(String) map.get("agentId"), true);
+							(String) map.get("agentId"), true, AgentBindWay.qrcode);
 					membersMsgService.updateMemberBindAgent(memberDbo);
 					AccountingRecord rcd = memberGoldCmdService.giveGoldToMember(memberDbo.getId(),
 							rights.getGoldForAgentInvite(), "bind invitioncode", System.currentTimeMillis());
