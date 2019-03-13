@@ -45,11 +45,9 @@ public class LotteryTable {
     }
 
     public void updateLotterySet(List<Lottery> lotterySet) {
-
-        lotteryTable.put(0, new Lottery("1", "玉石50个", 0, 0, LotteryTypeEnum.GOLD, 1, 1000, false));
-
         this.check(lotterySet);
         this.clearBefore();
+        lotteryTable.put(0, new Lottery("1", "玉石50个", 0, 0, LotteryTypeEnum.GOLD, 1, 1000, false));
         this.lotterySet = lotterySet;
         int firstProp = 0;
         int prop = 0;
@@ -78,6 +76,9 @@ public class LotteryTable {
         this.lotterySet.clear();
         this.lotteryTable.clear();
         this.firstLotteryTable.clear();
+
+        firstOverstepLotteryTable.clear();
+        overstepLotteryTable.clear();
     }
 
     public List<Lottery> list() {

@@ -225,6 +225,7 @@ public class SignController {
             commonVO.setMsg("");
             return commonVO;
         }
+
         boolean isFirst = this.memberRaffleQueryService.isFirstRaffle(memberId);
         try {
             RaffleHistoryValueObject raffleHistoryValueObject = null;
