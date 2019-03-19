@@ -35,6 +35,7 @@ import com.anbang.qipai.members.msg.service.ScoresMsgService;
 import com.anbang.qipai.members.plan.bean.MemberRightsConfiguration;
 import com.anbang.qipai.members.plan.service.MemberRightsConfigurationService;
 import com.anbang.qipai.members.web.vo.CommonVO;
+import com.dml.users.AuthorizationAlreadyExistsException;
 import com.google.gson.Gson;
 
 @RestController
@@ -111,10 +112,17 @@ public class MemberThirdAuthController {
 						.findThirdAuthorizationDbo("open.weixin.app.qipai", openid);
 				if (openidAuthDbo == null) {// openid未注册
 					// 添加openid授权
-					memberAuthCmdService.addThirdAuth("open.weixin.app.qipai", openid, unionidAuthDbo.getMemberId());
-					AuthorizationDbo authDbo = memberAuthQueryService.addThirdAuth("open.weixin.app.qipai", openid,
-							unionidAuthDbo.getMemberId());
-					authorizationMsgService.newAuthorization(authDbo);
+					try {
+						memberAuthCmdService.addThirdAuth("open.weixin.app.qipai", openid,
+								unionidAuthDbo.getMemberId());
+						AuthorizationDbo authDbo = memberAuthQueryService.addThirdAuth("open.weixin.app.qipai", openid,
+								unionidAuthDbo.getMemberId());
+						authorizationMsgService.newAuthorization(authDbo);
+					} catch (AuthorizationAlreadyExistsException e) {
+						AuthorizationDbo authDbo = memberAuthQueryService.addThirdAuth("open.weixin.app.qipai", openid,
+								unionidAuthDbo.getMemberId());
+						authorizationMsgService.newAuthorization(authDbo);
+					}
 				}
 				// 更新用户信息
 				memberAuthQueryService.updateMember(unionidAuthDbo.getMemberId(), nickname, headimgurl, sex);
