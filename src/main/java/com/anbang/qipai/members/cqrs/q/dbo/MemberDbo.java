@@ -24,6 +24,7 @@ public class MemberDbo {
 	private int gold;// 金币
 	private int score;// 积分
 	private double cost;// 累计消费
+	private boolean isRobot;// 是否机器人
 
 	public AgentBindWay getBindWay() {
 		return bindWay;
@@ -191,6 +192,14 @@ public class MemberDbo {
 
 	public void setCost(double cost) {
 		this.cost = cost;
+	}
+
+	public boolean isRobot() {
+		return isRobot;
+	}
+
+	public void setRobot(boolean isRobot) {
+		this.isRobot = isRobot;
 	}
 
 }

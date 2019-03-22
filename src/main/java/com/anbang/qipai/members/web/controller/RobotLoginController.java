@@ -128,7 +128,7 @@ public class RobotLoginController {
 						unionid, goldForNewMember, scoreForNewMember, System.currentTimeMillis());
 
 				AuthorizationDbo unionAuthDbo = memberAuthQueryService.createMemberAndAddThirdAuth(
-						createMemberResult.getMemberId(), "union.robot", unionid, memberRightsConfiguration);
+						createMemberResult.getMemberId(), "union.robot", unionid, memberRightsConfiguration, true);
 				authorizationMsgService.newAuthorization(unionAuthDbo);
 				// 添加openid授权
 				memberAuthCmdService.addThirdAuth("open.robot.app.qipai", openid, unionAuthDbo.getMemberId());

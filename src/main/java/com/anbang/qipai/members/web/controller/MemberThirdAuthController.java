@@ -152,7 +152,7 @@ public class MemberThirdAuthController {
 						unionid, goldForNewMember, scoreForNewMember, System.currentTimeMillis());
 
 				AuthorizationDbo unionAuthDbo = memberAuthQueryService.createMemberAndAddThirdAuth(
-						createMemberResult.getMemberId(), "union.weixin", unionid, memberRightsConfiguration);
+						createMemberResult.getMemberId(), "union.weixin", unionid, memberRightsConfiguration, false);
 				authorizationMsgService.newAuthorization(unionAuthDbo);
 				// 添加openid授权
 				memberAuthCmdService.addThirdAuth("open.weixin.app.qipai", openid, unionAuthDbo.getMemberId());
@@ -246,7 +246,7 @@ public class MemberThirdAuthController {
 						unionid, goldForNewMember, scoreForNewMember, System.currentTimeMillis());
 
 				AuthorizationDbo unionAuthDbo = memberAuthQueryService.createMemberAndAddThirdAuth(
-						createMemberResult.getMemberId(), "union.weixin", unionid, memberRightsConfiguration);
+						createMemberResult.getMemberId(), "union.weixin", unionid, memberRightsConfiguration, false);
 				authorizationMsgService.newAuthorization(unionAuthDbo);
 				// 添加openid授权
 				memberAuthCmdService.addThirdAuth("open.weixin.gongzhonghao.qipai", openid, unionAuthDbo.getMemberId());

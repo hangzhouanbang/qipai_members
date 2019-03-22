@@ -64,9 +64,10 @@ public class MemberAuthQueryService {
 	}
 
 	public AuthorizationDbo createMemberAndAddThirdAuth(String memberId, String publisher, String uuid,
-			MemberRightsConfiguration memberRightsConfiguration) {
+			MemberRightsConfiguration memberRightsConfiguration, boolean isRobot) {
 		MemberDbo memberDbo = new MemberDbo();
 		memberDbo.setId(memberId);
+		memberDbo.setRobot(isRobot);
 		memberDbo.setCreateTime(System.currentTimeMillis());
 		if (memberRightsConfiguration != null) {
 			memberDbo.setRights(memberRightsConfiguration.generateRightsForPlanMembers());

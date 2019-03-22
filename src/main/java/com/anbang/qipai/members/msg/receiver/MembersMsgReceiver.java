@@ -105,7 +105,7 @@ public class MembersMsgReceiver {
 							"union.weixin", unionid, goldForNewMember, scoreForNewMember, System.currentTimeMillis());
 
 					memberAuthQueryService.createMemberAndAddThirdAuth(createMemberResult.getMemberId(), "union.weixin",
-							unionid, memberRightsConfiguration);
+							unionid, memberRightsConfiguration, false);
 
 					// 填充用户信息
 					memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl, sex);
