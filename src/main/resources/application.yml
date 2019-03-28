@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/qipai_members
+#      uri: mongodb://localhost:27017/qipai_members
 
         
   cloud:
@@ -264,6 +264,14 @@ spring:
           contentType: application/json
           producer:
             partitionCount: 1
+
+        prizeSend:
+          destination: prizeSend
+          group: qipai-members
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
 
   application:
     name: qipai-members
