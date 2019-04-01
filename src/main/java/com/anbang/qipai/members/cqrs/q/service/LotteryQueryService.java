@@ -156,20 +156,20 @@ public class LotteryQueryService {
                     hasRewarded.add(3);
                     extraRecordList.add(extraLottey.get(0));
                     lotteryDbo = extraLottey.get(0);
-                } else if (cumulativeDay == 5) {
-                    hasRewarded.add(5);
-                    extraRecordList.add(extraLottey.get(1));
-                    lotteryDbo = extraLottey.get(1);
                 } else if (cumulativeDay == 7) {
                     hasRewarded.add(7);
-                    extraRecordList.add(extraLottey.get(2));
-                    lotteryDbo = extraLottey.get(2);
+                    extraRecordList.add(extraLottey.get(1));
+                    lotteryDbo = extraLottey.get(1);
                 } else if (cumulativeDay == 15) {
                     hasRewarded.add(15);
+                    extraRecordList.add(extraLottey.get(2));
+                    lotteryDbo = extraLottey.get(2);
+                } else if (cumulativeDay == 22) {
+                    hasRewarded.add(22);
                     extraRecordList.add(extraLottey.get(3));
                     lotteryDbo = extraLottey.get(3);
-                } else if (cumulativeDay == 25) {
-                    hasRewarded.add(25);
+                } else if (cumulativeDay == 30) {
+                    hasRewarded.add(30);
                     extraRecordList.add(extraLottey.get(4));
                     lotteryDbo = extraLottey.get(4);
                 } else {
