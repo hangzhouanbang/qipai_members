@@ -21,6 +21,7 @@ import com.anbang.qipai.members.cqrs.q.service.MemberScoreQueryService;
 import com.anbang.qipai.members.cqrs.q.service.PhoneFeeQueryService;
 import com.anbang.qipai.members.msg.channel.sink.MembersSink;
 import com.anbang.qipai.members.msg.msjobj.CommonMO;
+import com.anbang.qipai.members.msg.service.AuthorizationMsgService;
 import com.anbang.qipai.members.msg.service.GoldsMsgService;
 import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
@@ -71,6 +72,9 @@ public class MembersMsgReceiver {
 	@Autowired
 	private MemberRightsConfigurationService memberRightsConfigurationService;
 
+	@Autowired
+	private AuthorizationMsgService authorizationMsgService;
+
 	private Gson gson = new Gson();
 
 	@StreamListener(MembersSink.MEMBERSLOGIN)
@@ -104,9 +108,10 @@ public class MembersMsgReceiver {
 					CreateMemberResult createMemberResult = memberAuthCmdService.createMemberAndAddThirdAuth(
 							"union.weixin", unionid, goldForNewMember, scoreForNewMember, System.currentTimeMillis());
 
-					memberAuthQueryService.createMemberAndAddThirdAuth(createMemberResult.getMemberId(), "union.weixin",
-							unionid, memberRightsConfiguration, false);
-
+					AuthorizationDbo unionAuthDbo = memberAuthQueryService.createMemberAndAddThirdAuth(
+							createMemberResult.getMemberId(), "union.weixin", unionid, memberRightsConfiguration,
+							false);
+					authorizationMsgService.newAuthorization(unionAuthDbo);
 					// 填充用户信息
 					memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl, sex);
 					// 发送消息
