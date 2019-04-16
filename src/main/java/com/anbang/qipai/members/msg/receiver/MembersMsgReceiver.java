@@ -87,6 +87,7 @@ public class MembersMsgReceiver {
 			String unionid = (String) data.get("unionid");
 			String nickname = (String) data.get("nickname");
 			String headimgurl = (String) data.get("headimgurl");
+			String reqIP = (String) data.get("reqIP");
 			int sex = ((Double) data.get("sex")).intValue();
 			try {
 				AuthorizationDbo unionidAuthDbo = memberAuthQueryService.findThirdAuthorizationDbo("union.weixin",
@@ -109,8 +110,8 @@ public class MembersMsgReceiver {
 							"union.weixin", unionid, goldForNewMember, scoreForNewMember, System.currentTimeMillis());
 
 					AuthorizationDbo unionAuthDbo = memberAuthQueryService.createMemberAndAddThirdAuth(
-							createMemberResult.getMemberId(), "union.weixin", unionid, memberRightsConfiguration,
-							false);
+							createMemberResult.getMemberId(), "union.weixin", unionid, memberRightsConfiguration, false,
+							reqIP);
 					authorizationMsgService.newAuthorization(unionAuthDbo);
 					// 填充用户信息
 					memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl, sex);

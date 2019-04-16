@@ -34,6 +34,7 @@ import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
 import com.anbang.qipai.members.plan.bean.MemberRightsConfiguration;
 import com.anbang.qipai.members.plan.service.MemberRightsConfigurationService;
+import com.anbang.qipai.members.util.IPUtil;
 import com.anbang.qipai.members.web.vo.CommonVO;
 import com.dml.users.AuthorizationAlreadyExistsException;
 import com.google.gson.Gson;
@@ -152,7 +153,8 @@ public class MemberThirdAuthController {
 						unionid, goldForNewMember, scoreForNewMember, System.currentTimeMillis());
 
 				AuthorizationDbo unionAuthDbo = memberAuthQueryService.createMemberAndAddThirdAuth(
-						createMemberResult.getMemberId(), "union.weixin", unionid, memberRightsConfiguration, false);
+						createMemberResult.getMemberId(), "union.weixin", unionid, memberRightsConfiguration, false,
+						IPUtil.getRealIp(request));
 				authorizationMsgService.newAuthorization(unionAuthDbo);
 				// 添加openid授权
 				memberAuthCmdService.addThirdAuth("open.weixin.app.qipai", openid, unionAuthDbo.getMemberId());
@@ -202,8 +204,8 @@ public class MemberThirdAuthController {
 	 */
 	@RequestMapping(value = "/wechatidlogin_gongzhonghao")
 	@ResponseBody
-	public CommonVO wechatidlogin_gongzhonghao(HttpServletRequest request, String unionid, String openid,
-			String nickname, String headimgurl, Integer sex) {
+	public CommonVO wechatidlogin_gongzhonghao(String unionid, String openid, String nickname, String headimgurl,
+			Integer sex, String reqIP) {
 		CommonVO vo = new CommonVO();
 		try {
 			AuthorizationDbo unionidAuthDbo = memberAuthQueryService.findThirdAuthorizationDbo("union.weixin", unionid);
@@ -246,7 +248,8 @@ public class MemberThirdAuthController {
 						unionid, goldForNewMember, scoreForNewMember, System.currentTimeMillis());
 
 				AuthorizationDbo unionAuthDbo = memberAuthQueryService.createMemberAndAddThirdAuth(
-						createMemberResult.getMemberId(), "union.weixin", unionid, memberRightsConfiguration, false);
+						createMemberResult.getMemberId(), "union.weixin", unionid, memberRightsConfiguration, false,
+						reqIP);
 				authorizationMsgService.newAuthorization(unionAuthDbo);
 				// 添加openid授权
 				memberAuthCmdService.addThirdAuth("open.weixin.gongzhonghao.qipai", openid, unionAuthDbo.getMemberId());

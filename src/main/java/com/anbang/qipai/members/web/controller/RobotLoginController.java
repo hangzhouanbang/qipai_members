@@ -31,6 +31,7 @@ import com.anbang.qipai.members.msg.service.MembersMsgService;
 import com.anbang.qipai.members.msg.service.ScoresMsgService;
 import com.anbang.qipai.members.plan.bean.MemberRightsConfiguration;
 import com.anbang.qipai.members.plan.service.MemberRightsConfigurationService;
+import com.anbang.qipai.members.util.IPUtil;
 import com.anbang.qipai.members.web.vo.CommonVO;
 
 /**
@@ -128,7 +129,8 @@ public class RobotLoginController {
 						unionid, goldForNewMember, scoreForNewMember, System.currentTimeMillis());
 
 				AuthorizationDbo unionAuthDbo = memberAuthQueryService.createMemberAndAddThirdAuth(
-						createMemberResult.getMemberId(), "union.robot", unionid, memberRightsConfiguration, true);
+						createMemberResult.getMemberId(), "union.robot", unionid, memberRightsConfiguration, true,
+						IPUtil.getRealIp(request));
 				authorizationMsgService.newAuthorization(unionAuthDbo);
 				// 添加openid授权
 				memberAuthCmdService.addThirdAuth("open.robot.app.qipai", openid, unionAuthDbo.getMemberId());

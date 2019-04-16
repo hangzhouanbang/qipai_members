@@ -25,6 +25,15 @@ public class MemberDbo {
 	private int score;// 积分
 	private double cost;// 累计消费
 	private boolean isRobot;// 是否机器人
+	private String reqIP;// 注册ip
+
+	public String getReqIP() {
+		return reqIP;
+	}
+
+	public void setReqIP(String reqIP) {
+		this.reqIP = reqIP;
+	}
 
 	public AgentBindWay getBindWay() {
 		return bindWay;
