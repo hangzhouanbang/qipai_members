@@ -172,4 +172,12 @@ public class MongodbMemberDboDao implements MemberDboDao {
 		mongoTemplate.updateFirst(query, update, MemberDbo.class);
 	}
 
+	@Override
+	public void updateMemberReqIP(String memberId, String reqIP) {
+		Query query = new Query(Criteria.where("id").is(memberId));
+		Update update = new Update();
+		update.set("reqIP", reqIP);
+		mongoTemplate.updateFirst(query, update, MemberDbo.class);
+	}
+
 }

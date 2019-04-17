@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.jetty.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -52,7 +53,7 @@ public class MemberAuthQueryService {
 		return authorizationDboDao.find(true, publisher, uuid);
 	}
 
-	public void updateMember(String memberId, String nickname, String headimgurl, Integer sex) {
+	public void updateMember(String memberId, String nickname, String headimgurl, Integer sex, String reqIP) {
 		String gender = "unknow";
 		if (sex.intValue() == 1) {
 			gender = "male";
@@ -61,6 +62,10 @@ public class MemberAuthQueryService {
 			gender = "female";
 		}
 		memberDboDao.update(memberId, nickname, headimgurl, gender);
+		MemberDbo memberDbo = memberDboDao.findMemberById(memberId);
+		if (StringUtil.isBlank(memberDbo.getReqIP())) {
+			memberDboDao.updateMemberReqIP(memberId, reqIP);
+		}
 	}
 
 	public AuthorizationDbo createMemberAndAddThirdAuth(String memberId, String publisher, String uuid,

@@ -114,7 +114,8 @@ public class MembersMsgReceiver {
 							reqIP);
 					authorizationMsgService.newAuthorization(unionAuthDbo);
 					// 填充用户信息
-					memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl, sex);
+					memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl, sex,
+							reqIP);
 					// 发送消息
 					memberDbo = memberAuthQueryService.findMemberById(createMemberResult.getMemberId());
 					membersMsgService.createMember(memberDbo);

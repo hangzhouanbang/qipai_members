@@ -102,7 +102,8 @@ public class RobotLoginController {
 					authorizationMsgService.newAuthorization(authDbo);
 				}
 				// 更新用户信息
-				memberAuthQueryService.updateMember(unionidAuthDbo.getMemberId(), nickname, headimgurl, sex);
+				memberAuthQueryService.updateMember(unionidAuthDbo.getMemberId(), nickname, headimgurl, sex,
+						IPUtil.getRealIp(request));
 				// 发送消息
 				MemberDbo memberDbo = memberAuthQueryService.findMemberById(unionidAuthDbo.getMemberId());
 				membersMsgService.updateMemberBaseInfo(memberDbo);
@@ -138,7 +139,8 @@ public class RobotLoginController {
 						unionAuthDbo.getMemberId());
 				authorizationMsgService.newAuthorization(openAuthDbo);
 				// 填充用户信息
-				memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl, sex);
+				memberAuthQueryService.updateMember(createMemberResult.getMemberId(), nickname, headimgurl, sex,
+						IPUtil.getRealIp(request));
 				// 发送消息
 				MemberDbo memberDbo = memberAuthQueryService.findMemberById(createMemberResult.getMemberId());
 

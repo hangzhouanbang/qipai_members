@@ -24,6 +24,8 @@ public interface MemberDboDao {
 
 	void updateMemberPhone(String memberId, String phone);
 
+	void updateMemberReqIP(String memberId, String reqIP);
+
 	void updateMemberVIP(String memberId, boolean vip);
 
 	void updateMemberBindAgent(String memberId, String agentId, boolean bindAgent, AgentBindWay agentBindWay);
