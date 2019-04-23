@@ -544,6 +544,7 @@ public class MemberController {
 			for (MemberDbo member : memberList) {
 				// kafka更新
 				membersMsgService.updateMemberVip(member);
+				membersMsgService.updateMemberPhone(member);
 				memberTypeMsgService.removeMemberType(member.getId());
 			}
 		}
