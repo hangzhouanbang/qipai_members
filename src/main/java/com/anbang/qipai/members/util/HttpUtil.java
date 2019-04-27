@@ -53,7 +53,6 @@ public class HttpUtil {
 		for (Map.Entry<String, String> e : headers.entrySet()) {
 			request.addHeader(e.getKey(), e.getValue());
 		}
-
 		return httpClient.execute(request);
 	}
 
@@ -200,7 +199,6 @@ public class HttpUtil {
 		if (body != null) {
 			request.setEntity(new ByteArrayEntity(body));
 		}
-
 		return httpClient.execute(request);
 	}
 

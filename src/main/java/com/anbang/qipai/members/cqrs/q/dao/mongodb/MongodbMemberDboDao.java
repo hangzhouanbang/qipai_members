@@ -180,4 +180,10 @@ public class MongodbMemberDboDao implements MemberDboDao {
 		mongoTemplate.updateFirst(query, update, MemberDbo.class);
 	}
 
+	@Override
+	public MemberDbo findMemberByPhone(String phone) {
+		Query query = new Query(Criteria.where("phone").is(phone));
+		return mongoTemplate.findOne(query, MemberDbo.class);
+	}
+
 }

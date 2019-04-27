@@ -103,6 +103,10 @@ public class MemberAuthQueryService {
 		return memberDboDao.findMemberById(memberId);
 	}
 
+	public MemberDbo findMemberByPhone(String phone) {
+		return memberDboDao.findMemberByPhone(phone);
+	}
+
 	public void updatePlanMembersRights(MemberRights memberRights) {
 		memberDboDao.updatePlanMembersRights(memberRights);
 	}

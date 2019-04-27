@@ -263,7 +263,13 @@ public class MemberController {
 			vo.setMsg("invalid token");
 			return vo;
 		}
-		MemberDbo member = memberAuthQueryService.findMemberById(memberId);
+		MemberDbo member = memberAuthQueryService.findMemberByPhone(phone);
+		if (member != null) {
+			vo.setSuccess(false);
+			vo.setMsg("already used phone");
+			return vo;
+		}
+		member = memberAuthQueryService.findMemberById(memberId);
 		if (member.getPhone() != null && !"".equals(member.getPhone())) {
 			vo.setSuccess(false);
 			vo.setMsg("already registe phone");

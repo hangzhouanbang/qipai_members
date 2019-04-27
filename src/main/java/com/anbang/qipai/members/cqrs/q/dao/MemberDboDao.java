@@ -22,6 +22,8 @@ public interface MemberDboDao {
 
 	MemberDbo findMemberById(String memberId);
 
+	MemberDbo findMemberByPhone(String phone);
+
 	void updateMemberPhone(String memberId, String phone);
 
 	void updateMemberReqIP(String memberId, String reqIP);
