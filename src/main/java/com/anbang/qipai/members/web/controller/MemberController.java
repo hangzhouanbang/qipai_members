@@ -541,12 +541,12 @@ public class MemberController {
 	 * 刷新vip
 	 */
 	@RequestMapping("/flushvip")
-	public void flushVIP() {
+	public void flushVIP(boolean vip) {
 		int size = 2000;
-		long amount = memberAuthQueryService.getAmountByVip(true);
+		long amount = memberAuthQueryService.getAmountByVip(vip);
 		long pageCount = amount % size > 0 ? amount / size + 1 : amount / size;
 		for (int page = 1; page <= pageCount; page++) {
-			List<MemberDbo> memberList = memberAuthQueryService.findMemberByVip(page, size, true);
+			List<MemberDbo> memberList = memberAuthQueryService.findMemberByVip(page, size, vip);
 			for (MemberDbo member : memberList) {
 				// kafka更新
 				membersMsgService.updateMemberVip(member);
