@@ -23,7 +23,7 @@ public class ReceiverInfoMsgService {
 
 	public void updateReceiverInfo(ReceiverInfoDbo dbo) {
 		CommonMO mo = new CommonMO();
-		mo.setMsg("add info");
+		mo.setMsg("update info");
 		mo.setData(dbo);
 		receiverInfoSource.receiverInfo().send(MessageBuilder.withPayload(mo).build());
 	}

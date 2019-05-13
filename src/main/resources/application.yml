@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-#      uri: mongodb://localhost:27017/qipai_members
+      #uri: mongodb://localhost:27017/qipai_members
 
         
   cloud:
@@ -145,6 +145,46 @@ spring:
                   ms: 5
                 batch:
                   size: 16384
+          receiverInfo:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          scoreProductRecord:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          productType:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          scoreShopProductDbo:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
 
       bindings:
         notice:
@@ -272,6 +312,26 @@ spring:
             concurrency: 1
             partitioned: false
           contentType: application/json
+        receiverInfo:
+          destinationL: receiverInfo
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        scoreProductRecord:
+          destinationL: scoreProductRecord
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        productType:
+          destinationL: productType
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        scoreShopProductDbo:
+          destinationL: scoreShopProductDbo
+          contentType: application/json
+          producer:
+            partitionCount: 1
 
   application:
     name: qipai-members

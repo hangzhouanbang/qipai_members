@@ -1,7 +1,7 @@
 package com.anbang.qipai.members.cqrs.q.dbo;
 
 public enum RewardType {
-	yushi, // 玉石
+	YUSHI, // 玉石
 
-	entity// 实物
+	ENTITY// 实物
 }

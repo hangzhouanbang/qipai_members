@@ -43,4 +43,10 @@ public class MongodbProductTypeDao implements ProductTypeDao {
 		return mongoTemplate.findAll(ProductType.class);
 	}
 
+	@Override
+	public ProductType findById(String id) {
+		Query query = new Query(Criteria.where("id").is(id));
+		return mongoTemplate.findOne(query, ProductType.class);
+	}
+
 }

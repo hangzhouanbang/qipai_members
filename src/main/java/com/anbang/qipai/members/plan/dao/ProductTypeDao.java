@@ -13,4 +13,6 @@ public interface ProductTypeDao {
 	void updateDescById(String id, String desc);
 
 	List<ProductType> findAll();
+
+	ProductType findById(String id);
 }

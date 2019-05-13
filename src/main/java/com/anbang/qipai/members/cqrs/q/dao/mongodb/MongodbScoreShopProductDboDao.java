@@ -81,4 +81,13 @@ public class MongodbScoreShopProductDboDao implements ScoreShopProductDboDao {
 		return mongoTemplate.count(query, ScoreShopProductDbo.class);
 	}
 
+	@Override
+	public void updateRemainById(String id, int remain) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("id").is(id));
+		Update update = new Update();
+		update.set("remain", remain);
+		mongoTemplate.updateFirst(query, update, ScoreShopProductDbo.class);
+	}
+
 }

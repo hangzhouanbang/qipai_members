@@ -20,6 +20,7 @@ import com.dml.accounting.InsufficientBalanceException;
 @RestController
 @RequestMapping("/score")
 public class MemberScoreController {
+
 	@Autowired
 	private MemberScoreCmdService memberScoreCmdService;
 

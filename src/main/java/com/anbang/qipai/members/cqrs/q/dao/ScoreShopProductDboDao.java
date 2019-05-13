@@ -23,4 +23,6 @@ public interface ScoreShopProductDboDao {
 	List<ScoreShopProductDbo> findByType(int page, int size, String type);
 
 	void incRemainById(String id, int amount);
+
+	void updateRemainById(String id, int remain);
 }
